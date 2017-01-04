@@ -18,7 +18,7 @@ target_link_libraries(turbodbc
 
 add_custom_command(TARGET turbodbc POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${CMAKE_CURRENT_BINARY_DIR}/libturbodbc.so ${CMAKE_BINARY_DIR})
+                   ${CMAKE_CURRENT_BINARY_DIR}/libturbodbc${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR})
 
 install(
     TARGETS turbodbc

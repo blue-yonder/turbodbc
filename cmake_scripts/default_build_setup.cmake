@@ -22,6 +22,10 @@ set(BUILD_SHARED_LIBS TRUE)
 # flags for all compilation modes
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+endif()
+
 # flags for Debug compilation mode
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -pedantic") # add pedantic here as it breaks Coco
 

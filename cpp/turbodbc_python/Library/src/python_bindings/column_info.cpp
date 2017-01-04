@@ -1,5 +1,8 @@
 #include <turbodbc/column_info.h>
 
+// Include ostream explicitly before to_python_converter.hpp to avoid compilation problems on macOS
+#include <ostream>
+
 #include <boost/python/to_python_converter.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/dict.hpp>

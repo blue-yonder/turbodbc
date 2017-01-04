@@ -21,7 +21,11 @@ target_link_libraries(turbodbc_python
 
 add_custom_command(TARGET turbodbc_python POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${CMAKE_CURRENT_BINARY_DIR}/turbodbc_intern.so ${CMAKE_BINARY_DIR})
+                   ${CMAKE_CURRENT_BINARY_DIR}/turbodbc_intern${CMAKE_SHARED_LIBRARY_SUFFIX} ${CMAKE_BINARY_DIR})
+
+if (APPLE)
+   set_target_properties(turbodbc_python PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+endif()
 
 install(
     TARGETS turbodbc_python
