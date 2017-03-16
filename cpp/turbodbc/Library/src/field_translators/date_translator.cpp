@@ -14,7 +14,8 @@ date_translator::~date_translator() = default;
 field date_translator::do_make_field(char const * data_pointer) const
 {
 	auto const date = reinterpret_cast<SQL_DATE_STRUCT const *>(data_pointer);
-	return {boost::gregorian::date(date->year, date->month, date->day)};
+	std::tm tm_date = {0, 0, 0, date->day, date->month - 1, date->year - 1900}
+	return tm_date;
 }
 
 

@@ -4,7 +4,6 @@
 
 #include <Python.h>
 
-#include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #include <sql.h>
@@ -34,13 +33,13 @@ namespace {
 		return (ts - timestamp_epoch).total_microseconds();
 	}
 
-	boost::gregorian::date const date_epoch(1970, 1, 1);
+	std::tm epoch = {0, 0, 0, 1, 0, 70, 0, 0, 0, 0, 0};
 
 	long date_to_days(char const * data_pointer)
 	{
 		auto & sql_date = *reinterpret_cast<SQL_DATE_STRUCT const *>(data_pointer);
-		boost::gregorian::date const date(sql_date.year, sql_date.month, sql_date.day);
-		return (date - date_epoch).days();
+		std::tm date = {0, 0, 0, sql_date.day, sql_date.month - 1, sql_date.year - 1900, 0, 0, 0, 0, 0};
+		return (difftime(mktime(&date), mktime(&epoch)))/(60*60*24);
 	}
 
 	datetime_column::converter make_converter(turbodbc::type_code type)
