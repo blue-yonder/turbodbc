@@ -18,5 +18,6 @@ std::ostream& operator<<(std::ostream& os, const std::tm& mytm)
 
 bool operator==(const std::tm LHS, const std::tm RHS)
 {
-	return LHS.tm_year == RHS.tm_year && LHS.tm_mon == RHS.tm_mon && LHS.tm_mday == RHS.tm_mday;
+	return LHS.tm_year == RHS.tm_year && LHS.tm_mon == RHS.tm_mon && LHS.tm_mday == RHS.tm_mday &&
+		LHS.tm_hour == RHS.tm_hour && LHS.tm_min == RHS.tm_min && LHS.tm_sec == RHS.tm_sec;
 }
