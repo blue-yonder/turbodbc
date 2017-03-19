@@ -19,6 +19,6 @@ TEST(DateTranslatorTest, MakeField)
 	std::tm expected = std::tm {};
 	expected.tm_year = 2015 - 1900;
 	expected.tm_mon  = 12 - 1;
-	expected.tm_mday = 7;
+	expected.tm_mday = 31;
 	EXPECT_EQ(turbodbc::field(expected), *(translator.make_field(as_const[0])));
 }

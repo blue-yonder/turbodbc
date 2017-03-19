@@ -167,8 +167,8 @@ TEST(SetFieldTest, SetFieldTimestamp)
 TEST(SetFieldTest, SetFieldDate)
 {
 	std::tm date = std::tm {};
-	date.tm_year = 2015 - 1900;
-	date.tm_mon  = 12 - 1;
+	date.tm_year = 2015;
+	date.tm_mon  = 12;
 	date.tm_mday = 31;
 
 	cpp_odbc::multi_value_buffer buffer(sizeof(SQL_DATE_STRUCT), 1);
