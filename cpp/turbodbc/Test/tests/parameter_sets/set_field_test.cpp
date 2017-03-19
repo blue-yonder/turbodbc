@@ -182,6 +182,41 @@ TEST(SetFieldTest, SetFieldDate)
 	EXPECT_EQ(sizeof(SQL_DATE_STRUCT), element.indicator);
 }
 
+TEST(SetFieldTest, SetFieldDatePre1400)
+{
+	std::tm date = std::tm {};
+	date.tm_year = 1000;
+	date.tm_mon  = 4;
+	date.tm_mday = 1;
+
+	cpp_odbc::multi_value_buffer buffer(sizeof(SQL_DATE_STRUCT), 1);
+	auto element = buffer[0];
+
+	set_field(turbodbc::field{date}, element);
+	auto const as_sql_date = reinterpret_cast<SQL_DATE_STRUCT const *>(element.data_pointer);
+	EXPECT_EQ(1000, as_sql_date->year);
+	EXPECT_EQ(4, as_sql_date->month);
+	EXPECT_EQ(1, as_sql_date->day);
+	EXPECT_EQ(sizeof(SQL_DATE_STRUCT), element.indicator);
+}
+
+TEST(SetFieldTest, SetFieldDatePost10000)
+{
+	std::tm date = std::tm {};
+	date.tm_year = 11567;
+	date.tm_mon  = 7;
+	date.tm_mday = 22;
+
+	cpp_odbc::multi_value_buffer buffer(sizeof(SQL_DATE_STRUCT), 1);
+	auto element = buffer[0];
+
+	set_field(turbodbc::field{date}, element);
+	auto const as_sql_date = reinterpret_cast<SQL_DATE_STRUCT const *>(element.data_pointer);
+	EXPECT_EQ(11567, as_sql_date->year);
+	EXPECT_EQ(7, as_sql_date->month);
+	EXPECT_EQ(22, as_sql_date->day);
+	EXPECT_EQ(sizeof(SQL_DATE_STRUCT), element.indicator);
+}
 
 TEST(SetFieldTest, SetFieldString)
 {
