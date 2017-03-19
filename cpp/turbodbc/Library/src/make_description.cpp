@@ -62,7 +62,7 @@ namespace {
 			return new boolean_description;
 		}
 
-		description_ptr operator()(boost::gregorian::date const &) const
+		description_ptr operator()(std::tm const &) const
 		{
 			return new date_description;
 		}

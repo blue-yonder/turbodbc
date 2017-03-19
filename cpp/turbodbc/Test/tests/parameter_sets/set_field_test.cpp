@@ -78,7 +78,12 @@ TEST(SetFieldTest, ParameterIsSuitableForDate)
 	parameter const boolean_parameter(statement, param_index, n_params,
 	                                  std::unique_ptr<description>(new boolean_description()));
 
-	field const value(boost::gregorian::date{2016, 9, 23});
+
+	std::tm testval = std::tm {};
+	testval.tm_year = 2016 - 1900;
+	testval.tm_mon  = 9 - 1;
+	testval.tm_mday = 23;
+	field const value(testval);
 	EXPECT_TRUE(parameter_is_suitable_for(date_parameter, value));
 	EXPECT_FALSE(parameter_is_suitable_for(boolean_parameter, value));
 }
@@ -161,7 +166,10 @@ TEST(SetFieldTest, SetFieldTimestamp)
 
 TEST(SetFieldTest, SetFieldDate)
 {
-	boost::gregorian::date const date{2015, 12, 31};
+	std::tm date = std::tm {};
+	date.tm_year = 2015 - 1900;
+	date.tm_mon  = 12 - 1;
+	date.tm_mday = 31;
 
 	cpp_odbc::multi_value_buffer buffer(sizeof(SQL_DATE_STRUCT), 1);
 	auto element = buffer[0];

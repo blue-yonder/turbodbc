@@ -1,4 +1,5 @@
 #include "turbodbc/description.h"
+#include "mock_classes.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>

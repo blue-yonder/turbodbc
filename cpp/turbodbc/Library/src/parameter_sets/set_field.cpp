@@ -32,7 +32,7 @@ namespace {
 			return parameter_.is_suitable_for(type_code::timestamp, size_not_important);
 		}
 
-		bool operator()(boost::gregorian::date const &) const {
+		bool operator()(std::tm const &) const {
 			return parameter_.is_suitable_for(type_code::date, size_not_important);
 		}
 
@@ -87,13 +87,13 @@ namespace {
 			destination_.indicator = sizeof(SQL_TIMESTAMP_STRUCT);
 		}
 
-		void operator()(boost::gregorian::date const & value)
+		void operator()(std::tm const & value)
 		{
 			auto destination = reinterpret_cast<SQL_DATE_STRUCT *>(destination_.data_pointer);
 
-			destination->year = value.year();
-			destination->month = value.month();
-			destination->day = value.day();
+			destination->year  = value.tm_year;
+			destination->month = value.tm_mon;
+			destination->day   = value.tm_mday;
 
 			destination_.indicator = sizeof(SQL_DATE_STRUCT);
 		}

@@ -33,13 +33,18 @@ namespace {
 		return (ts - timestamp_epoch).total_microseconds();
 	}
 
-	std::tm epoch = {0, 0, 0, 1, 0, 70, 0, 0, 0, 0, 0};
-
 	long date_to_days(char const * data_pointer)
 	{
 		auto & sql_date = *reinterpret_cast<SQL_DATE_STRUCT const *>(data_pointer);
-		std::tm date = {0, 0, 0, sql_date.day, sql_date.month - 1, sql_date.year - 1900, 0, 0, 0, 0, 0};
-		return (difftime(mktime(&date), mktime(&epoch)))/(60*60*24);
+		std::tm tm_epoch = {};
+		tm_epoch.tm_year = 70;
+		tm_epoch.tm_mon  = 0;
+		tm_epoch.tm_mday = 1;
+		std::tm date     = {};
+		date.tm_year     = sql_date.year - 1900;
+		date.tm_mon      = sql_date.month - 1;
+		date.tm_mday     = sql_date.day;
+		return (difftime(mktime(&date), mktime(&tm_epoch)))/(60*60*24);
 	}
 
 	datetime_column::converter make_converter(turbodbc::type_code type)

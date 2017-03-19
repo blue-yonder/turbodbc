@@ -1,6 +1,7 @@
 #include "turbodbc/field_translators/boolean_translator.h"
 
 #include <gtest/gtest.h>
+#include <tests/mock_classes.h>
 
 
 using turbodbc::field_translators::boolean_translator;
