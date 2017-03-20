@@ -1,8 +1,8 @@
 #include "turbodbc/description.h"
-#include "mock_classes.h"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <tests/mock_classes.h>
 
 
 namespace {
