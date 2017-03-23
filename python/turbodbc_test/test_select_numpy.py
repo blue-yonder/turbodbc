@@ -125,10 +125,38 @@ def test_numpy_timestamp_column(dsn, configuration):
             assert results[_fix_case(configuration, 'a')].dtype == numpy.dtype('datetime64[us]')
             assert_equal(results[_fix_case(configuration, 'a')], expected)
 
+@for_each_database
+def test_numpy_timestamp_column_pre1400(dsn, configuration):
+    supported_digits = configuration['capabilities']['fractional_second_digits']
+    fractional = generate_microseconds_with_precision(supported_digits)
+    timestamp = datetime.datetime(400, 12, 31, 1, 2, 3, fractional)
+
+    with open_cursor(configuration) as cursor:
+        with query_fixture(cursor, configuration, 'INSERT TIMESTAMP') as table_name:
+            cursor.execute('INSERT INTO {} VALUES (?)'.format(table_name), [timestamp])
+            cursor.execute('SELECT a FROM {}'.format(table_name))
+            results = cursor.fetchallnumpy()
+            expected = MaskedArray([timestamp], mask=[0], dtype='datetime64[us]')
+            assert results[_fix_case(configuration, 'a')].dtype == numpy.dtype('datetime64[us]')
+            assert_equal(results[_fix_case(configuration, 'a')], expected)
+
 
 @for_each_database
 def test_numpy_date_column(dsn, configuration):
     date = datetime.date(3999, 12, 31)
+
+    with open_cursor(configuration) as cursor:
+        with query_fixture(cursor, configuration, 'INSERT DATE') as table_name:
+            cursor.execute('INSERT INTO {} VALUES (?)'.format(table_name), [date])
+            cursor.execute('SELECT a FROM {}'.format(table_name))
+            results = cursor.fetchallnumpy()
+            expected = MaskedArray([date], mask=[0], dtype='datetime64[D]')
+            assert results[_fix_case(configuration, 'a')].dtype == numpy.dtype('datetime64[D]')
+            assert_equal(results[_fix_case(configuration, 'a')], expected)
+
+@for_each_database
+def test_numpy_date_column_pre1400(dsn, configuration):
+    date = datetime.date(400, 12, 31)
 
     with open_cursor(configuration) as cursor:
         with query_fixture(cursor, configuration, 'INSERT DATE') as table_name:

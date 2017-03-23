@@ -2,6 +2,8 @@
 #include <turbodbc_numpy/ndarrayobject.h>
 #include <turbodbc_numpy/make_numpy_array.h>
 
+#include <turbodbc/utils/datetime.h>
+
 #include <Python.h>
 
 #include <boost/date_time/gregorian/gregorian_types.hpp>
@@ -46,9 +48,9 @@ namespace {
 	datetime_column::converter make_converter(turbodbc::type_code type)
 	{
 		if (type == turbodbc::type_code::timestamp) {
-			return timestamp_to_microseconds;
+			return turbodbc::datetime_utils::timestamp_to_microseconds;
 		} else {
-			return date_to_days;
+			return turbodbc::datetime_utils::date_to_days;
 		}
 	}
 
