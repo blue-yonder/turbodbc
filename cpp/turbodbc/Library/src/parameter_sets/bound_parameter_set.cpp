@@ -8,40 +8,44 @@
 #include <sqlext.h>
 
 #include <functional>
+#include <ciso646>
 
 namespace turbodbc {
 
 namespace {
 	std::size_t const max_initial_string_length = 16;
 
-	std::shared_ptr<parameter> make_suggested_parameter(cpp_odbc::statement const & statement, std::size_t one_based_index, std::size_t buffered_sets)
+	std::shared_ptr<parameter> make_suggested_parameter(cpp_odbc::statement const & statement, std::size_t one_based_index, std::size_t buffered_sets, bool prefer_unicode)
 	{
-		auto description = make_description(statement.describe_parameter(one_based_index));
-		if ((description->get_type_code() == type_code::string) and
-		    (description->element_size() > (max_initial_string_length + 1)))
+		auto description = make_description(statement.describe_parameter(one_based_index), prefer_unicode);
+		if (((description->get_type_code() == type_code::string) or (description->get_type_code() == type_code::unicode))
+		    and (description->element_size() > (max_initial_string_length + 1)))
 		{
 			auto modified_description = statement.describe_parameter(one_based_index);
 			modified_description.size = max_initial_string_length;
-			description = make_description(modified_description);
+			description = make_description(modified_description, prefer_unicode);
 		}
 		return std::make_shared<parameter>(statement, one_based_index, buffered_sets, std::move(description));
 	}
 
-	std::shared_ptr<parameter> make_default_parameter(cpp_odbc::statement const & statement, std::size_t one_based_index, std::size_t buffered_sets)
+	std::shared_ptr<parameter> make_default_parameter(cpp_odbc::statement const & statement, std::size_t one_based_index, std::size_t buffered_sets, bool prefer_unicode)
 	{
-		auto description = make_description(type_code::string, 1);
+		type_code const code = prefer_unicode ? type_code::unicode : type_code::string;
+		auto description = make_description(code, 1);
 		return std::make_shared<parameter>(statement, one_based_index, buffered_sets, std::move(description));
 	}
 
-	using parameter_factory = std::function<std::shared_ptr<parameter>(cpp_odbc::statement const &, std::size_t, std::size_t)>;
+	using parameter_factory = std::function<std::shared_ptr<parameter>(cpp_odbc::statement const &, std::size_t, std::size_t, bool)>;
 }
 
 
 bound_parameter_set::bound_parameter_set(cpp_odbc::statement const & statement,
                                          std::size_t buffered_sets,
+                                         bool prefer_unicode,
                                          bool query_db_for_initial_types) :
 		statement_(statement),
 		buffered_sets_(buffered_sets),
+		prefer_unicode_(prefer_unicode),
 		transferred_sets_(0),
 		confirmed_last_batch_(0)
 {
@@ -49,10 +53,11 @@ bound_parameter_set::bound_parameter_set(cpp_odbc::statement const & statement,
 	parameter_factory make_parameter(query_db_for_initial_types ? make_suggested_parameter : make_default_parameter);
 	for (std::size_t one_based_index = 1; one_based_index <= n_parameters; ++one_based_index) {
 		try {
-			parameters_.push_back(make_parameter(statement_, one_based_index, buffered_sets_));
+			parameters_.push_back(make_parameter(statement_, one_based_index, buffered_sets_, prefer_unicode_));
 		} catch (cpp_odbc::error const &) {
-			parameters_.push_back(make_default_parameter(statement_, one_based_index, buffered_sets_));
+			parameters_.push_back(make_default_parameter(statement_, one_based_index, buffered_sets_, prefer_unicode_));
 		}
+		initial_parameter_types_.push_back(parameters_.back()->get_type_code());
 	}
 	statement_.set_attribute(SQL_ATTR_PARAMS_PROCESSED_PTR, &confirmed_last_batch_);
 }
@@ -101,6 +106,11 @@ void bound_parameter_set::rebind(std::size_t parameter_index,
 	                                                           parameter_index + 1,
 	                                                           buffered_sets_,
 	                                                           std::move(parameter_description));
+}
+
+std::vector<type_code> const & bound_parameter_set::get_initial_parameter_types() const
+{
+	return initial_parameter_types_;
 }
 
 

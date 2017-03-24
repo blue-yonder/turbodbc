@@ -4,6 +4,7 @@
 #include <turbodbc_numpy/binary_column.h>
 #include <turbodbc_numpy/datetime_column.h>
 #include <turbodbc_numpy/string_column.h>
+#include <turbodbc_numpy/unicode_column.h>
 
 #include <vector>
 
@@ -25,6 +26,8 @@ namespace {
 			case turbodbc::type_code::timestamp:
 			case turbodbc::type_code::date:
 				return std::unique_ptr<datetime_column>(new datetime_column(type));
+			case turbodbc::type_code::unicode:
+				return std::unique_ptr<unicode_column>(new unicode_column());
 			default:
 				return std::unique_ptr<string_column>(new string_column());
 		}

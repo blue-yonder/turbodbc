@@ -18,6 +18,8 @@ namespace {
 
 	bool const query_db_for_types = true;
 	bool const do_not_query_db_for_types = false;
+	bool const prefer_string = false;
+	bool const prefer_unicode = true;
 
 	cpp_odbc::column_description const int_description = {"dummy", SQL_BIGINT, 0, 0, true};
 	cpp_odbc::column_description const timestamp_description = {"dummy", SQL_TYPE_TIMESTAMP, 0, 0, true};
@@ -41,7 +43,7 @@ TEST(BoundParameterSetTest, ConstructorBindsParametersBasedOnDBSuggestion)
 	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_SBIGINT, SQL_BIGINT, 0, testing::_)).Times(1);
 	EXPECT_CALL(statement, do_bind_input_parameter(2, SQL_C_TYPE_TIMESTAMP, SQL_TYPE_TIMESTAMP, 6, testing::_)).Times(1);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 	EXPECT_EQ(params.number_of_parameters(), 2);
 	EXPECT_EQ(params.get_parameters()[0]->get_buffer().number_of_elements(), 42);
 	EXPECT_EQ(params.buffered_sets(), 42);
@@ -57,7 +59,20 @@ TEST(BoundParameterSetTest, ConstructorFallsBackToStringIfDBSuggestionFails)
 
 	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_CHAR, SQL_VARCHAR, testing::_, testing::_)).Times(1);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
+}
+
+
+TEST(BoundParameterSetTest, ConstructorFallsBackToUnicodeIfDBSuggestionFails)
+{
+	mock_statement statement;
+	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(1));
+	ON_CALL(statement, do_describe_parameter(1))
+		.WillByDefault(testing::Throw(cpp_odbc::error("")));
+
+	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+
+	bound_parameter_set params(statement, 42, prefer_unicode, query_db_for_types);
 }
 
 
@@ -69,11 +84,36 @@ TEST(BoundParameterSetTest, ConstructorBindsStringParametersByDefault)
 
 	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_CHAR, SQL_VARCHAR, testing::_, testing::_)).Times(1);
 
-	bound_parameter_set params(statement, 42, do_not_query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, do_not_query_db_for_types);
 }
 
 
-TEST(BoundParameterSetTest, ConstructorOverridesStringParameterSuggestions)
+TEST(BoundParameterSetTest, ConstructorBindsUnicodeParametersByDefault)
+{
+	mock_statement statement;
+	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(1));
+	EXPECT_CALL(statement, do_describe_parameter(1)).Times(0);
+
+	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+
+	bound_parameter_set params(statement, 42, prefer_unicode, do_not_query_db_for_types);
+}
+
+
+TEST(BoundParameterSetTest, ConstructorBindsUnicodeWhenPreferred)
+{
+	mock_statement statement;
+	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(1));
+	ON_CALL(statement, do_describe_parameter(1))
+		.WillByDefault(testing::Return(string_description_short));
+
+	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+
+	bound_parameter_set params(statement, 42, prefer_unicode, query_db_for_types);
+}
+
+
+TEST(BoundParameterSetTest, ConstructorOverridesStringParameterLengthSuggestions)
 {
 	mock_statement statement;
 	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(4));
@@ -91,11 +131,37 @@ TEST(BoundParameterSetTest, ConstructorOverridesStringParameterSuggestions)
 	EXPECT_CALL(statement, do_bind_input_parameter(3, SQL_C_CHAR, SQL_VARCHAR, testing::_, testing::_)).Times(1);
 	EXPECT_CALL(statement, do_bind_input_parameter(4, SQL_C_CHAR, SQL_VARCHAR, testing::_, testing::_)).Times(1);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 	EXPECT_EQ(params.get_parameters()[0]->get_buffer().capacity_per_element(), string_description_short.size + 1);
 	EXPECT_EQ(params.get_parameters()[1]->get_buffer().capacity_per_element(), string_description_max_length.size + 1);
 	EXPECT_EQ(params.get_parameters()[2]->get_buffer().capacity_per_element(), string_description_max_length.size + 1);
 	EXPECT_EQ(params.get_parameters()[3]->get_buffer().capacity_per_element(), string_description_max_length.size + 1);
+}
+
+
+TEST(BoundParameterSetTest, ConstructorOverridesUnicodeParameterLengthSuggestions)
+{
+	mock_statement statement;
+	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(4));
+	ON_CALL(statement, do_describe_parameter(1))
+		.WillByDefault(testing::Return(string_description_short));
+	ON_CALL(statement, do_describe_parameter(2))
+		.WillByDefault(testing::Return(string_description_max_length));
+	ON_CALL(statement, do_describe_parameter(3))
+		.WillByDefault(testing::Return(string_description_slightly_too_long));
+	ON_CALL(statement, do_describe_parameter(4))
+		.WillByDefault(testing::Return(string_description_too_long));
+
+	EXPECT_CALL(statement, do_bind_input_parameter(1, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+	EXPECT_CALL(statement, do_bind_input_parameter(2, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+	EXPECT_CALL(statement, do_bind_input_parameter(3, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+	EXPECT_CALL(statement, do_bind_input_parameter(4, SQL_C_WCHAR, SQL_WVARCHAR, testing::_, testing::_)).Times(1);
+
+	bound_parameter_set params(statement, 42, prefer_unicode, query_db_for_types);
+	EXPECT_EQ(params.get_parameters()[0]->get_buffer().capacity_per_element(), 2 * (string_description_short.size + 1));
+	EXPECT_EQ(params.get_parameters()[1]->get_buffer().capacity_per_element(), 2 * (string_description_max_length.size + 1));
+	EXPECT_EQ(params.get_parameters()[2]->get_buffer().capacity_per_element(), 2 * (string_description_max_length.size + 1));
+	EXPECT_EQ(params.get_parameters()[3]->get_buffer().capacity_per_element(), 2 * (string_description_max_length.size + 1));
 }
 
 
@@ -108,7 +174,7 @@ TEST(BoundParameterSetTest, Rebind)
 	ON_CALL(statement, do_describe_parameter(2))
 		.WillByDefault(testing::Return(timestamp_description));
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 
 	std::size_t const column_index = 1;
 	auto const one_based_column_index = column_index + 1;
@@ -129,12 +195,29 @@ namespace {
 	}
 }
 
+
+TEST(BoundParameterSetTest, GetInitialParameterTypes)
+{
+	mock_statement statement;
+	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(2));
+	ON_CALL(statement, do_describe_parameter(1))
+		.WillByDefault(testing::Return(int_description));
+	ON_CALL(statement, do_describe_parameter(2))
+		.WillByDefault(testing::Return(timestamp_description));
+
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
+
+	std::vector<type_code> const expected = {type_code::integer, type_code::timestamp};
+	EXPECT_EQ(params.get_initial_parameter_types(), expected);
+}
+
+
 TEST(BoundParameterSetTest, ExecuteBatchNoSets)
 {
 	mock_statement statement;
 	configure_single_param(statement);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 
 	EXPECT_CALL(statement, do_execute_prepared()).Times(0);
 
@@ -146,7 +229,7 @@ TEST(BoundParameterSetTest, ExecuteBatchNoParameters)
 	mock_statement statement;
 	ON_CALL(statement, do_number_of_parameters()).WillByDefault(testing::Return(0));
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 
 	EXPECT_CALL(statement, do_execute_prepared()).Times(0);
 
@@ -159,7 +242,7 @@ TEST(BoundParameterSetTest, ExecuteBatchThrowsIfBatchTooLarge)
 	mock_statement statement;
 	configure_single_param(statement);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 
 	ASSERT_THROW(params.execute_batch(43), std::logic_error);
 }
@@ -170,7 +253,7 @@ TEST(BoundParameterSetTest, ExecuteBatch)
 	mock_statement statement;
 	configure_single_param(statement);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 
 	testing::InSequence ordered;
 	EXPECT_CALL(statement, do_set_attribute(SQL_ATTR_PARAMSET_SIZE, 23));
@@ -189,7 +272,7 @@ namespace {
 		        process_parameters(true)
 		{}
 
-		void do_set_attribute(SQLINTEGER attribute, long value) const final
+		void do_set_attribute(SQLINTEGER attribute, intptr_t value) const final
 		{
 			if (attribute == SQL_ATTR_PARAMSET_SIZE) {
 				input = value;
@@ -225,7 +308,7 @@ TEST(BoundParameterSetTest, TransferredSetsRespectsDatabaseFeedback)
 	testing::NiceMock<fake_statement> statement;
 	configure_single_param(statement);
 
-	bound_parameter_set params(statement, 42, query_db_for_types);
+	bound_parameter_set params(statement, 42, prefer_string, query_db_for_types);
 
 	EXPECT_EQ(params.transferred_sets(), 0);
 	params.execute_batch(17);

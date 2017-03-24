@@ -18,6 +18,9 @@ using turbodbc_test::mock_statement;
 
 namespace {
 
+	bool const prefer_string = false;
+	bool const prefer_unicode = true;
+
 	std::shared_ptr<mock_statement> prepare_mock_with_columns(std::vector<SQLSMALLINT> const & column_types)
 	{
 		auto statement = std::make_shared<mock_statement>();
@@ -53,7 +56,7 @@ TEST(DoubleBufferedResultSetTest, BindsArraySizeFixedRowsInContructor)
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROW_ARRAY_SIZE, 501))
 		.Times(testing::AtLeast(1));
 
-	double_buffered_result_set rs(statement, turbodbc::rows(buffered_rows));
+	double_buffered_result_set rs(statement, turbodbc::rows(buffered_rows), prefer_string);
 }
 
 
@@ -68,7 +71,7 @@ TEST(DoubleBufferedResultSetTest, BindsArraySizeFixedMegabytesInContructor)
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROW_ARRAY_SIZE, expected_rows_for_half_buffer))
 		.Times(testing::AtLeast(1));
 
-	double_buffered_result_set rs(statement, turbodbc::megabytes(3));
+	double_buffered_result_set rs(statement, turbodbc::megabytes(3), prefer_string);
 }
 
 
@@ -77,7 +80,7 @@ TEST(DoubleBufferedResultSetTest, GetColumnInfo)
 {
 	auto statement = prepare_mock_with_columns({SQL_INTEGER, SQL_VARCHAR});
 
-	double_buffered_result_set rs(statement, turbodbc::rows(123));
+	double_buffered_result_set rs(statement, turbodbc::rows(123), prefer_string);
 
 	ASSERT_EQ(2, rs.get_column_info().size());
 	EXPECT_EQ(turbodbc::type_code::integer, rs.get_column_info()[0].type);
@@ -128,8 +131,8 @@ namespace {
 				*rows_fetched_pointer_ = batch_sizes_[batch_index_];
 				for (std::size_t i = 0; i != batch_sizes_[batch_index_]; ++i) {
 					auto element = (*buffer_)[i];
-					*reinterpret_cast<long *>(element.data_pointer) = (batch_index_ + 1);
-					element.indicator = sizeof(long);
+					*reinterpret_cast<int64_t *>(element.data_pointer) = (batch_index_ + 1);
+					element.indicator = sizeof(intptr_t);
 				}
 				++batch_index_;
 			} else {
@@ -153,7 +156,7 @@ TEST(DoubleBufferedResultSetTest, FetchNextBatch)
 	std::vector<size_t> batch_sizes = {123};
 	auto statement = std::make_shared<testing::NiceMock<statement_with_fake_int_result_set>>(batch_sizes);
 
-	double_buffered_result_set rs(statement, turbodbc::rows(1000));
+	double_buffered_result_set rs(statement, turbodbc::rows(1000), prefer_string);
 	EXPECT_EQ(123, rs.fetch_next_batch());
 }
 
@@ -163,22 +166,22 @@ TEST(DoubleBufferedResultSetTest, GetBuffers)
 	std::vector<size_t> batch_sizes = {4, 4, 2, 0};
 	auto statement = std::make_shared<testing::NiceMock<statement_with_fake_int_result_set>>(batch_sizes);
 
-	double_buffered_result_set rs(statement, turbodbc::rows(8));
+	double_buffered_result_set rs(statement, turbodbc::rows(8), prefer_string);
 
 	// first batch
 	ASSERT_EQ(4, rs.fetch_next_batch());
 	ASSERT_EQ(1, rs.get_buffers().size());
-	EXPECT_EQ(1, *reinterpret_cast<long const *>(rs.get_buffers()[0].get()[3].data_pointer));
+	EXPECT_EQ(1, *reinterpret_cast<int64_t const *>(rs.get_buffers()[0].get()[3].data_pointer));
 
 	// second batch
 	ASSERT_EQ(4, rs.fetch_next_batch());
 	ASSERT_EQ(1, rs.get_buffers().size());
-	EXPECT_EQ(2, *reinterpret_cast<long const *>(rs.get_buffers()[0].get()[3].data_pointer));
+	EXPECT_EQ(2, *reinterpret_cast<intptr_t const *>(rs.get_buffers()[0].get()[3].data_pointer));
 
 	// third batch (partially filled)
 	ASSERT_EQ(2, rs.fetch_next_batch());
 	ASSERT_EQ(1, rs.get_buffers().size());
-	EXPECT_EQ(3, *reinterpret_cast<long const *>(rs.get_buffers()[0].get()[1].data_pointer));
+	EXPECT_EQ(3, *reinterpret_cast<intptr_t const *>(rs.get_buffers()[0].get()[1].data_pointer));
 
 	// fourth, non-existing batch
 	ASSERT_EQ(0, rs.fetch_next_batch());
@@ -217,6 +220,27 @@ TEST(DoubleBufferedResultSetTest, FetchNextBatchFails)
 {
 	auto statement = std::make_shared<testing::NiceMock<statement_with_fake_failing_result_set>>();
 
-	double_buffered_result_set rs(statement, turbodbc::rows(1000));
+	double_buffered_result_set rs(statement, turbodbc::rows(1000), prefer_string);
 	EXPECT_THROW(rs.fetch_next_batch(), std::runtime_error);
+}
+
+
+namespace {
+
+	void test_preference(bool prefer_unicode, SQLSMALLINT expected_c_column_type)
+	{
+		std::vector<SQLSMALLINT> const sql_column_types = {SQL_VARCHAR}; // get character
+
+		auto statement = prepare_mock_with_columns(sql_column_types);
+		EXPECT_CALL(*statement, do_bind_column(1, expected_c_column_type, testing::_)).Times(testing::AtLeast(2));
+
+		double_buffered_result_set rs(statement, turbodbc::rows(1), prefer_unicode);
+	}
+
+}
+
+TEST(DoubleBufferedResultSetTest, ConstructorRespectsStringOrUnicodePreference)
+{
+	test_preference(prefer_string, SQL_CHAR);
+	test_preference(prefer_unicode, SQL_WCHAR);
 }

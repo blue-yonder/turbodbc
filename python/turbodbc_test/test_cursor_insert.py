@@ -46,6 +46,13 @@ def test_insert_string_column(dsn, configuration):
 
 
 @for_each_database
+def test_insert_unicode_column(dsn, configuration):
+    _test_insert_many(configuration,
+                      'INSERT UNICODE',
+                      [[u'a I \u2665 unicode'], [u'b I really d\u00f8']])
+
+
+@for_each_database
 def test_insert_bool_column(dsn, configuration):
     _test_insert_many(configuration,
                       'INSERT BOOL',

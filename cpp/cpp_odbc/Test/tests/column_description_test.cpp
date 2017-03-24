@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <sstream>
+#include <ciso646>
 #include <sqlext.h>
 
 using cpp_odbc::column_description;

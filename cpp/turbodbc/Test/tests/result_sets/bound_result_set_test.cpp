@@ -17,6 +17,9 @@ using turbodbc_test::mock_statement;
 
 namespace {
 
+	bool const prefer_string = false;
+	bool const prefer_unicode = true;
+
 	std::shared_ptr<mock_statement> prepare_mock_with_columns(std::vector<SQLSMALLINT> const & column_types)
 	{
 		auto statement = std::make_shared<mock_statement>();
@@ -62,7 +65,7 @@ TEST(BoundResultSetTest, BindColumnsWithFixedRowsInConstructor)
 	expect_calls_to_bind_buffer(*statement, c_column_types);
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROW_ARRAY_SIZE, buffered_rows));
 
-	bound_result_set rs(statement, turbodbc::rows(buffered_rows));
+	bound_result_set rs(statement, turbodbc::rows(buffered_rows), prefer_string);
 }
 
 TEST(BoundResultSetTest, BindColumnsWithFixedMegabytesInConstructor)
@@ -76,7 +79,7 @@ TEST(BoundResultSetTest, BindColumnsWithFixedMegabytesInConstructor)
 	expect_calls_to_bind_buffer(*statement, c_column_types);
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROW_ARRAY_SIZE, expected_rows));
 
-	bound_result_set rs(statement, turbodbc::megabytes(1));
+	bound_result_set rs(statement, turbodbc::megabytes(1), prefer_string);
 }
 
 
@@ -105,7 +108,7 @@ TEST(BoundResultSetTest, FetchNextBatch)
 	auto statement = prepare_mock_with_columns(sql_column_types);
 	expect_rows_fetched_pointer_set(*statement, rows_fetched);
 
-	bound_result_set rs(statement, turbodbc::rows(1000));
+	bound_result_set rs(statement, turbodbc::rows(1000), prefer_string);
 	ASSERT_TRUE(rows_fetched != nullptr);
 
 	*rows_fetched = 123;
@@ -119,7 +122,7 @@ TEST(BoundResultSetTest, GetColumnInfo)
 {
 	auto statement = prepare_mock_with_columns({SQL_INTEGER, SQL_VARCHAR});
 
-	bound_result_set rs(statement, turbodbc::rows(123));
+	bound_result_set rs(statement, turbodbc::rows(123), prefer_string);
 
 	ASSERT_EQ(2, rs.get_column_info().size());
 	EXPECT_EQ(turbodbc::type_code::integer, rs.get_column_info()[0].type);
@@ -132,7 +135,7 @@ TEST(BoundResultSetTest, GetBuffers)
 	auto statement = prepare_mock_with_columns({SQL_INTEGER, SQL_VARCHAR});
 	std::size_t const buffered_rows = 1234;
 
-	bound_result_set rs(statement, turbodbc::rows(buffered_rows));
+	bound_result_set rs(statement, turbodbc::rows(buffered_rows), prefer_string);
 	auto const buffers = rs.get_buffers();
 	ASSERT_EQ(2, buffers.size());
 
@@ -154,7 +157,7 @@ TEST(BoundResultSetTest, Rebind)
 	auto statement = prepare_mock_with_columns(sql_column_types);
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROW_ARRAY_SIZE, buffered_rows));
 
-	bound_result_set rs(statement, turbodbc::rows(buffered_rows));
+	bound_result_set rs(statement, turbodbc::rows(buffered_rows), prefer_string);
 
 	expect_calls_to_bind_buffer(*statement, c_column_types);
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROWS_FETCHED_PTR, testing::An<SQLULEN *>()));
@@ -166,7 +169,7 @@ TEST(BoundResultSetTest, MoveConstructorRebinds)
 {
 	auto statement = prepare_mock_with_columns({SQL_INTEGER, SQL_VARCHAR});
 
-	bound_result_set moved(statement, turbodbc::rows(123));
+	bound_result_set moved(statement, turbodbc::rows(123), prefer_string);
 
 	// rebind includes setting fetched pointer
 	EXPECT_CALL(*statement, do_set_attribute(SQL_ATTR_ROWS_FETCHED_PTR, testing::An<SQLULEN *>()));
@@ -175,4 +178,26 @@ TEST(BoundResultSetTest, MoveConstructorRebinds)
 	ASSERT_EQ(2, rs.get_column_info().size());
 	EXPECT_EQ(turbodbc::type_code::integer, rs.get_column_info()[0].type);
 	EXPECT_EQ(turbodbc::type_code::string, rs.get_column_info()[1].type);
+}
+
+
+namespace {
+
+    void test_preference(bool prefer_unicode, SQLSMALLINT expected_c_column_type)
+    {
+        std::vector<SQLSMALLINT> const sql_column_types = {SQL_VARCHAR}; // get character
+        std::vector<SQLSMALLINT> const c_column_types = {expected_c_column_type};
+
+        auto statement = prepare_mock_with_columns(sql_column_types);
+        expect_calls_to_bind_buffer(*statement, c_column_types);
+
+        bound_result_set rs(statement, turbodbc::rows(1), prefer_unicode);
+    }
+
+}
+
+TEST(BoundResultSetTest, ConstructorRespectsStringOrUnicodePreference)
+{
+    test_preference(prefer_string, SQL_CHAR);
+    test_preference(prefer_unicode, SQL_WCHAR);
 }

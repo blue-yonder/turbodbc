@@ -47,7 +47,7 @@ namespace {
 	using description_ptr = description const *;
 
 	struct description_by_value : public boost::static_visitor<description_ptr> {
-		description_ptr operator()(long const &) const
+		description_ptr operator()(int64_t const &) const
 		{
 			return new integer_description;
 		}
@@ -82,16 +82,21 @@ namespace {
 }
 
 
-std::unique_ptr<description const> make_description(cpp_odbc::column_description const & source)
+std::unique_ptr<description const> make_description(cpp_odbc::column_description const & source, bool prefer_unicode)
 {
 	switch (source.data_type) {
 		case SQL_CHAR:
 		case SQL_VARCHAR:
 		case SQL_LONGVARCHAR:
+			if (prefer_unicode) {
+				return std::unique_ptr<description>(new unicode_description(source.name, source.allows_null_values, source.size));
+			} else {
+				return std::unique_ptr<description>(new string_description(source.name, source.allows_null_values, source.size));
+			}
 		case SQL_WVARCHAR:
 		case SQL_WLONGVARCHAR:
 		case SQL_WCHAR:
-			return std::unique_ptr<description>(new string_description(source.name, source.allows_null_values, source.size));
+			return std::unique_ptr<description>(new unicode_description(source.name, source.allows_null_values, source.size));
 		case SQL_INTEGER:
 		case SQL_SMALLINT:
 		case SQL_BIGINT:
@@ -136,6 +141,8 @@ std::unique_ptr<description const> make_description(type_code type, std::size_t 
 			return std::unique_ptr<description const>(new timestamp_description);
 		case type_code::string:
 			return std::unique_ptr<description const>(new string_description(size_after_growth_strategy(size)));
+		case type_code::unicode:
+			return std::unique_ptr<description const>(new unicode_description(size_after_growth_strategy(size)));
 		default:
 			return std::unique_ptr<description const>(new integer_description);
 	}

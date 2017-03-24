@@ -11,7 +11,7 @@ int64_translator::~int64_translator() = default;
 
 field int64_translator::do_make_field(char const * data_pointer) const
 {
-	return {*reinterpret_cast<long const *>(data_pointer)};
+	return {*reinterpret_cast<int64_t const *>(data_pointer)};
 }
 
 } }

@@ -2,6 +2,8 @@
 
 #include <turbodbc/make_field_translator.h>
 
+#include <ciso646>
+
 namespace turbodbc { namespace result_sets {
 
 field_result_set::field_result_set(result_set & base) :

@@ -68,3 +68,24 @@ TEST(MakeDescriptionOfTypeTest, FromStringProvidesExtraSpaceForLargeStrings)
 
 	EXPECT_GT(as_string_description->element_size(), (large_string.size() + 1));
 }
+
+TEST(MakeDescriptionOfTypeTest, FromUnicodeProvidesMinimumLength)
+{
+	std::size_t const small_size = 2;
+	auto description = make_description(type_code::unicode, small_size);
+	auto as_unicode_description = dynamic_cast<turbodbc::unicode_description const *>(description.get());
+	ASSERT_TRUE( as_unicode_description != nullptr );
+
+	std::size_t const minimum_length = 10;
+	EXPECT_EQ(as_unicode_description->element_size(), 2 * (minimum_length + 1));
+}
+
+TEST(MakeDescriptionOfTypeTest, FromUnicodeProvidesExtraSpaceForLargeStrings)
+{
+	std::string large_string("this is a relatively large string");
+	auto description = make_description(type_code::unicode, large_string.size());
+	auto as_unicode_description = dynamic_cast<turbodbc::unicode_description const *>(description.get());
+	ASSERT_TRUE( as_unicode_description != nullptr );
+
+	EXPECT_GT(as_unicode_description->element_size(), 2 * (large_string.size() + 1));
+}

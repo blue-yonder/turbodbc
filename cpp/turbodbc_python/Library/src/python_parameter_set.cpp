@@ -8,6 +8,7 @@
 #include <sqlext.h>
 
 #include <sstream>
+#include <ciso646>
 
 namespace turbodbc {
 
@@ -59,7 +60,7 @@ void python_parameter_set::check_parameter_set(pybind11::iterable const & parame
 void python_parameter_set::add_parameter(std::size_t index, pybind11::handle const & value)
 {
 	if (not value.is_none()) {
-		auto info = determine_parameter_type(value);
+		auto info = determine_parameter_type(value, parameters_.get_initial_parameter_types()[index]);
 
 		if (parameters_.get_parameters()[index]->is_suitable_for(info.type, info.size)) {
 			auto & parameter = *(parameters_.get_parameters()[index]);

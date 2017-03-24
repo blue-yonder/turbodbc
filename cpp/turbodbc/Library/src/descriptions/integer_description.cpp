@@ -18,7 +18,7 @@ integer_description::~integer_description() = default;
 
 std::size_t integer_description::do_element_size() const
 {
-	return sizeof(long);
+	return sizeof(int64_t);
 }
 
 SQLSMALLINT integer_description::do_column_c_type() const

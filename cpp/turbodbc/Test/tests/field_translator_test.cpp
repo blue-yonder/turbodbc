@@ -18,7 +18,7 @@ namespace {
 
 TEST(FieldTranslatorTest, MakeFieldForwards)
 {
-	turbodbc::nullable_field const expected(turbodbc::field(42l));
+	turbodbc::nullable_field const expected(turbodbc::field(int64_t(42)));
 	cpp_odbc::multi_value_buffer buffer(8, 3);
 	auto element = buffer[0];
 	element.indicator = 1;

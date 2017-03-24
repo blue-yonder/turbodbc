@@ -102,7 +102,7 @@ TEST(Level1APITest, EstablishConnectionForwards)
 {
 	SQLRETURN const expected = 27;
 	SQLHDBC connection_handle = &value_a;
-	SQLHWND window_handle = &value_b;
+	SQLHWND window_handle = reinterpret_cast<SQLHWND>(&value_b);
 	std::array<unsigned char, 6> input_string;
 	std::array<unsigned char, 7> output_string;
 	SQLSMALLINT output_string_length = 123;
@@ -329,6 +329,20 @@ TEST(Level1APITest, PrepareStatementForwards)
 	SQLRETURN const expected = 23;
 	SQLHDBC handle = &value_a;
 	std::array<unsigned char, 5> statement;
+
+	level1_mock_api api;
+	EXPECT_CALL(api, do_prepare_statement(handle, statement.data(), statement.size()))
+		.WillOnce(testing::Return(expected));
+
+	auto const actual = api.prepare_statement(handle, statement.data(), statement.size());
+	EXPECT_EQ(expected, actual);
+}
+
+TEST(Level1APITest, PrepareWideStatementForwards)
+{
+	SQLRETURN const expected = 23;
+	SQLHDBC handle = &value_a;
+	std::array<SQLWCHAR, 5> statement;
 
 	level1_mock_api api;
 	EXPECT_CALL(api, do_prepare_statement(handle, statement.data(), statement.size()))

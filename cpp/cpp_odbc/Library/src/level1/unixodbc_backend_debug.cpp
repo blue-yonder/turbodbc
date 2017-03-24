@@ -1,15 +1,3 @@
-/**
- *  @file unixodbc_backend_debug.cpp
- *  @date 13.03.2014
- *  @author mkoenig
- *  @brief 
- *
- *  $LastChangedDate: 2014-11-28 11:59:59 +0100 (Fr, 28 Nov 2014) $
- *  $LastChangedBy: mkoenig $
- *  $LastChangedRevision: 21206 $
- *
- */
-
 #include "cpp_odbc/level1/unixodbc_backend_debug.h"
 #include "sql.h"
 #include "sqlext.h"
@@ -173,6 +161,14 @@ SQLRETURN unixodbc_backend_debug::do_prepare_statement(SQLHSTMT statement_handle
 {
 	std::cout << " *DEBUG* prepare_statement";
 	auto const return_code = SQLPrepare(statement_handle, statement_text, text_length);
+	std::cout << " (return code " << return_code << ")" << std::endl;
+	return return_code;
+}
+
+SQLRETURN unixodbc_backend_debug::do_prepare_statement(SQLHSTMT statement_handle, SQLWCHAR * statement_text, SQLINTEGER text_length) const
+{
+	std::cout << " *DEBUG* prepare_statement (wide)";
+	auto const return_code = SQLPrepareW(statement_handle, statement_text, text_length);
 	std::cout << " (return code " << return_code << ")" << std::endl;
 	return return_code;
 }

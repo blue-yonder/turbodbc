@@ -1,15 +1,3 @@
-/**
- *  @file unixodbc_backend.cpp
- *  @date 13.03.2014
- *  @author mkoenig
- *  @brief 
- *
- *  $LastChangedDate: 2014-11-28 11:59:59 +0100 (Fr, 28 Nov 2014) $
- *  $LastChangedBy: mkoenig $
- *  $LastChangedRevision: 21206 $
- *
- */
-
 #include "cpp_odbc/level1/unixodbc_backend.h"
 #include "sql.h"
 #include "sqlext.h"
@@ -114,6 +102,11 @@ SQLRETURN unixodbc_backend::do_number_of_parameters(SQLHSTMT statement_handle, S
 SQLRETURN unixodbc_backend::do_prepare_statement(SQLHSTMT statement_handle, SQLCHAR * statement_text, SQLINTEGER text_length) const
 {
 	return SQLPrepare(statement_handle, statement_text, text_length);
+}
+
+SQLRETURN unixodbc_backend::do_prepare_statement(SQLHSTMT statement_handle, SQLWCHAR * statement_text, SQLINTEGER text_length) const
+{
+	return SQLPrepareW(statement_handle, statement_text, text_length);
 }
 
 SQLRETURN unixodbc_backend::do_set_statement_attribute(SQLHSTMT statement_handle, SQLINTEGER attribute, SQLPOINTER value_ptr, SQLINTEGER string_length) const

@@ -5,7 +5,7 @@
 namespace turbodbc {
 
 /**
- * @brief Represents a description to bind a buffer holding integer values
+ * @brief Represents a description to bind a buffer holding string values
  */
 class string_description : public description {
 public:

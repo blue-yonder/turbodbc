@@ -39,7 +39,7 @@ TEST(SetFieldTest, ParameterIsSuitableForInteger)
 	parameter const boolean_parameter(statement, param_index, n_params,
 	                                  std::unique_ptr<description>(new boolean_description()));
 
-	field const value(42l);
+	field const value(int64_t(42));
 	EXPECT_TRUE(parameter_is_suitable_for(integer_parameter, value));
 	EXPECT_FALSE(parameter_is_suitable_for(boolean_parameter, value));
 }
@@ -122,8 +122,8 @@ TEST(SetFieldTest, SetFieldInteger)
 	cpp_odbc::multi_value_buffer buffer(8, 1);
 	auto element = buffer[0];
 
-	set_field(turbodbc::field{42l}, element);
-	EXPECT_EQ(42, *reinterpret_cast<long *>(element.data_pointer));
+	set_field(turbodbc::field{int64_t(42)}, element);
+	EXPECT_EQ(42, *reinterpret_cast<int64_t *>(element.data_pointer));
 	EXPECT_EQ(8, element.indicator);
 }
 

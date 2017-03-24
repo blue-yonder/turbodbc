@@ -47,10 +47,12 @@ namespace {
 }
 
 
-double_buffered_result_set::double_buffered_result_set(std::shared_ptr<cpp_odbc::statement const> statement, turbodbc::buffer_size buffer_size) :
+double_buffered_result_set::double_buffered_result_set(std::shared_ptr<cpp_odbc::statement const> statement,
+                                                       turbodbc::buffer_size buffer_size,
+                                                       bool prefer_unicode) :
 	statement_(statement),
-	batches_{{bound_result_set(statement_, rows_per_single_buffer(buffer_size)),
-	          bound_result_set(statement_, rows_per_single_buffer(buffer_size))}},
+	batches_{{bound_result_set(statement_, rows_per_single_buffer(buffer_size), prefer_unicode),
+	          bound_result_set(statement_, rows_per_single_buffer(buffer_size), prefer_unicode)}},
 	active_reading_batch_(0),
 	reader_(reader_thread,
 	        std::ref(read_requests_),

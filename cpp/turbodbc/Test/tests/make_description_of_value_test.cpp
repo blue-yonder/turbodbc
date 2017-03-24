@@ -14,7 +14,7 @@ using turbodbc::field;
 
 TEST(MakeDescriptionOfValueTest, FromInteger)
 {
-	field const value(42l);
+	field const value(int64_t(42));
 	auto description = make_description(value);
 	ASSERT_TRUE( dynamic_cast<turbodbc::integer_description const *>(description.get()) );
 }

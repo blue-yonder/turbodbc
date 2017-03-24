@@ -16,6 +16,6 @@ struct python_parameter_info {
 	std::size_t size;
 };
 
-python_parameter_info determine_parameter_type(pybind11::handle const & value);
+python_parameter_info determine_parameter_type(pybind11::handle const & value, type_code initial_type);
 
 }

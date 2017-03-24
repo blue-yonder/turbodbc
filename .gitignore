@@ -3,3 +3,4 @@
 *.pyc
 
 PyTest/PyTest
+contrib/sdist

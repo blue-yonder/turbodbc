@@ -19,8 +19,8 @@ namespace cpp_odbc_test {
 
 	class mock_environment : public cpp_odbc::environment {
 	public:
-		MOCK_CONST_METHOD1(do_make_connection, std::shared_ptr<cpp_odbc::connection const>(std::string const &));
-		MOCK_CONST_METHOD2(do_set_attribute, void(SQLINTEGER, long));
+		MOCK_CONST_METHOD1(do_make_connection, std::shared_ptr<cpp_odbc::connection>(std::string const &));
+		MOCK_CONST_METHOD2(do_set_attribute, void(SQLINTEGER, intptr_t));
 	};
 
 }

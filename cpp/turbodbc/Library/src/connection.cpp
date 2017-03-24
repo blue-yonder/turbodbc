@@ -3,44 +3,27 @@
 
 namespace turbodbc {
 
-connection::connection(std::shared_ptr<cpp_odbc::connection const> low_level_connection) :
-	parameter_sets_to_buffer(1000),
-	use_async_io(false),
-	buffer_size_(megabytes(20)),
-	supports_describe_parameter_(low_level_connection->supports_function(SQL_API_SQLDESCRIBEPARAM)),
-	connection_(low_level_connection)
+connection::connection(std::shared_ptr<cpp_odbc::connection const> low_level_connection,
+                       options options) :
+    connection_(low_level_connection),
+    configuration(std::move(options), capabilities(*connection_))
 {
-	connection_->set_attribute(SQL_ATTR_AUTOCOMMIT, SQL_AUTOCOMMIT_OFF);
+    connection_->set_attribute(SQL_ATTR_AUTOCOMMIT, SQL_AUTOCOMMIT_OFF);
 }
 
 void connection::commit() const
 {
-	connection_->commit();
+    connection_->commit();
 }
 
 void connection::rollback() const
 {
-	connection_->rollback();
+    connection_->rollback();
 }
 
 cursor connection::make_cursor() const
 {
-	return {connection_, buffer_size_, parameter_sets_to_buffer, use_async_io, supports_describe_parameter_};
-}
-
-turbodbc::buffer_size connection::get_buffer_size() const
-{
-    return buffer_size_;
-}
-
-void connection::set_buffer_size(turbodbc::buffer_size buffer_size)
-{
-    buffer_size_ = buffer_size;
-}
-
-bool connection::supports_describe_parameter() const
-{
-	return supports_describe_parameter_;
+    return {connection_, configuration};
 }
 
 }

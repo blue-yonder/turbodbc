@@ -1,15 +1,4 @@
 #pragma once
-/**
- *  @file input_string_buffer.h
- *  @date 21.03.2014
- *  @author mkoenig
- *  @brief 
- *
- *  $LastChangedDate: 2014-11-28 11:59:59 +0100 (Fr, 28 Nov 2014) $
- *  $LastChangedBy: mkoenig $
- *  $LastChangedRevision: 21206 $
- *
- */
 
 #include <string>
 #include <vector>

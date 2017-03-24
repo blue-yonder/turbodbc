@@ -1,5 +1,8 @@
 #pragma once
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "sqltypes.h"
 
 #include <string>

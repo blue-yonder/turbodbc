@@ -22,6 +22,11 @@ public:
 	parameter(cpp_odbc::statement const & statement, std::size_t one_based_index, std::size_t buffered_rows, std::unique_ptr<description const> description);
 
 	/**
+	 * @brief Return the parameter's type code
+	 */
+	type_code get_type_code() const;
+
+	/**
 	 * @brief Determine whether this parameter is suitable to hold a value of
 	 *        given type and size
 	 * @param code The type code for the value

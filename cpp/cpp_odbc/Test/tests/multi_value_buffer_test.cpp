@@ -80,7 +80,7 @@ TEST(MultiValueBufferTest, MutableElementAccess)
 	std::strcpy( buffer[1].data_pointer, "def" );
 	EXPECT_EQ( 0, std::memcmp(buffer.data_pointer(), "abcdef", 6));
 
-	long const expected_indicator = 42;
+	int64_t const expected_indicator = 42;
 	buffer[1].indicator = expected_indicator;
 	EXPECT_EQ( expected_indicator, buffer.indicator_pointer()[1]);
 }
@@ -92,7 +92,7 @@ TEST(MultiValueBufferTest, ConstElementAccess)
 	multi_value_buffer buffer(element_size, number_of_elements);
 
 	std::string const data = "abcdef";
-	long const expected_indicator = 17;
+	int64_t const expected_indicator = 17;
 
 	std::strcpy( buffer.data_pointer(), data.c_str() );
 	buffer.indicator_pointer()[1] = expected_indicator;

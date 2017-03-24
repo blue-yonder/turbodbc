@@ -40,6 +40,7 @@ private:
 	SQLRETURN do_number_of_result_columns(SQLHSTMT statement_handle, SQLSMALLINT * destination) const final;
 	SQLRETURN do_number_of_parameters(SQLHSTMT statement_handle, SQLSMALLINT * destination) const final;
 	SQLRETURN do_prepare_statement(SQLHSTMT statement_handle, SQLCHAR * statement_text, SQLINTEGER text_length) const final;
+	SQLRETURN do_prepare_statement(SQLHSTMT statement_handle, SQLWCHAR * statement_text, SQLINTEGER text_length) const final;
 	SQLRETURN do_set_statement_attribute(SQLHSTMT statement_handle, SQLINTEGER attribute, SQLPOINTER value_ptr, SQLINTEGER string_length) const final;
 	SQLRETURN do_row_count(SQLHSTMT statement_handle, SQLLEN * count) const final;
 	SQLRETURN do_describe_column(SQLHSTMT statement_handle, SQLUSMALLINT column_number, SQLCHAR * column_name, SQLSMALLINT buffer_length, SQLSMALLINT * name_length, SQLSMALLINT * data_type, SQLULEN * column_size, SQLSMALLINT * decimal_digits, SQLSMALLINT * nullable) const final;

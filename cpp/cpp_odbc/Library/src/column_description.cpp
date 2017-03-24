@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <map>
+#include <ciso646>
 
 #include <sqlext.h>
 

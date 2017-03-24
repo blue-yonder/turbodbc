@@ -6,8 +6,17 @@
 
 #include <Python.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <sql.h>
 #include <cstring>
+
+#ifdef __GNUC__
+#define EXTENSION __extension__
+#else
+#define EXTENSION
+#endif
 
 namespace turbodbc_numpy {
 
@@ -64,7 +73,7 @@ void datetime_column::do_append(cpp_odbc::multi_value_buffer const & buffer, std
 		if (element.indicator == SQL_NULL_DATA) {
 			mask_pointer[i] = 1;
 		} else {
-			reinterpret_cast<long *>(data_pointer)[i] = converter_(element.data_pointer);
+			reinterpret_cast<intptr_t *>(data_pointer)[i] = converter_(element.data_pointer);
 		}
 	}
 }
@@ -84,8 +93,8 @@ void datetime_column::resize(std::size_t new_size)
 	npy_intp size = new_size;
 	PyArray_Dims new_dimensions = {&size, 1};
 	int const no_reference_check = 0;
-	__extension__ PyArray_Resize(get_array_ptr(data_), &new_dimensions, no_reference_check, NPY_ANYORDER);
-	__extension__ PyArray_Resize(get_array_ptr(mask_), &new_dimensions, no_reference_check, NPY_ANYORDER);
+	EXTENSION PyArray_Resize(get_array_ptr(data_), &new_dimensions, no_reference_check, NPY_ANYORDER);
+	EXTENSION PyArray_Resize(get_array_ptr(mask_), &new_dimensions, no_reference_check, NPY_ANYORDER);
 	size_ = new_size;
 }
 

@@ -10,8 +10,11 @@ namespace turbodbc {
 
 /**
  * @brief Create a buffer description based on a given column description
+ * @param source The column description
+ * @param prefer_unicode Set to true if VARCHAR and other single-byte characters should be
+ *                       treated just like unicode fields.
  */
-std::unique_ptr<description const> make_description(cpp_odbc::column_description const & source);
+std::unique_ptr<description const> make_description(cpp_odbc::column_description const & source, bool prefer_unicode);
 
 /**
  * @brief Create a buffer description based on the type and content of a value

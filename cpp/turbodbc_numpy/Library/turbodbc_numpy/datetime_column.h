@@ -12,7 +12,7 @@ public:
 	datetime_column(turbodbc::type_code type);
 	virtual ~datetime_column();
 
-	typedef std::function<long (char const * data_pointer)> converter;
+	typedef std::function<int64_t (char const * data_pointer)> converter;
 private:
 	void do_append(cpp_odbc::multi_value_buffer const & buffer, std::size_t n_values) final;
 

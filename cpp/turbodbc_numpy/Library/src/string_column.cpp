@@ -1,5 +1,8 @@
 #include <turbodbc_numpy/string_column.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include <sql.h>
 #include <cstring>
 

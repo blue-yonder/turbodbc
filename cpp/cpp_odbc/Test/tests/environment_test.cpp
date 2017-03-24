@@ -31,7 +31,7 @@ TEST(EnvironmentTest, SetIntegerAttributeForwards)
 {
 	mock_environment environment;
 	SQLINTEGER const attribute = 42;
-	long const value = 17;
+	intptr_t const value = 17;
 
 	EXPECT_CALL(environment, do_set_attribute(attribute, value)).Times(1);
 

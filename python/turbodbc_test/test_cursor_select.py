@@ -64,9 +64,11 @@ def test_select_single_row_string_result(dsn, configuration):
 
 @for_each_database
 def test_select_single_row_unicode_result(dsn, configuration):
-    _test_single_row_result_set(configuration,
-                                u"SELECT 'value \u2665'",
-                                [u"value \u2665"])
+    with open_cursor(configuration) as cursor:
+        with query_fixture(cursor, configuration, 'SELECT UNICODE') as query:
+            cursor.execute(query)
+            row = cursor.fetchone()
+            assert row == [u'I \u2665 unicode']
 
 
 @for_each_database

@@ -13,6 +13,7 @@
 #include <condition_variable>
 #include <queue>
 #include <future>
+#include <ciso646>
 
 
 namespace turbodbc { namespace result_sets {
@@ -61,7 +62,9 @@ public:
 	 * @brief Prepare and bind buffers suitable of holding buffered_rows to
 	 *        the given statement.
 	 */
-	double_buffered_result_set(std::shared_ptr<cpp_odbc::statement const> statement, turbodbc::buffer_size buffer_size);
+	double_buffered_result_set(std::shared_ptr<cpp_odbc::statement const> statement,
+	                           turbodbc::buffer_size buffer_size,
+	                           bool prefer_unicode);
 	virtual ~double_buffered_result_set();
 
 private:

@@ -37,6 +37,10 @@
 			"payload": "SELECT FALSE"
 		},
 
+		"SELECT UNICODE": {
+			"payload": "SELECT 'I \u2665 unicode'"
+		},
+
 		"SELECT MULTIPLE INTEGERS": {
 			"table": "a INTEGER",
 			"setup": ["INSERT INTO {table_name} VALUES (42), (43), (44)"],
@@ -50,7 +54,11 @@
 		"INSERT STRING": {
 			"table": "a VARCHAR(20)"
 		},
-	
+
+		"INSERT UNICODE": {
+			"table": "a VARCHAR(20)"
+		},
+
 		"INSERT LONG STRING": {
 			"table": "a VARCHAR(1000)"
 		},

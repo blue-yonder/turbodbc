@@ -46,13 +46,13 @@ level2::environment_handle const & raii_environment::get_handle() const
 	return impl_->handle;
 }
 
-std::shared_ptr<connection const> raii_environment::do_make_connection(std::string const & connection_string) const
+std::shared_ptr<connection> raii_environment::do_make_connection(std::string const & connection_string) const
 {
 	auto as_raii_environment = std::dynamic_pointer_cast<raii_environment const>(shared_from_this());
-	return std::make_shared<raii_connection const>(as_raii_environment, connection_string);
+	return std::make_shared<raii_connection>(as_raii_environment, connection_string);
 }
 
-void raii_environment::do_set_attribute(SQLINTEGER attribute, long value) const
+void raii_environment::do_set_attribute(SQLINTEGER attribute, intptr_t value) const
 {
 	impl_->api->set_environment_attribute(impl_->handle, attribute, value);
 }

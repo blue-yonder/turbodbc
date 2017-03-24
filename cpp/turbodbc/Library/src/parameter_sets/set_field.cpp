@@ -20,7 +20,7 @@ namespace {
 			return parameter_.is_suitable_for(type_code::boolean, size_not_important);
 		}
 
-		bool operator()(long const &) const {
+		bool operator()(int64_t const &) const {
 			return parameter_.is_suitable_for(type_code::integer, size_not_important);
 		}
 
@@ -37,7 +37,7 @@ namespace {
 		}
 
 		bool operator()(std::string const & value) const {
-			return parameter_.is_suitable_for(type_code::string, value.size() + 1);
+			return parameter_.is_suitable_for(type_code::string, value.size());
 		}
 
 	private:
@@ -57,10 +57,10 @@ namespace {
 			destination_.indicator = 1;
 		}
 
-		void operator()(long const & value)
+		void operator()(int64_t const & value)
 		{
-			*reinterpret_cast<long *>(destination_.data_pointer) = value;
-			destination_.indicator = sizeof(long);
+			*reinterpret_cast<intptr_t *>(destination_.data_pointer) = value;
+			destination_.indicator = sizeof(intptr_t);
 		}
 
 		void operator()(double const & value)

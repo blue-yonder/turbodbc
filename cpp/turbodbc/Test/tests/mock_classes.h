@@ -19,7 +19,7 @@ namespace turbodbc_test {
 		default_mock_connection();
 		~default_mock_connection();
 		MOCK_CONST_METHOD0( do_make_statement, std::shared_ptr<cpp_odbc::statement const>());
-		MOCK_CONST_METHOD2( do_set_attribute, void(SQLINTEGER, long));
+		MOCK_CONST_METHOD2( do_set_attribute, void(SQLINTEGER, intptr_t));
 		MOCK_CONST_METHOD0( do_commit, void());
 		MOCK_CONST_METHOD0( do_rollback, void());
 		MOCK_CONST_METHOD1( do_get_string_info, std::string(SQLUSMALLINT));
@@ -32,11 +32,12 @@ namespace turbodbc_test {
 	public:
 		default_mock_statement();
 		~default_mock_statement();
-		MOCK_CONST_METHOD1( do_get_integer_attribute, long(SQLINTEGER));
-		MOCK_CONST_METHOD2( do_set_attribute, void(SQLINTEGER, long));
+		MOCK_CONST_METHOD1( do_get_integer_attribute, intptr_t(SQLINTEGER));
+		MOCK_CONST_METHOD2( do_set_attribute, void(SQLINTEGER, intptr_t));
 		MOCK_CONST_METHOD2( do_set_attribute, void(SQLINTEGER, SQLULEN *));
 		MOCK_CONST_METHOD1( do_execute, void(std::string const &));
 		MOCK_CONST_METHOD1( do_prepare, void(std::string const &));
+		MOCK_CONST_METHOD1( do_prepare, void(std::u16string const &));
 		MOCK_CONST_METHOD5( do_bind_input_parameter, void(SQLUSMALLINT, SQLSMALLINT, SQLSMALLINT, SQLSMALLINT, cpp_odbc::multi_value_buffer &));
 		MOCK_CONST_METHOD0( do_unbind_all_parameters, void());
 		MOCK_CONST_METHOD0( do_execute_prepared, void());
@@ -46,7 +47,7 @@ namespace turbodbc_test {
 		MOCK_CONST_METHOD0( do_unbind_all_columns, void());
 		MOCK_CONST_METHOD0( do_fetch_next, bool());
 		MOCK_CONST_METHOD0( do_close_cursor, void());
-		MOCK_CONST_METHOD2( do_get_integer_column_attribute, long(SQLUSMALLINT, SQLUSMALLINT));
+		MOCK_CONST_METHOD2( do_get_integer_column_attribute, intptr_t(SQLUSMALLINT, SQLUSMALLINT));
 		MOCK_CONST_METHOD2( do_get_string_column_attribute, std::string(SQLUSMALLINT, SQLUSMALLINT));
 		MOCK_CONST_METHOD0( do_row_count, SQLLEN());
 		MOCK_CONST_METHOD1( do_describe_column, cpp_odbc::column_description(SQLUSMALLINT));

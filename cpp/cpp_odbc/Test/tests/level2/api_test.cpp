@@ -127,7 +127,7 @@ TEST(Level2APITest, SetEnvironmentAttributeForwards)
 {
 	level2::environment_handle const handle = {&value_a};
 	SQLINTEGER const attribute = 42;
-	long const value = 17;
+	intptr_t const value = 17;
 
 	level2_mock_api api;
 	EXPECT_CALL(api, do_set_environment_attribute(handle, attribute, value))
@@ -140,7 +140,7 @@ TEST(Level2APITest, SetConnectionAttributeForwards)
 {
 	level2::connection_handle const handle = {&value_a};
 	SQLINTEGER const attribute = 42;
-	long const value = 17;
+	intptr_t const value = 17;
 
 	level2_mock_api api;
 	EXPECT_CALL(api, do_set_connection_attribute(handle, attribute, value))
@@ -257,7 +257,7 @@ TEST(Level2APITest, GetIntegerColumnAttributeForwards)
 	level2::statement_handle const handle = {&value_a};
 	SQLUSMALLINT column_id = 17;
 	SQLUSMALLINT field_identifier = 23;
-	long const expected = 42;
+	intptr_t const expected = 42;
 
 	level2_mock_api api;
 	EXPECT_CALL(api, do_get_integer_column_attribute(handle, column_id, field_identifier))
@@ -315,7 +315,7 @@ TEST(Level2APITest, GetIntegerStatementAttributeForwards)
 {
 	level2::statement_handle const handle = {&value_a};
 	SQLINTEGER const attribute = 42;
-	long const expected = 17;
+	intptr_t const expected = 17;
 
 	level2_mock_api api;
 	EXPECT_CALL(api, do_get_integer_statement_attribute(handle, attribute))
@@ -359,11 +359,22 @@ TEST(Level2APITest, PrepareStatementForwards)
 	api.prepare_statement(handle, query);
 }
 
+TEST(Level2APITest, PrepareWideStatementForwards)
+{
+	level2::statement_handle const handle = {&value_a};
+	std::u16string const query(u"SELECT * FROM table");
+
+	level2_mock_api api;
+	EXPECT_CALL(api, do_prepare_statement(handle, query)).Times(1);
+
+	api.prepare_statement(handle, query);
+}
+
 TEST(Level2APITest, SetLongStatementAttributeForwards)
 {
 	level2::statement_handle const handle = {&value_a};
 	SQLINTEGER const attribute = 23;
-	long const value = 42;
+	intptr_t const value = 42;
 
 	level2_mock_api api;
 	EXPECT_CALL(api, do_set_statement_attribute(handle, attribute, value)).Times(1);

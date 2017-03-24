@@ -100,7 +100,7 @@ std::shared_ptr<statement const> raii_connection::do_make_statement() const
 	return std::make_shared<raii_statement const>(as_raii_connection);
 }
 
-void raii_connection::do_set_attribute(SQLINTEGER attribute, long value) const
+void raii_connection::do_set_attribute(SQLINTEGER attribute, intptr_t value) const
 {
 	impl_->api->set_connection_attribute(impl_->handle.handle, attribute, value);
 }

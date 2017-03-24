@@ -25,12 +25,12 @@ raii_statement::~raii_statement()
 	}
 }
 
-long raii_statement::do_get_integer_attribute(SQLINTEGER attribute) const
+intptr_t raii_statement::do_get_integer_attribute(SQLINTEGER attribute) const
 {
 	return api_->get_integer_statement_attribute(handle_, attribute);
 }
 
-void raii_statement::do_set_attribute(SQLINTEGER attribute, long value) const
+void raii_statement::do_set_attribute(SQLINTEGER attribute, intptr_t value) const
 {
 	api_->set_statement_attribute(handle_, attribute, value);
 }
@@ -46,6 +46,11 @@ void raii_statement::do_execute(std::string const & sql) const
 }
 
 void raii_statement::do_prepare(std::string const & sql) const
+{
+	api_->prepare_statement(handle_, sql);
+}
+
+void raii_statement::do_prepare(std::u16string const & sql) const
 {
 	api_->prepare_statement(handle_, sql);
 }
@@ -96,7 +101,7 @@ void raii_statement::do_close_cursor() const
 	api_->free_statement(handle_, SQL_CLOSE);
 }
 
-long raii_statement::do_get_integer_column_attribute(SQLUSMALLINT column_id, SQLUSMALLINT field_identifier) const
+intptr_t raii_statement::do_get_integer_column_attribute(SQLUSMALLINT column_id, SQLUSMALLINT field_identifier) const
 {
 	return api_->get_integer_column_attribute(handle_, column_id, field_identifier);
 }

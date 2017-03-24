@@ -21,7 +21,9 @@ public:
 	 * @brief Prepare and bind buffers suitable of holding buffered_rows to
 	 *        the given statement.
 	 */
-	bound_result_set(std::shared_ptr<cpp_odbc::statement const> statement, turbodbc::buffer_size buffer_size);
+	bound_result_set(std::shared_ptr<cpp_odbc::statement const> statement,
+	                 turbodbc::buffer_size buffer_size,
+	                 bool prefer_unicode);
 
 	/**
 	 * @brief Move constructor

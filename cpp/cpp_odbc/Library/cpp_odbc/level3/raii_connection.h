@@ -46,7 +46,7 @@ public:
 
 private:
 	std::shared_ptr<statement const> do_make_statement() const final;
-	void do_set_attribute(SQLINTEGER attribute, long value) const final;
+	void do_set_attribute(SQLINTEGER attribute, intptr_t value) const final;
 	void do_commit() const final;
 	void do_rollback() const final;
 	std::string do_get_string_info(SQLUSMALLINT info_type) const final;

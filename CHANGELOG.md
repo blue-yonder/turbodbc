@@ -1,22 +1,43 @@
+Version 1.1.0 (unreleased)
+==========================
+*   Added support for databases that require Unicode data to be transported
+    in UCS-2/UCS-16 format rather than UTF-8, e.g., MSSQL.
+*   Added `make_options()` function that take all performance and compatibility
+    settings as keyword arguments.
+*   Deprecated all performance options (`read_buffer_size`, `use_async_io`, and
+    `parameter_sets_to_buffer`) for `connect()`. Please move these keyword arguments
+    to `make_options()`. Then, set `connect{}`'s new keyword argument `turbodbc_options`
+    to the result of `make_options()`. This effectively separates performance options
+    from options passed to the ODBC connection string.
+*   Removed deprecated option `rows_to_buffer` from `turbodbc.connect()`
+    (see version 0.4.1 for details).
+*   The order of arguments for `turbodbc.connect()` has changed; this may affect
+    you if you have not used keyword arguments.
+
+Version 1.0.5
+=============
+*   Internal: Remove some `const` pointer to resolve some compile issues with
+    xcode 6.4 (thanks @xhochy)
+
 Version 1.0.4
 =============
-*   Add possibility to set unixodbc include and library directories in
+*   Added possibility to set unixodbc include and library directories in
     setup.py. Required for conda builds.
 
 Version 1.0.3
 =============
-*   Improve compatibility with ODBC drivers (e.g. FreeTDS) that do not
+*   Improved compatibility with ODBC drivers (e.g. FreeTDS) that do not
     support ODBC's `SQLDescribeParam()` function by using a default
     parameter type.
-*   Use a default parameter type when the ODBC driver cannot determine
+*   Used a default parameter type when the ODBC driver cannot determine
     a parameter's type, for example when using column expressions for
     `INSERT` statements.
-*   Improve compatibility with some ODBC drivers (e.g. Microsoft's official
+*   Improved compatibility with some ODBC drivers (e.g. Microsoft's official
     MSSQL ODBC driver) for setting timestamps with fractional seconds.
 
 Version 1.0.2
 =============
-*   Add support for chaining operations to `Cursor.execute()` and
+*   Added support for chaining operations to `Cursor.execute()` and
     `Cursor.executemany()`. This allows one-liners such as
     `cursor.execute("SELECT 42").fetchallnumpy()`.
 *   Right before a database connection is closed, any open transactions
@@ -26,11 +47,11 @@ Version 1.0.2
 *   Improved stability of turbodbc when facing errors while closing connections,
     statements, and environments. In earlier versions, connection timeouts etc.
     could have lead to the Python process's termination.
-*   Source distribution contains license, readme, and changelog.
+*   Source distribution now contains license, readme, and changelog.
 
 Version 1.0.1
 =============
-*   Add support for OSX
+*   Added support for OSX
 
 Version 1.0.0
 =============

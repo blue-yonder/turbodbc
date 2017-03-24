@@ -31,7 +31,7 @@ TEST(ConnectionTest, SetIntegerAttributeForwards)
 {
 	mock_connection connection;
 	SQLINTEGER const attribute = 42;
-	long const value = 17;
+	intptr_t const value = 17;
 
 	EXPECT_CALL(connection, do_set_attribute(attribute, value)).Times(1);
 

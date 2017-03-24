@@ -18,6 +18,7 @@ class bound_parameter_set {
 public:
 	bound_parameter_set(cpp_odbc::statement const & statement,
 	                    std::size_t buffered_sets,
+	                    bool prefer_unicode,
 	                    bool query_db_for_initial_types);
 
 	/**
@@ -58,12 +59,21 @@ public:
 	 * @param parameter_description Describes the parameter type
 	 */
 	void rebind(std::size_t zero_based_parameter_index, std::unique_ptr<description const> parameter_description);
+
+	/**
+	 * @brief Retrieve type codes of the initially bound parameter types.
+	 *        Useful for reverting to the original suggestion after rebinding.
+	 * @return
+	 */
+	std::vector<type_code> const & get_initial_parameter_types() const;
 private:
 	cpp_odbc::statement const & statement_;
 	std::size_t buffered_sets_;
+	bool prefer_unicode_;
 	std::size_t transferred_sets_;
 	SQLULEN confirmed_last_batch_;
 	std::vector<std::shared_ptr<parameter>> parameters_;
+	std::vector<type_code> initial_parameter_types_;
 };
 
 

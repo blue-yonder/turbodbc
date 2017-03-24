@@ -40,16 +40,20 @@ at installation time to determine whether NumPy support can be provided.
 Since turbodbc includes C-extensions, make sure the following prerequisites
 are given:
 
-Requirement                       | Linux (`apt-get install`)    | OSX (`brew install`)
-----------------------------------|------------------------------|----------------------
-C++-compiler with C++11 support   | G++-4.8 or higher            | clang with OSX 10.9+
-Boost library + headers*       | `libboost-all-dev`           | `boost`
-Unixodbc library + headers        | `unixodbc-dev`               | `unixodbc`
-Python headers                    | `python-dev`                 | use `pyenv` to install
+Requirement                 | Linux (`apt-get install`) | OSX (`brew install`)   | Windows (experimental) |
+----------------------------|---------------------------|------------------------|------------------------|
+C++11 compiler              | G++-4.8 or higher         | clang with OSX 10.9+   | Visual C++ 2015        |
+Boost library + headers (1) | `libboost-all-dev`        | `boost`                | Boost sources (2)      |
+ODBC library + headers      | `unixodbc-dev`            | `unixodbc`             | Windows Kits           |
+Python headers              | `python-dev`              | use `pyenv` to install | Python 3.5+ (3)        |
 
-*) The minimum viable boost setup requires the libraries `variant`, `optional`,
-and `datetime`.
+(1) The minimum viable Boost setup requires the libraries `variant`, `optional`,
+`datetime`, and `locale`.
 
+(2) After unpacking Boost run Simplified Build From Source (`bootstrap` and `.\b2`).
+Also make sure the enviroment variable `BOOST_ROOT` is pointing to the installation.
+
+(3) Python 2.7 and 3.4 uses older compilers on Windows, and can not be used.
 
 
 Why should I use turbodbc instead of other ODBC modules?
@@ -65,7 +69,7 @@ popular Python ODBC module) with various databases (Exasol, PostgreSQL, MySQL)
 and corresponding ODBC drivers. I found turbodbc to be consistently faster.
 
 For retrieving result sets, I found speedups between 1.5 and 7 retrieving plain
-Python objects. For inserting data, I found speedups of up to 100. 
+Python objects. For inserting data, I found speedups of up to 100.
 
 Is this completely scientific? Not at all. I have not told you about which
 hardware I used, which operating systems, drivers, database versions, network
@@ -166,16 +170,24 @@ Please note a few things:
 *   NumPy support is limited to result sets, experimental, and will probably change
     with the next iterations.
 
-Performance options
--------------------
+Performance and compatibility options
+-------------------------------------
 
-Turbodbc offers some options to tune the performance for your database:
+Turbodbc offers a way to adjust its behavior to tune performance and to
+achieve compatibility with your database. The basic usage is this:
+
+    >>> from turbodbc import connect, make_options
+    >>> options = make_options()
+    >>> connect(dsn="my_dsn", turbodbc_options=options)
+
+This will connect with your database using the default options. To use non-default
+options, supply keyword arguments to `make_options()`:
 
     >>> from turbodbc import Megabytes
-    >>> connect(dsn="my dsn",
-                read_buffer_size=Megabytes(100),
-                parameter_sets_to_buffer=5000,
-                use_async_io=True)
+    >>> options = make_options(read_buffer_size=Megabytes(100),
+                               parameter_sets_to_buffer=1000,
+                               use_async_io=True,
+                               prefer_unicode=True)
 
 `read_buffer_size` affects how many result set rows are retrieved per batch
 of results. Set the attribute to `turbodbc.Megabytes(42)` to have turbodbc determine
@@ -189,49 +201,76 @@ which are transferred per batch of parameters (e.g., as sent with `executemany()
 Please note that it is not (yet) possible to use the `Megabytes` and `Rows` classes
 here.
 
-Finally, set `use_async_io` to `True` if you would like to benefit from
-asynchronous I/O operations (limited to result sets for the time being).
-Asynchronous I/O means that while the main thread converts result set rows
-retrieved from the database to Python objects, another thread fetches a
-new batch of results from the database in the background. This may yield
+If you set `use_async_io` to `True`, turbodbc will use asynchronous I/O operations
+(limited to result sets for the time being). Asynchronous I/O means that while the
+main thread converts result set rows retrieved from the database to Python
+objects, another thread fetches a new batch of results from the database in the background. This may yield
 significant speedups when retrieving and converting are similarly fast
 operations.
 
     Asynchronous I/O is experimental and has to fully prove itself yet.
-    Don't be afraid to give it a try, though.
+    Do not be afraid to give it a try, though.
+
+Finally, set `prefer_unicode` to `True` if your database does not fully support
+the UTF-8 encoding turbodbc prefers. With this option you can tell turbodbc
+to use two-byte character strings with UCS-2/UTF-16 encoding. Use this option
+if you try to connection to Microsoft SQL server (MSSQL).
 
 
 Development version
 -------------------
 
-To use the latest version of turbodbc, you need to follow these steps:
+To use the latest version of turbodbc, do the following.
 
-*   Get the source code from github
-*   Check the source build requirements (see below) are installed on your computer
-*   Create a build directory. Make this your working directory.
-*   Execute the following command:
+1.  Create a Python virtual environment, activate it, and install the necessary
+    packages numpy, pytest, and mock:
 
-        cmake -DCMAKE_INSTALL_PREFIX=./dist /path/to/source/directory
+        pip install numpy pytest mock
 
-    This will prepare the build directory for the actual build step.
+1.  Clone turbodbc into the virtual environment somewhere:
 
-*   Execute the `make` command to build the code.
-*   You can execute the tests with `ctest`.
-*   To create a Python source distribution for simple installation, use
-    the following commands:
-    
+        git clone https://github.com/blue-yonder/turbodbc.git
+
+1.  `cd` into the git repo and pull in the `pybind11` submodule by running:
+
+        git submodule update --init --recursive
+
+1.  Check the source build requirements (see below) are installed on your
+    computer.
+1.  Create a build directory somewhere and `cd` into it.
+1.  Execute the following command:
+
+        cmake -DCMAKE_INSTALL_PREFIX=./dist /path/to/turbodbc
+
+    where the final path parameter is the directory to the turbodbc git repo,
+    specifically the directory containing `setup.py`. This `cmake` command will
+    prepare the build directory for the actual build step.
+
+1.  Run `make`. This will build (compile) the source code.
+1.  At this point you can run the test suite. First, make a copy of the
+    relevant json documents from the turbodbc `python/turbodbc_test` directory,
+    there's one for each database. Then edit your copies with the relevant
+    credentials. Next, set the environment variable TURBODBC_TEST_CONFIGURATION_FILES
+    as a comma-separated list of the json files you've just copied and run
+    the test suite, as follows:
+
+        export TURBODBC_TEST_CONFIGURATION_FILES="<MySql json file>,<Postgres json file>,<MS SQL json file>"
+        ctest --output-on-failure
+
+1.  Finally, to create a Python source distribution for `pip` installation, run
+    the following from the build directory:
+
         make install
         cd dist
         python setup.py sdist
-    
-    This will create a `.tar.gz` file in the folder `dist/dist` in your
-    build directory. This file is self-contained and can be installed by
-    other users using `pip install`.
+
+    This will create a `turbodbc-x.y.z.tar.gz` file locally which can be used
+    by others to install turbodbc with `pip install turbodbc-x.y.z.tar.gz`.
 
 Source build requirements
 -------------------------
 
-For the development build, you also require the following additional 
+For the development build, you also require the following additional
 dependencies:
 
 *   CMake
@@ -274,6 +313,15 @@ There is a good chance that turbodbc will work with other, totally untested data
 as well. There is, however, an equally good chance that you will encounter compatibility
 issues. If you encounter one, please take the time to report it so turbodbc can be improved
 to work with more real-world databases. Thanks!
+
+
+SQLAlchemy support
+------------------
+
+Using Turbodbc in combination with SQLAlchemy is possible for a limited number of databases:
+
+* Exasol: [sqlalchemy_exasol](https://github.com/blue-yonder/sqlalchemy_exasol)
+* MSSQL: [sqlalchemy-turbodbc](https://github.com/dirkjonker/sqlalchemy-turbodbc) (experimental)
 
 
 I got questions and issues to report!

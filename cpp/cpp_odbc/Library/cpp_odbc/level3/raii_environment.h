@@ -42,8 +42,8 @@ public:
 	virtual ~raii_environment();
 
 private:
-	std::shared_ptr<connection const> do_make_connection(std::string const & connection_string) const final;
-	void do_set_attribute(SQLINTEGER attribute, long value) const final;
+	std::shared_ptr<connection> do_make_connection(std::string const & connection_string) const final;
+	void do_set_attribute(SQLINTEGER attribute, intptr_t value) const final;
 
 	struct intern;
 	std::unique_ptr<intern> impl_;

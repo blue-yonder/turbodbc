@@ -12,21 +12,29 @@
 
 #include <cstring>
 #include <sstream>
+//#include <codecvt>
+//#include <locale>
 
+#include <boost/locale.hpp>
+
+namespace {
+
+    std::u16string as_utf16(std::string utf8_encoded) {
+        // not all compilers support the new C++11 conversion facets
+//        static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
+//        return converter.from_bytes(utf8_encoded);
+        return boost::locale::conv::utf_to_utf<char16_t>(utf8_encoded);
+    }
+
+}
 
 namespace turbodbc {
 
 cursor::cursor(std::shared_ptr<cpp_odbc::connection const> connection,
-               turbodbc::buffer_size buffer_size,
-               std::size_t parameter_sets_to_buffer,
-               bool use_async_io,
-               bool query_db_for_parameter_types) :
-	connection_(connection),
-	buffer_size_(buffer_size),
-	parameter_sets_to_buffer_(parameter_sets_to_buffer),
-	use_async_io_(use_async_io),
-	query_db_for_parameter_types_(query_db_for_parameter_types),
-	command_()
+               turbodbc::configuration configuration) :
+    connection_(connection),
+    configuration_(std::move(configuration)),
+    command_()
 {
 }
 
@@ -34,44 +42,44 @@ cursor::~cursor() = default;
 
 void cursor::prepare(std::string const & sql)
 {
-	results_.reset();
-	command_.reset();
-	auto statement = connection_->make_statement();
-	statement->prepare(sql);
-	command_ = std::make_shared<command>(statement,
-	                                     buffer_size_,
-	                                     parameter_sets_to_buffer_,
-	                                     use_async_io_,
-	                                     query_db_for_parameter_types_);
+    results_.reset();
+    command_.reset();
+    auto statement = connection_->make_statement();
+    if (configuration_.options.prefer_unicode) {
+        statement->prepare(as_utf16(sql));
+    } else {
+        statement->prepare(sql);
+    }
+    command_ = std::make_shared<command>(statement, configuration_);
 }
 
 void cursor::execute()
 {
-	command_->execute();
-	auto raw_result_set = command_->get_results();
-	if (raw_result_set) {
-		results_ = raw_result_set;
-	}
+    command_->execute();
+    auto raw_result_set = command_->get_results();
+    if (raw_result_set) {
+        results_ = raw_result_set;
+    }
 }
 
 std::shared_ptr<result_sets::result_set> cursor::get_result_set() const
 {
-	return command_->get_results();
+    return command_->get_results();
 }
 
-long cursor::get_row_count()
+int64_t cursor::get_row_count()
 {
-	return command_->get_row_count();
+    return command_->get_row_count();
 }
 
 std::shared_ptr<cpp_odbc::connection const> cursor::get_connection() const
 {
-	return connection_;
+    return connection_;
 }
 
 std::shared_ptr<turbodbc::command> cursor::get_command()
 {
-	return command_;
+    return command_;
 }
 
 

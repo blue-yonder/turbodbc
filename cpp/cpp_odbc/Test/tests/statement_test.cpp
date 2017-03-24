@@ -12,7 +12,7 @@ using cpp_odbc_test::mock_statement;
 TEST(StatementTest, GetIntegerAttributeForwards)
 {
 	SQLINTEGER const attribute = 23;
-	long const expected = 42;
+	intptr_t const expected = 42;
 
 	mock_statement statement;
 	EXPECT_CALL( statement, do_get_integer_attribute(attribute))
@@ -24,7 +24,7 @@ TEST(StatementTest, GetIntegerAttributeForwards)
 TEST(StatementTest, SetIntegerAttributeForwards)
 {
 	SQLINTEGER const attribute = 23;
-	long const value = 42;
+	intptr_t const value = 42;
 
 	mock_statement statement;
 	EXPECT_CALL( statement, do_set_attribute(attribute, value)).Times(1);
@@ -59,6 +59,16 @@ TEST(StatementTest, PrepareForwards)
 
 	mock_statement statement;
 	EXPECT_CALL( statement, do_prepare(query)).Times(1);
+
+	statement.prepare(query);
+}
+
+TEST(StatementTest, PrepareWideForwards)
+{
+	std::u16string const query(u"SELECT * FROM dummy");
+
+	mock_statement statement;
+	EXPECT_CALL(statement, do_prepare(query)).Times(1);
 
 	statement.prepare(query);
 }
@@ -157,7 +167,7 @@ TEST(StatementTest, GetIntegerColumnAttributeForwards)
 {
 	SQLUSMALLINT const column = 23;
 	SQLUSMALLINT const field_identifier = 42;
-	long const expected = 17;
+	intptr_t const expected = 17;
 
 	mock_statement statement;
 	EXPECT_CALL( statement, do_get_integer_column_attribute(column, field_identifier))

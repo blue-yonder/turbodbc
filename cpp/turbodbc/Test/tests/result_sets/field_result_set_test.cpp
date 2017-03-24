@@ -30,14 +30,14 @@ TEST(FieldResultSetTest, GetColumnInfoForwards)
 
 TEST(FieldResultSetTest, FetchRow)
 {
-	long const expected_int = 42;
+	int64_t const expected_int = 42;
 	double const expected_float = 3.14;
 	cpp_odbc::multi_value_buffer buffer_int(8, 3);
 	cpp_odbc::multi_value_buffer buffer_float(8, 3);
 	std::vector<turbodbc::column_info> const infos = {{"my column", turbodbc::type_code::integer, true},
 	                                                  {"my column", turbodbc::type_code::floating_point, true}};
 
-	*reinterpret_cast<long *>(buffer_int[0].data_pointer) = expected_int;
+	*reinterpret_cast<intptr_t *>(buffer_int[0].data_pointer) = expected_int;
 	buffer_int[0].indicator = 8;
 	*reinterpret_cast<double *>(buffer_float[0].data_pointer) = expected_float;
 	buffer_int[0].indicator = 8;
@@ -52,7 +52,7 @@ TEST(FieldResultSetTest, FetchRow)
 	EXPECT_CALL(base, do_fetch_next_batch()).WillOnce(testing::Return(1));
 	auto const row = rs.fetch_row();
 	ASSERT_EQ(2, row.size());
-	EXPECT_EQ(expected_int, boost::get<long>(*row[0]));
+	EXPECT_EQ(expected_int, boost::get<int64_t>(*row[0]));
 	EXPECT_EQ(expected_float, boost::get<double>(*row[1]));
 }
 
