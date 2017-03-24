@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <turbodbc/descriptions.h>
+#include <tests/mock_classes.h>
 
 #include <sqlext.h>
 #include <sstream>
@@ -35,7 +36,11 @@ TEST(MakeDescriptionOfValueTest, FromBool)
 
 TEST(MakeDescriptionOfValueTest, FromDate)
 {
-	field const value(boost::gregorian::date(2016, 1, 7));
+	std::tm testval = std::tm {};
+	testval.tm_year = 2016 - 1900;
+	testval.tm_mon  = 1 - 1;
+	testval.tm_mday = 7;
+	field const value(testval);
 	auto description = make_description(value);
 	ASSERT_TRUE( dynamic_cast<turbodbc::date_description const *>(description.get()) );
 }

@@ -1,6 +1,7 @@
 #include "turbodbc/field_translators/float64_translator.h"
 
 #include <gtest/gtest.h>
+#include <tests/mock_classes.h>
 
 
 using turbodbc::field_translators::float64_translator;

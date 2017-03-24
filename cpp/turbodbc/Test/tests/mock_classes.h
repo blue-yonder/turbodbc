@@ -55,11 +55,14 @@ namespace turbodbc_test {
 		MOCK_CONST_METHOD0( do_more_results, bool());
 	};
 
-    using mock_connection = testing::NiceMock<default_mock_connection>;
-    using mock_statement = testing::NiceMock<default_mock_statement>;
+	using mock_connection = testing::NiceMock<default_mock_connection>;
+	using mock_statement = testing::NiceMock<default_mock_statement>;
 
 
 }
 
+std::ostream& operator<<(std::ostream& os, const std::tm& mytm);
+
+bool operator==(const std::tm LHS, const std::tm RHS);
 
 

@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <tests/mock_classes.h>
 
 #include <sql.h>
 

@@ -2,7 +2,6 @@
 
 #include <boost/variant/variant.hpp>
 #include <boost/optional.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 
@@ -16,7 +15,7 @@ using field = boost::variant<	long,
 								std::string,
 								bool,
 								double,
-								boost::gregorian::date,
+								std::tm,
 								boost::posix_time::ptime>;
 
 /**
