@@ -60,12 +60,12 @@ class Cursor(object):
     @property
     def description(self):
         """
-        Retrieve a description of the columns in the current result set
-        
-        :return: A tuple of seven elements. Only some elements are meaningful:\n
+        Retrieve a description of the columns in the current result set.
+
+        :return: A tuple of seven elements (or just ``None`` if no result set exists). Only some elements are meaningful:\n
                  *   Element #0 is the name of the column
                  *   Element #1 is the type code of the column
-                 *   Element #6 is true if the column may contain ``NULL`` values
+                 *   Element #6 is true if the column may contain `NULL` values
         """
         if self.result_set:
             info = self.result_set.get_column_info()
@@ -76,14 +76,15 @@ class Cursor(object):
     @translate_exceptions
     def execute(self, sql, parameters=None):
         """
-        Execute an SQL command or query
-        :param sql: A (unicode) string the contains the SQL command or query. If you would like to\
-               use parameters, please use a question mark ``?`` at the location where the\
-               parameter shall be inserted.
-        :param parameters: An iterable of parameter values. The number of values must match\
-               the number of parameters in the SQL string.
-        
-        :return: Returns the ``Cursor`` object to allow chaining of operations.
+        Execute an SQL command or query.
+
+        :param sql: A (unicode) string that contains the SQL command or query. If you would
+         like to use parameters, use a question mark ``?`` at the location where each
+         parameter value should be substituted.
+        :param parameters: An iterable of parameter values. The parameter values are matched
+         by position with the question marks in the SQL string and the number of parameter
+         values must match the number of question marks.
+        :return: The ``Cursor`` object, to allow chaining of operations.
         """
         self.rowcount = -1
         self._assert_valid()
@@ -105,15 +106,15 @@ class Cursor(object):
     def executemany(self, sql, parameters=None):
         """
         Execute an SQL command or query with multiple parameter sets.
-        :param sql: A (unicode) string the contains the SQL command or query. If you would like to\
-               use parameters, please use a question mark ``?`` at the location where the\
-               parameter shall be inserted.
-        :param parameters: An iterable of iterable of parameter values. The outer iterable represents\
-               separate parameter sets. The inner iterable contains parameter values for a given\
-               parameter set. The number of values of each set must match the number of parameters\
-               in the SQL string.
-               
-        :return: Returns the ``Cursor`` object to allow chaining of operations.
+
+        :param sql: A (unicode) string that contains the SQL command or query. If you would
+         like to use parameters, use a question mark ``?`` at the location where each
+         parameter value should be substituted.
+        :param parameters: An iterable of iterables of parameter values. The outer iterable represents
+         separate parameter sets. Each inner iterable contains parameter values for a given
+         parameter set. The number of values of each set must match the number of question marks
+         in the SQL string.
+        :return: The ``Cursor`` object, to allow chaining of operations.
         """
         self.rowcount = -1
         self._assert_valid()
@@ -137,10 +138,10 @@ class Cursor(object):
     @translate_exceptions
     def fetchone(self):
         """
-        Returns a single row of a result set. Requires an active result set on the database\
+        Retrieve the next row of a result set. Requires an active result set on the database
         generated with ``execute()`` or ``executemany()``.
-        
-        :return: Returns ``None`` when no more rows are available in the result set
+
+        :return: A single row, or ``None`` if no more rows are available
         """
         self._assert_valid_result_set()
         result = self.result_set.fetch_row()
@@ -152,22 +153,22 @@ class Cursor(object):
     @translate_exceptions
     def fetchall(self):
         """
-        Fetches a list of all rows in the active result set generated with ``execute()`` or\
+        Retrieve all remaining rows in the active result set generated with ``execute()`` or
         ``executemany()``.
-        
-        :return: Returns a list of rows
+
+        :return: A list of rows, or an empty list if no more rows are available
         """
         return [row for row in self]
 
     @translate_exceptions
     def fetchmany(self, size=None):
         """
-        Fetches a batch of rows in the active result set generated with ``execute()`` or\
+        Retrieve multiple rows in the active result set generated with ``execute()`` or
         ``executemany()``.
-        :param size: Controls how many rows are returned. The default ``None`` means that\
-               the value of Cursor.arraysize is used.
-        
-        :return: Returns a list of rows
+
+        :param size: Controls how many rows are returned. The default ``None`` means that
+         the value of Cursor.arraysize is used.
+        :return: A list of rows
         """
         if size is None:
             size = self.arraysize
@@ -178,12 +179,12 @@ class Cursor(object):
 
     def fetchallnumpy(self):
         """
-        Fetches all rows in the active result set generated with ``execute()`` or\
+        Retrieve all rows in the active result set generated with ``execute()`` or
         ``executemany()``.
-        
-        :return: An ``OrderedDict`` of *columns*, where the keys of the dictionary\
-                 are the column names. The columns are of NumPy's ``MaskedArray``\
-                 type, where the optimal data type for each result set column is\
+
+        :return: An ``OrderedDict`` of *columns*, where the keys of the dictionary
+                 are the column names. The columns are of NumPy's ``MaskedArray``
+                 type, where the optimal data type for each result set column is
                  chosen automatically.
         """
         from numpy.ma import concatenate
@@ -193,11 +194,11 @@ class Cursor(object):
 
     def fetchnumpybatches(self):
         """
-        Returns an iterator over all rows in the active result set generated with ``execute()`` or\
+        Return an iterator for all rows in the active result set generated with ``execute()`` or
         ``executemany()``.
-        
-        :return: An iterator you can use to iterate over batches of rows of the result set. Each\
-                 batch consists of an ``OrderedDict`` of NumPy ``MaskedArray`` instances. See\
+
+        :return: An iterator you can use to iterate over batches of rows in the result set. Each
+                 batch consists of an ``OrderedDict`` of NumPy ``MaskedArray`` instances. See
                  ``fetchallnumpy()`` for details.
         """
         batchgen = self._numpy_batch_generator()
@@ -224,7 +225,7 @@ class Cursor(object):
 
     def close(self):
         """
-        Closes the cursor. 
+        Close the cursor. The cursor can no longer be used and any remaining result set on the cursor is discarded.
         """
         self.result_set = None
         self.impl = None
@@ -232,13 +233,13 @@ class Cursor(object):
     def setinputsizes(self, sizes):
         """
         Has no effect since turbodbc automatically picks appropriate
-        return types and sizes. Method exists since PEP-249 requires it.
+        return types and sizes. Method is here only because PEP-249 requires it.
         """
         pass
 
     def setoutputsize(self, size, column=None):
         """
         Has no effect since turbodbc automatically picks appropriate
-        input types and sizes. Method exists since PEP-249 requires it.
+        input types and sizes. Method is here only because PEP-249 requires it.
         """
         pass
