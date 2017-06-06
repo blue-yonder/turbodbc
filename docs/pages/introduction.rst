@@ -48,8 +48,8 @@ took less time, often approaching one (reading) or two (writing) orders of
 magnitude. Give it a spin for yourself, and tell me if you liked it.
 
 
-Smooth. What is the trick?
---------------------------
+Smooth. What's the trick?
+-------------------------
 
 Turbodbc exploits buffering.
 
