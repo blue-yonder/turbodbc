@@ -83,7 +83,7 @@ before_install: |
   fi
 
 install:
-  - pip install numpy==1.10.4 pyarrow==0.7.0 six twine pytest-cov coveralls pandas
+  - pip install numpy==1.10.4 pyarrow==0.7.1 six twine pytest-cov coveralls pandas
 
 before_script: |
   if [ "$TRAVIS_OS_NAME" == "linux" ]; then
