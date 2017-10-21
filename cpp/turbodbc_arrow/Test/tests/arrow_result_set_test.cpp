@@ -3,6 +3,7 @@
 #include <list>
 
 #undef BOOL
+#undef timezone
 #include <arrow/api.h>
 #include <arrow/test-util.h>
 #include <gtest/gtest.h>
