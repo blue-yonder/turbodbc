@@ -353,3 +353,17 @@ class Cursor(object):
         input types and sizes. Method exists since PEP-249 requires it.
         """
         pass
+
+    def __enter__(self):
+        """
+        Conformance to PEP-343
+        """
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """
+        Conformance to PEP-343
+        """
+        return self.close()
+
+

@@ -64,3 +64,17 @@ class Connection(object):
     @autocommit.setter
     def autocommit(self, value):
         self.impl.set_autocommit(value)
+
+
+    def __enter__(self):
+        """
+        Conformance to PEP-343
+        """
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """
+        Conformance to PEP-343
+        """
+        return self.close()
+
