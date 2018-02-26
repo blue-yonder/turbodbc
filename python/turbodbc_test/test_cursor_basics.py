@@ -126,3 +126,13 @@ def test_connection_does_not_strongly_reference_cursors(dsn, configuration):
     cursor = connection.cursor()
     import sys
     assert sys.getrefcount(cursor) == 2
+
+@for_one_database
+def test_pep343_with_statement(dsn, configuration):
+    with connect(dsn, **get_credentials(configuration)) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 42")
+
+        # cursor should be closed
+        with pytest.raises(InterfaceError):
+            cursor.execute("SELECT 42")
