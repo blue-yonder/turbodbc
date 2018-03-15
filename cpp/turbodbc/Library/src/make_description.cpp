@@ -9,6 +9,7 @@
 #include <sstream>
 #include <algorithm>
 
+
 namespace turbodbc {
 
 namespace {
@@ -101,10 +102,11 @@ template <typename Description>
 std::unique_ptr<description> make_character_description(cpp_odbc::column_description const & source,
                                                         turbodbc::options const & options)
 {
+    int multiplier = (options.fix_unicode_allocation ? Description::multiplier : 1);
     std::size_t const sanitized_size = (source.size == 0 ? options.varchar_max_character_limit : source.size);
     std::size_t const limited_size = (options.limit_varchar_results_to_max ?
                                       std::min(sanitized_size, options.varchar_max_character_limit) :
-                                      sanitized_size);
+                                      sanitized_size) * multiplier;
     return std::unique_ptr<description>(new Description(source.name,
                                                         source.allows_null_values,
                                                         limited_size));

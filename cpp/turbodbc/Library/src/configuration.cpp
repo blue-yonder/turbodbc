@@ -12,7 +12,8 @@ options::options() :
     prefer_unicode(false),
     autocommit(false),
     large_decimals_as_64_bit_types(false),
-    limit_varchar_results_to_max(false)
+    limit_varchar_results_to_max(false),
+    fix_unicode_allocation(false)
 {
 }
 
