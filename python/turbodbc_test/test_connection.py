@@ -155,7 +155,7 @@ def test_autocommit_querying(dsn, configuration):
 @for_one_database
 def test_pep343_with_statement(dsn, configuration):
 
-    with connect(dsn, **get_credentials(configuration)) connection:
+    with connect(dsn, **get_credentials(configuration)) as connection:
         cursor = connection.cursor()
 
     # connection should be closed, test it with the cursor
