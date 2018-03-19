@@ -225,6 +225,40 @@ TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsCanBeLimited)
     EXPECT_EQ(limit + 1, limited->element_size());
 }
 
+TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsModifiedMemoryAllocation)
+{
+    std::size_t const reported_size = 10;
+    std::size_t const allocated_size = 40;
+    cpp_odbc::column_description column_description = {name, SQL_VARCHAR, reported_size, 0, supports_null_values};
+
+    turbodbc::options options;
+    options.fix_unicode_allocation = false;
+
+    auto const allocation = make_description(column_description, options);
+    EXPECT_EQ(reported_size + 1, allocation->element_size());
+
+    options.fix_unicode_allocation = true;
+    auto const modified_allocation = make_description(column_description, options);
+    EXPECT_EQ(allocated_size + 1, modified_allocation->element_size());
+}
+
+TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsModifiedMemoryAllocationForUnicode)
+{
+    std::size_t const reported_size = 10;
+    std::size_t const allocated_size = (reported_size + 1) * sizeof(char16_t);
+    std::size_t const fixed_allocated_size = (reported_size*2 + 1) * sizeof(char16_t);
+    cpp_odbc::column_description column_description = {name, SQL_WVARCHAR, reported_size, 0, supports_null_values};
+
+    turbodbc::options options;
+    options.fix_unicode_allocation = false;
+
+    auto const allocation = make_description(column_description, options);
+    EXPECT_EQ(allocated_size, allocation->element_size());
+
+    options.fix_unicode_allocation = true;
+    auto const modified_allocation = make_description(column_description, options);
+    EXPECT_EQ(fixed_allocated_size, modified_allocation->element_size());
+}
 
 TEST(MakeDescriptionOfDescriptionTest, FloatingPointTypes)
 {
