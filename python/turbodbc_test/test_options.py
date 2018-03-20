@@ -14,7 +14,8 @@ def test_options_with_overrides():
                            use_async_io=True,
                            autocommit=True,
                            large_decimals_as_64_bit_types=True,
-                           limit_varchar_results_to_max=True)
+                           limit_varchar_results_to_max=True,
+                           fix_unicode_allocation=True)
 
     assert options.read_buffer_size.rows == 123
     assert options.parameter_sets_to_buffer == 2500
@@ -24,3 +25,4 @@ def test_options_with_overrides():
     assert options.autocommit == True
     assert options.large_decimals_as_64_bit_types == True
     assert options.limit_varchar_results_to_max == True
+    assert options.fix_unicode_allocation == True
