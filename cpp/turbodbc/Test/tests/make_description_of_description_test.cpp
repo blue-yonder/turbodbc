@@ -228,36 +228,69 @@ TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsCanBeLimited)
 TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsModifiedMemoryAllocation)
 {
     std::size_t const reported_size = 10;
-    std::size_t const allocated_size = 40;
+    std::size_t const size_with_extra_capacity = 40;
     cpp_odbc::column_description column_description = {name, SQL_VARCHAR, reported_size, 0, supports_null_values};
 
     turbodbc::options options;
-    options.fix_unicode_allocation = false;
 
-    auto const allocation = make_description(column_description, options);
-    EXPECT_EQ(reported_size + 1, allocation->element_size());
+    options.force_extra_capacity_for_unicode = false;
+    EXPECT_EQ(reported_size + 1, make_description(column_description, options)->element_size());
 
-    options.fix_unicode_allocation = true;
-    auto const modified_allocation = make_description(column_description, options);
-    EXPECT_EQ(allocated_size + 1, modified_allocation->element_size());
+    options.force_extra_capacity_for_unicode = true;
+    EXPECT_EQ(size_with_extra_capacity + 1, make_description(column_description, options)->element_size());
 }
 
 TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsModifiedMemoryAllocationForUnicode)
 {
     std::size_t const reported_size = 10;
-    std::size_t const allocated_size = (reported_size + 1) * sizeof(char16_t);
-    std::size_t const fixed_allocated_size = (reported_size*2 + 1) * sizeof(char16_t);
+    std::size_t const size_without_extra_capacity = (reported_size + 1) * sizeof(char16_t);
+    std::size_t const size_with_extra_capacity = (reported_size*2 + 1) * sizeof(char16_t);
     cpp_odbc::column_description column_description = {name, SQL_WVARCHAR, reported_size, 0, supports_null_values};
 
     turbodbc::options options;
-    options.fix_unicode_allocation = false;
 
-    auto const allocation = make_description(column_description, options);
-    EXPECT_EQ(allocated_size, allocation->element_size());
+    options.force_extra_capacity_for_unicode = false;
+    EXPECT_EQ(size_without_extra_capacity, make_description(column_description, options)->element_size());
 
-    options.fix_unicode_allocation = true;
-    auto const modified_allocation = make_description(column_description, options);
-    EXPECT_EQ(fixed_allocated_size, modified_allocation->element_size());
+    options.force_extra_capacity_for_unicode = true;
+    EXPECT_EQ(size_with_extra_capacity, make_description(column_description, options)->element_size());
+}
+
+TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsLimitedModifiedMemoryAllocation)
+{
+    std::size_t const reported_size = 10;
+    std::size_t const limited_size = 5;
+    std::size_t const size_with_extra_capacity = 20;
+    cpp_odbc::column_description column_description = {name, SQL_VARCHAR, reported_size, 0, supports_null_values};
+
+    turbodbc::options options;
+    options.varchar_max_character_limit = 5;
+    options.limit_varchar_results_to_max = true;
+
+    options.force_extra_capacity_for_unicode = false;
+    EXPECT_EQ(limited_size + 1, make_description(column_description, options)->element_size());
+
+    options.force_extra_capacity_for_unicode = true;
+    EXPECT_EQ(size_with_extra_capacity + 1, make_description(column_description, options)->element_size());
+}
+
+TEST(MakeDescriptionOfDescriptionTest, VarcharFieldsLimitedModifiedMemoryAllocationForUnicode)
+{
+    std::size_t const reported_size = 10;
+    std::size_t const limited_size = 5;
+    std::size_t const size_without_extra_capacity = (limited_size + 1) * sizeof(char16_t);
+    std::size_t const size_with_extra_capacity = (limited_size*2 + 1) * sizeof(char16_t);
+    cpp_odbc::column_description column_description = {name, SQL_WVARCHAR, reported_size, 0, supports_null_values};
+
+    turbodbc::options options;
+    options.varchar_max_character_limit = 5;
+    options.limit_varchar_results_to_max = true;
+
+    options.force_extra_capacity_for_unicode = false;
+    EXPECT_EQ(size_without_extra_capacity, make_description(column_description, options)->element_size());
+
+    options.force_extra_capacity_for_unicode = true;
+    EXPECT_EQ(size_with_extra_capacity, make_description(column_description, options)->element_size());
 }
 
 TEST(MakeDescriptionOfDescriptionTest, FloatingPointTypes)

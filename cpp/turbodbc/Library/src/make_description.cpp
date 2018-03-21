@@ -102,11 +102,11 @@ template <typename Description>
 std::unique_ptr<description> make_character_description(cpp_odbc::column_description const & source,
                                                         turbodbc::options const & options)
 {
-    int multiplier = (options.fix_unicode_allocation ? Description::multiplier : 1);
+    int const capacity_multiplier = (options.force_extra_capacity_for_unicode ? Description::max_code_units_per_unicode_code_point : 1);
     std::size_t const sanitized_size = (source.size == 0 ? options.varchar_max_character_limit : source.size);
     std::size_t const limited_size = (options.limit_varchar_results_to_max ?
                                       std::min(sanitized_size, options.varchar_max_character_limit) :
-                                      sanitized_size) * multiplier;
+                                      sanitized_size) * capacity_multiplier;
     return std::unique_ptr<description>(new Description(source.name,
                                                         source.allows_null_values,
                                                         limited_size));

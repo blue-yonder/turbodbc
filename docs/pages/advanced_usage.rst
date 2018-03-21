@@ -155,6 +155,20 @@ If not set or set to ``False``, string-like result fields with a specific size w
 String-like fields of indeterminate size (``VARCHAR(max)``, ``TEXT``, etc. on some
 databases) are still subject to :ref:`advanced_usage_options_varchar_max`.
 
+.. _advanced_usage_options_limit_varchar_results:
+
+Extra capacity for unicode strings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Set ``force_extra_capacity_for_unicode`` to ``True`` if  you find that strings retrieved
+from ``VARCHAR(n)`` or ``NVARCHAR(n)`` fields are being truncated. Some ODBC drivers report
+the length of the field and setting this option changes the way turbodbc allocates memory,
+so that retrieving these strings are not truncated. If ``limit_varchar_results_to_max`` is
+``True``, memory is allocated as if ``n`` is :ref:`advanced_usage_options_varchar_max`.
+
+Please note that enabling this option leads to increased memory usage when retrieving string
+fields in result sets. Parameters sent to the database are not affected by this option.
+
 
 Controlling autocommit behavior at runtime
 ------------------------------------------

@@ -15,7 +15,7 @@ struct options {
     bool autocommit;
     bool large_decimals_as_64_bit_types;
     bool limit_varchar_results_to_max;
-    bool fix_unicode_allocation;
+    bool force_extra_capacity_for_unicode;
 };
 
 struct capabilities {
