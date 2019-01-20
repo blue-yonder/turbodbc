@@ -9,6 +9,8 @@ Version 3.1.0
 *  Support the unicode datatype in the Arrow support. This primarily enables
    MS SQL support for the Arrow adapter.
 *  Windows support for the Arrow adapter.
+*  Add a new entry to the build matrix that tests Python 3.7 with conda and
+   MS SQL on Linux.
 
 Version 3.0.0
 -------------
