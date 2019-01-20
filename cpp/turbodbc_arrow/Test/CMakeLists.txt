@@ -36,6 +36,10 @@ if (UNIX)
     target_link_libraries(turbodbc_arrow_test
         pthread
     )
+    # VERSION_GREATER_EQUAL and target_link_options are only supported in newer CMake versions
+    if (NOT (${CMAKE_VERSION} VERSION_LESS "3.13"))
+        target_link_options(turbodbc_arrow_test PUBLIC "-pthread")
+    endif()
 endif()
 
 add_test(NAME turbodbc_arrow_unit_test

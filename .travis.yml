@@ -36,6 +36,20 @@ matrix:
     env:
     - TURBODBC_TEST_CONFIGURATION_FILES="query_fixtures_postgresql.json,query_fixtures_mysql.json"
     - ODBC_DIR=odbc
+  - os: linux
+    dist: xenial
+    language: python
+    addons:
+      apt:
+        packages:
+          - unixodbc
+          - unixodbc-dev
+          - odbc-postgresql
+    python: "3.7"
+    env:
+    - TURBODBC_USE_CONDA=yes
+    - TURBODBC_TEST_CONFIGURATION_FILES="query_fixtures_postgresql.json"
+    - ODBC_DIR=odbc
 
 
 services:
@@ -76,8 +90,25 @@ before_install: |
     psql -U postgres -c "ALTER USER postgres WITH PASSWORD 'password';"
   fi
 
-install:
-  - pip install numpy==1.14.5 pyarrow==0.11.1 six twine pytest-cov coveralls pandas
+  if [ "${TURBODBC_USE_CONDA}" == "yes" ]; then
+    MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+    wget --no-verbose -O miniconda.sh $MINICONDA_URL
+    export MINICONDA=$HOME/miniconda
+    bash miniconda.sh -b -p $MINICONDA
+    source $MINICONDA/etc/profile.d/conda.sh
+    conda config --remove channels defaults
+    conda config --add channels conda-forge
+    conda create -y -q -n turbodbc-dev pyarrow=0.11.1 numpy pybind11 boost-cpp=1.68 \
+        pytest pytest-cov mock cmake unixodbc coveralls python=3.7 \
+        gxx_linux-64 gcc_linux-64 ninja make \
+        -c conda-forge
+    conda activate turbodbc-dev
+  fi
+
+install: |
+  if [ "${TURBODBC_USE_CONDA}" != "yes" ]; then
+    pip install numpy==1.14.5 pyarrow==0.11.1 six twine pytest-cov coveralls pandas
+  fi
 
 before_script: |
   if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -87,9 +118,15 @@ before_script: |
 script:
   - export ODBCSYSINI=${PWD}/travis/${ODBC_DIR}
   - mkdir build && cd build
-  - cmake -DBUILD_COVERAGE=ON -DCMAKE_INSTALL_PREFIX=./dist -DPYBIND11_PYTHON_VERSION=${TRAVIS_PYTHON_VERSION} ..
-  - make -j4
-  - pip install numpy==1.14.5
+  - |
+    if [ "${TURBODBC_USE_CONDA}" == "yes" ]; then
+      export UNIXODBC_INCLUDE_DIR=$CONDA_PREFIX/include
+      cmake -DBOOST_ROOT=$CONDA_PREFIX -DBUILD_COVERAGE=ON -DCMAKE_INSTALL_PREFIX=./dist  -DPYTHON_EXECUTABLE=`which python` -GNinja ..
+      ninja
+    else
+      cmake -DBUILD_COVERAGE=ON -DCMAKE_INSTALL_PREFIX=./dist -DPYBIND11_PYTHON_VERSION=${TRAVIS_PYTHON_VERSION} ..
+      make -j4
+    fi
   - |
       if [ "$TRAVIS_OS_NAME" == "osx" ]; then
         ctest -E turbodbc_arrow_unit_test --verbose
@@ -112,12 +149,15 @@ script:
   - bash <(curl -s https://codecov.io/bash) -s $PWD/gcov/ -X coveragepy -X gcov
 
   - cd build
-  - make install
+  - cmake --build . --target install
   - cd dist
   - python setup.py sdist
-  - cd dist
-  - pip install *.tar.gz
-  - cd ..
+  - |
+    if [ "${TURBODBC_USE_CONDA}" != "yes" ]; then
+      cd dist
+      pip install *.tar.gz
+      cd ..
+    fi
   - rm -rf dist
 
 
