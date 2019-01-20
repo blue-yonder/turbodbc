@@ -13,6 +13,8 @@
 
 #include <ciso646>
 
+#include <boost/locale.hpp>
+
 using arrow::BooleanArray;
 using arrow::BinaryArray;
 using arrow::ChunkedArray;
@@ -129,11 +131,44 @@ namespace {
           }
         }
 
+      // Parse UTF-16 data and convert it on-the-fly to UTF-8
+      void set_batch_utf16(std::size_t start, std::size_t elements)
+      {
+        auto const& typed_array = static_cast<const BinaryArray&>(*data->chunk(0));
+        std::vector<std::pair<bool, std::u16string>> batch;
+        size_t maximum_length = 0;
+        for (int64_t i = 0; i != elements; ++i) {
+          if (!typed_array.IsNull(start + i)) {
+            std::u16string str = boost::locale::conv::utf_to_utf<char16_t>(typed_array.GetString(start + i));
+            maximum_length = std::max(maximum_length, str.length());
+            batch.push_back({false, str});
+          } else {
+            batch.push_back({true, std::u16string()});
+          }
+        }
+
+        // Propagate the maximum string length to the parameters.
+        // These then adjust the size of the underlying buffer.
+        parameters.rebind(parameter_index, turbodbc::make_description(type, maximum_length));
+        auto & buffer = get_buffer();
+        auto const character_size = sizeof(typename std::u16string::value_type);
+
+        for (std::size_t i = 0; i != batch.size(); ++i) {
+            auto element = buffer[i];
+            if (batch[i].first) {
+                element.indicator = SQL_NULL_DATA;
+            } else {
+                auto const & s = batch[i].second;
+                std::memcpy(element.data_pointer, s.c_str(), character_size * (s.size() + 1));
+                element.indicator = character_size * s.size();
+            }
+        }
+      }
+
       void set_batch(int64_t start, int64_t elements) final
       {
         if (type == turbodbc::type_code::unicode) {
-          throw turbodbc::interface_error("UTF-16 Strings are not supported yet");
-          // set_batch_of_type<std::u16string>(start, elements);
+          set_batch_utf16(start, elements);
         } else {
           set_batch_of_type<std::string>(start, elements);
         }

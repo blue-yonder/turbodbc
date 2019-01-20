@@ -1,6 +1,7 @@
 file(GLOB_RECURSE LIBRARY_FILES "src/*.cpp")
 
-pybind11_add_module(turbodbc_arrow_support SHARED ${LIBRARY_FILES})
+# We need to disable LTO on Arrow builds
+pybind11_add_module(turbodbc_arrow_support SHARED ${LIBRARY_FILES} NO_EXTRAS)
 
 set_target_properties(turbodbc_arrow_support PROPERTIES
     PREFIX ""

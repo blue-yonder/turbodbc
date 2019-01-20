@@ -3,6 +3,13 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 3.1.0
+-------------
+
+*  Support the unicode datatype in the Arrow support. This primarily enables
+   MS SQL support for the Arrow adapter.
+*  Windows support for the Arrow adapter.
+
 Version 3.0.0
 -------------
 

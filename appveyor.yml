@@ -35,7 +35,7 @@ install:
 
     SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
 
-    pip install numpy pytest pytest-cov mock
+    pip install numpy pytest pytest-cov mock "pyarrow>=0.11,<0.12" pandas
 
     echo %PYTHON%
 

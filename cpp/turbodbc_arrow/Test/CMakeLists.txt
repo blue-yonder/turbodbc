@@ -25,6 +25,13 @@ target_link_libraries(turbodbc_arrow_test
     gmock
 )
 
+if (MSVC)
+    target_link_libraries(turbodbc_arrow_test
+        ${ARROW_SHARED_IMP_LIB}
+        ${ARROW_PYTHON_SHARED_IMP_LIB}
+    )
+endif()
+
 if (UNIX)
     target_link_libraries(turbodbc_arrow_test
         pthread
@@ -35,9 +42,11 @@ add_test(NAME turbodbc_arrow_unit_test
          COMMAND turbodbc_arrow_test --gtest_output=xml:${CMAKE_BINARY_DIR}/turbodbc_arrow_test.xml)
 
 if (WIN32)
+    get_filename_component(ARROW_LIBS "${ARROW_SHARED_LIB}" DIRECTORY)
+    string(REPLACE ";" "\\;" MASKED_PATH "$ENV{PATH}")
     set_tests_properties(
         turbodbc_arrow_unit_test
         PROPERTIES
-        ENVIRONMENT "PATH=${CMAKE_BINARY_DIR};$ENV{PATH}"
+        ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}\;${ARROW_LIBS}\;${MASKED_PATH}"
     )
 endif()
