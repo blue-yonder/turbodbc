@@ -11,6 +11,7 @@ Version 3.1.0
 *  Windows support for the Arrow adapter.
 *  Add a new entry to the build matrix that tests Python 3.7 with conda and
    MS SQL on Linux.
+*  Update to Apache Arrow 0.12
 
 Version 3.0.0
 -------------

@@ -39,6 +39,12 @@ namespace {
         ASSERT_OK(builder.Finish(out));
     }
 
+    void random_bytes(int64_t n, uint32_t seed, uint8_t* out) {
+        std::default_random_engine gen(seed);
+        std::uniform_int_distribution<uint32_t> d(0, std::numeric_limits<uint8_t>::max());
+        std::generate(out, out + n, [&d, &gen] { return static_cast<uint8_t>(d(gen)); });
+    }
+
 }
 
 class ArrowResultSetTest : public ::testing::Test {
@@ -95,7 +101,7 @@ class ArrowResultSetTest : public ::testing::Test {
             EXPECT_OK(AllocateResizableBuffer(pool, data_nbytes, &data));
 
             // Fill with random data
-            arrow::random_bytes(data_nbytes, 0 /*random_seed*/, data->mutable_data());
+            random_bytes(data_nbytes, 0 /*random_seed*/, data->mutable_data());
 
             std::shared_ptr<arrow::ResizableBuffer> null_bitmap;
             const int64_t null_nbytes = arrow::BitUtil::BytesForBits(length);

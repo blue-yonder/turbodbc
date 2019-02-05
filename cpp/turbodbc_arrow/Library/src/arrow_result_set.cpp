@@ -22,17 +22,73 @@ using arrow::ArrayBuilder;
 using arrow::BooleanBuilder;
 using arrow::Date32Builder;
 using arrow::DoubleBuilder;
+using arrow::Int32Builder;
 using arrow::Int64Builder;
 using arrow::Status;
 using arrow::StringBuilder;
 using arrow::StringDictionaryBuilder;
 using arrow::TimeUnit;
 using arrow::TimestampBuilder;
+using arrow::Type;
 
 namespace turbodbc_arrow {
 
 
 namespace {
+
+// We inherit this class to simply provide the same interfaces as StringDictionaryBuilderProxy
+//
+// Both classes can be removed once we upgrade to an Arrow version where ARROW-4367 is fixed.
+class StringBuilderProxy: public StringBuilder {
+  public:
+    using StringBuilder::StringBuilder;
+
+    Status AppendNullProxy() {
+        return AppendNull();
+    }
+
+    Status AppendProxy(const char* value, int32_t length) {
+        return Append(value, length);
+    }
+};
+
+class StringDictionaryBuilderProxy: public StringDictionaryBuilder {
+  public:
+    using StringDictionaryBuilder::StringDictionaryBuilder;
+
+    Status AppendNullProxy() {
+        length_++;
+        null_count_++;
+        return AppendNull();
+    }
+
+    Status AppendProxy(const char* value, int32_t length) {
+        length_++;
+        return Append(value, length);
+    }
+
+    Status FinishInternal(std::shared_ptr<arrow::ArrayData>* out) override {
+        // ARROW-4367: StringDictionaryBuilder segfaults on Finish with only null entries
+        if (length_ == null_count_) {
+            auto values = std::make_shared<arrow::StringArray>(0, std::shared_ptr<arrow::Buffer>(), std::shared_ptr<arrow::Buffer>());
+            auto type = arrow::dictionary(arrow::int32(), values);
+            Int32Builder builder;
+            for (size_t i = 0; i != length_; i++) {
+                ARROW_RETURN_NOT_OK(builder.AppendNull());
+            }
+            std::shared_ptr<arrow::Array> indices;
+            ARROW_RETURN_NOT_OK(builder.Finish(&indices));
+            *out = arrow::DictionaryArray(type, indices).data();
+
+            return Status::OK();
+        }
+        return StringDictionaryBuilder::FinishInternal(out);
+    };
+
+  private:
+    size_t length_ = 0;
+    size_t null_count_ = 0;
+};
 
 std::unique_ptr<ArrayBuilder> make_array_builder(turbodbc::type_code type, bool strings_as_dictionary, bool adaptive_integers)
 {
@@ -59,9 +115,9 @@ std::unique_ptr<ArrayBuilder> make_array_builder(turbodbc::type_code type, bool 
             }
         default:
             if (strings_as_dictionary) {
-                return std::unique_ptr<StringDictionaryBuilder>(new StringDictionaryBuilder(::arrow::utf8(), ::arrow::default_memory_pool()));
+                return std::unique_ptr<StringDictionaryBuilderProxy>(new StringDictionaryBuilderProxy(::arrow::utf8(), ::arrow::default_memory_pool()));
             } else {
-                return std::unique_ptr<StringBuilder>(new StringBuilder());
+                return std::unique_ptr<StringBuilderProxy>(new StringBuilderProxy());
             }
     }
 }
@@ -71,9 +127,9 @@ Status AppendStringsToBuilder(size_t rows_in_batch, BuilderType& builder, cpp_od
     for (std::size_t j = 0; j != rows_in_batch; ++j) {
         auto const element = input_buffer[j];
         if (element.indicator == SQL_NULL_DATA) {
-            ARROW_RETURN_NOT_OK(builder.AppendNull());
+            ARROW_RETURN_NOT_OK(builder.AppendNullProxy());
         } else {
-            ARROW_RETURN_NOT_OK(builder.Append(element.data_pointer, element.indicator));
+            ARROW_RETURN_NOT_OK(builder.AppendProxy(element.data_pointer, element.indicator));
         }
     }
     return Status::OK();
@@ -185,12 +241,12 @@ Status append_to_date_builder(size_t rows_in_batch, std::unique_ptr<ArrayBuilder
 
 Status append_to_string_builder(size_t rows_in_batch, std::unique_ptr<ArrayBuilder> const& builder, cpp_odbc::multi_value_buffer const& input_buffer, uint8_t*, bool strings_as_dictionary) {
     if (strings_as_dictionary) {
-        return AppendStringsToBuilder<StringDictionaryBuilder>(rows_in_batch,
-            static_cast<StringDictionaryBuilder&>(*builder), input_buffer);
+        return AppendStringsToBuilder<StringDictionaryBuilderProxy>(rows_in_batch,
+            static_cast<StringDictionaryBuilderProxy&>(*builder), input_buffer);
     }
 
-    return AppendStringsToBuilder<StringBuilder>(rows_in_batch,
-        static_cast<StringBuilder&>(*builder), input_buffer);
+    return AppendStringsToBuilder<StringBuilderProxy>(rows_in_batch,
+        static_cast<StringBuilderProxy&>(*builder), input_buffer);
 }
 
 

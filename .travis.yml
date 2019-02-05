@@ -4,7 +4,7 @@ sudo: required
 matrix:
   include:
   - os: osx
-    osx_image: xcode6.4
+    osx_image: xcode9.4
     language: generic
     env:
     - TRAVIS_PYTHON_VERSION="2.7.12"
@@ -102,7 +102,7 @@ before_install: |
     source $MINICONDA/etc/profile.d/conda.sh
     conda config --remove channels defaults
     conda config --add channels conda-forge
-    conda create -y -q -n turbodbc-dev pyarrow=0.11.1 numpy pybind11 boost-cpp=1.68 \
+    conda create -y -q -n turbodbc-dev pyarrow=0.12.0 numpy pybind11 boost-cpp=1.68 \
         pytest pytest-cov mock cmake unixodbc coveralls python=3.7 \
         gxx_linux-64 gcc_linux-64 ninja make \
         -c conda-forge
@@ -111,8 +111,9 @@ before_install: |
 
 install: |
   if [ "${TURBODBC_USE_CONDA}" != "yes" ]; then
-    pip install numpy==1.14.5 pyarrow==0.11.1 six twine pytest-cov coveralls pandas
+    pip install numpy==1.14.5 pyarrow==0.12.0 six twine pytest-cov coveralls pandas
   fi
+
 
 before_script: |
   if [ "$TRAVIS_OS_NAME" == "linux" ]; then
