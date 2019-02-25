@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+
+ENV ACCEPT_EULA=Y SA_PASSWORD=StrongPassword1
+
+RUN /opt/mssql/bin/sqlservr & /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db'

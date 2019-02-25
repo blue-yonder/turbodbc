@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:11
+    environment:
+      - POSTGRES_PASSWORD=pg_pwd!
+      - POSTGRES_DB=test_db
+    ports:
+     - "5432"
+
+  mssql:
+    build:
+      context: .
+      dockerfile: Dockerfile-mssql
+    ports:
+      - "1433"
+
+  mysql:
+      image: mysql:latest
+      environment:
+        - MYSQL_ROOT_PASSWORD=MysqlPassword
+        - MYSQL_DATABASE=test_db
+      ports:
+        - "3306"
+
+  turbodbc:
+    build:
+      context: .
+      dockerfile: Dockerfile-turbodbc
+    environment:
+       - ODBCSYSINI=/turbodbc/contrib/docker
+       - PYTHONPATH=/turbodbc/build_docker
+       # some drivers (mysql) only work correctly using suitable locales:
+       - LC_ALL=C.UTF-8
+       # set environment variables as if 'source /venv/bin/activate' had run:
+       - VIRTUAL_ENV=/venv
+       - PATH=/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+       # configure turbodbc tests to run against all of the above databases;
+       # adapt manually if needed:
+       - TURBODBC_TEST_CONFIGURATION_FILES=query_fixtures_mysql.json,query_fixtures_postgres.json,query_fixtures_mssql.json
+    volumes:
+       # bind-mount the repository root at /turbodbc
+       - ../..:/turbodbc

@@ -1,0 +1,23 @@
+FROM debian:stretch-slim
+
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y unixodbc unixodbc-dev libboost-all-dev python-virtualenv cmake g++ wget odbc-postgresql && \
+    apt-get clean
+
+# install the mysql odbc driver:
+RUN wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
+    echo 7e2102246b5342f4e8e0230c2bc86589  mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz | md5sum -c && \
+    tar xzf mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
+    cp mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit/lib/libmyodbc8w.so /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so && \
+    rm -rf mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit*
+
+# install the mssql odbc driver:
+RUN wget https://packages.microsoft.com/debian/9/prod/pool/main/m/msodbcsql17/msodbcsql17_17.2.0.1-1_amd64.deb && \
+    echo ab73def14f99d72bcc50d6c70ee5aa71  msodbcsql17_17.2.0.1-1_amd64.deb | md5sum -c && \
+    ACCEPT_EULA=Y dpkg -i msodbcsql17_17.2.0.1-1_amd64.deb && \
+    rm msodbcsql17_17.2.0.1-1_amd64.deb
+
+
+# create a python virtualenv at /venv that contains the necessary build and test packages:
+RUN virtualenv --python=python3.5 /venv && \
+    /venv/bin/pip install numpy==1.16.1 pandas==0.24.1 pytest mock pytest-cov

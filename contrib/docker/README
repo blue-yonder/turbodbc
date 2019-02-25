@@ -1,0 +1,18 @@
+This directory contains docker-compose based configuration to build and test turbodbc on Debian 9
+
+docker-compose.yml defines four services:
+ * 'turbodbc' for building from source and running tests in a debian 9-based image
+ * 3 database services: 'mssql', 'mysql', and 'postgres', suitable for use in integration tests
+
+You can start the containers as you need them, e.g.:
+
+1. spin up the required database services, e.g. "docker-compose up postgres"
+2. start an interactive shell in the turbodbc container: "docker-compose run turbodbc"
+3. in the "turbodbc" container, run the "/turbodbc/contrib/docker/build_and_test.sh" script.
+   Note that you might want to adapt the TURBODBC_TEST_CONFIGURATION_FILES environment variable
+   to only use the database services you started in 1.
+
+Hints:
+ - use "docker-compose rm" to remove containers to force a predictable database state; otherwise tests may fail
+   because of "left-overs" from previous test runs (although such issues should also be fixed in the test code,
+   by proper test cleanup)
