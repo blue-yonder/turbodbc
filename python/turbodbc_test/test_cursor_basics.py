@@ -89,7 +89,7 @@ def test_setoutputsize_does_not_raise(dsn, configuration):
 @for_one_database
 def test_rowcount_is_reset_after_execute_raises(dsn, configuration):
     with open_cursor(configuration) as cursor:
-        with query_fixture(cursor, configuration, 'INSERT INTEGER') as table_name:
+        with query_fixture(cursor, configuration, 'INSERT INTEGER', ignore_drop_errors=True) as table_name:
             cursor.execute("INSERT INTO {} VALUES (?)".format(table_name), [42])
             assert cursor.rowcount == 1
             with pytest.raises(Error):
@@ -100,7 +100,7 @@ def test_rowcount_is_reset_after_execute_raises(dsn, configuration):
 @for_one_database
 def test_rowcount_is_reset_after_executemany_raises(dsn, configuration):
     with open_cursor(configuration) as cursor:
-        with query_fixture(cursor, configuration, 'INSERT INTEGER') as table_name:
+        with query_fixture(cursor, configuration, 'INSERT INTEGER', ignore_drop_errors=True) as table_name:
             cursor.execute("INSERT INTO {} VALUES (?)".format(table_name), [42])
             assert cursor.rowcount == 1
             with pytest.raises(Error):
@@ -111,7 +111,7 @@ def test_rowcount_is_reset_after_executemany_raises(dsn, configuration):
 @for_one_database
 def test_rowcount_is_reset_after_executemanycolumns_raises(dsn, configuration):
     with open_cursor(configuration) as cursor:
-        with query_fixture(cursor, configuration, 'INSERT INTEGER') as table_name:
+        with query_fixture(cursor, configuration, 'INSERT INTEGER', ignore_drop_errors=True) as table_name:
             cursor.execute("INSERT INTO {} VALUES (?)".format(table_name), [42])
             assert cursor.rowcount == 1
             with pytest.raises(Error):

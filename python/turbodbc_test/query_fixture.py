@@ -7,7 +7,7 @@ def unique_table_name():
     return 'test_{}'.format(random.randint(0, 1000000000))
 
 @contextmanager
-def query_fixture(cursor, configuration, fixture_key):
+def query_fixture(cursor, configuration, fixture_key, ignore_drop_errors=False):
     """
     Context manager used to set up fixtures for setting up queries.
     :param cursor: This cursor is used to execute queries
@@ -20,7 +20,9 @@ def query_fixture(cursor, configuration, fixture_key):
     * If present, execute all queries listed in the fixture's "setup" section
     * If present, return the query listed in the fixture's "payload" section;
       else return the name of a temporary table
-    * Clean up any tables or views created
+    * Clean up any tables or views created. If ignore_drop_errors is set, ignore
+      exceptions during cleanup. This can be sueful if the tests make the cursor
+      unusable for the cleanup statements.
     
     The fixtures dictionary should have the following format:
     
@@ -97,4 +99,8 @@ def query_fixture(cursor, configuration, fixture_key):
         else:
             yield table_name
     finally:
-        drop_objects()
+        try:
+            drop_objects()
+        except Exception:
+            if not ignore_drop_errors:
+                raise
