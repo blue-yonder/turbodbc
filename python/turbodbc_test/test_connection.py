@@ -39,14 +39,36 @@ def test_closing_connection_closes_all_cursors(dsn, configuration):
 
 @for_one_database
 def test_no_autocommit(dsn, configuration):
+    # Some database have transactional semantics also for DDL statement
+    # (i.e. creating / deleting tables only takes effect after "commit").
+    # However, other databases (most notably mysql) always create / delete tables,
+    # even without a "commit". Therefore, this test is somewhat
+    # more complex to work with both types of databases.
     connection = connect(dsn, **get_credentials(configuration))
 
-    connection.cursor().execute('CREATE TABLE test_no_autocommit (a INTEGER)')
+    table_name = unique_table_name()
+    
+    cursor = connection.cursor()
+    cursor.execute('CREATE TABLE {} (a INTEGER)'.format(table_name))
+    cursor.execute('INSERT INTO {} VALUES (42)'.format(table_name))
+    cursor.close()
     connection.close()
 
     connection = connect(dsn, **get_credentials(configuration))
-    with pytest.raises(DatabaseError):
-        connection.cursor().execute('SELECT * FROM test_no_autocommit')
+    
+    db_error = False
+    result = [23]
+    try:
+        result = connection.cursor().execute('SELECT * FROM {}'.format(table_name)).fetchall()
+    except DatabaseError:
+        # databases with transactional DDL semantics enter here, because
+        # they do not find {table_name}.
+        db_error = True
+
+    assert db_error or result == []
+    if not db_error:
+        connection.cursor().execute('DROP TABLE {}'.format(table_name))
+        # no commit necessary ;-)
 
 
 @for_one_database
@@ -64,6 +86,7 @@ def test_commit(dsn, configuration):
     connection = connect(dsn, **get_credentials(configuration))
 
     connection.cursor().execute('CREATE TABLE {} (a INTEGER)'.format(table_name))
+    connection.cursor().execute('INSERT INTO {} VALUES (37)'.format(table_name))
     connection.commit()
 
     connection.close()
@@ -72,7 +95,7 @@ def test_commit(dsn, configuration):
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM {}'.format(table_name))
     results = cursor.fetchall()
-    assert results == []
+    assert results == [[37]]
     
     cursor.execute('DROP TABLE {}'.format(table_name))
     connection.commit()
@@ -89,14 +112,27 @@ def test_rollback_on_closed_connection_raises(dsn, configuration):
 
 @for_one_database
 def test_rollback(dsn, configuration):
+    # see comments in test_no_autocommit 
     table_name = unique_table_name()
     connection = connect(dsn, **get_credentials(configuration))
 
-    connection.cursor().execute('CREATE TABLE {} (a INTEGER)'.format(table_name))
+    cursor = connection.cursor()
+    cursor.execute('CREATE TABLE {} (a INTEGER)'.format(table_name))
+    cursor.execute('INSERT INTO {} VALUES (28)'.format(table_name))
     connection.rollback()
 
-    with pytest.raises(DatabaseError):
-        connection.cursor().execute('SELECT * FROM {}'.format(table_name))
+    db_error = False
+    result = [23]
+    try:
+        result = connection.cursor().execute('SELECT * FROM {}'.format(table_name)).fetchall()
+    except DatabaseError:
+        # databases with transactional DDL semantics enter here, because
+        # they do not find {table_name}.
+        db_error = True
+    assert db_error or result == []
+    if not db_error:
+        connection.cursor().execute('DROP TABLE {}'.format(table_name))
+        # no commit necessary ;-)
 
 
 @for_one_database
