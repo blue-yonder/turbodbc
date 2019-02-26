@@ -29,7 +29,6 @@ void python_parameter_set::flush()
 
 void python_parameter_set::add_parameter_set(pybind11::iterable const & parameter_set)
 {
-	pybind11::iterable iterable(parameter_set);
 	check_parameter_set(parameter_set);
 
 	if (current_parameter_set_ == parameters_.buffered_sets()) {
