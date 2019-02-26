@@ -34,7 +34,9 @@ namespace {
     {
         switch (info.type) {
             case type_code::boolean:
-                return cast(*reinterpret_cast<bool const *>(data_pointer));
+                // odbc returns boolean values in a single byte, so make sure to convert
+                // exactly one byte to bool:
+                return cast(static_cast<bool>(*data_pointer));
             case type_code::integer:
                 return cast(*reinterpret_cast<int64_t const *>(data_pointer));
             case type_code::floating_point:
