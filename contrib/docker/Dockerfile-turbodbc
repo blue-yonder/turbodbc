@@ -5,18 +5,26 @@ RUN apt-get update && apt-get upgrade -y && \
                        odbc-postgresql ninja-build gnupg apt-transport-https && \
     apt-get clean
 
-# install the mysql odbc driver:
-RUN wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
+# install the mysql odbc driver in /opt
+RUN cd /opt && \
+    wget -q https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
     tar xzf mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
-    /mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit/bin/myodbc-installer -d -a -n MySQL -t DRIVER=`ls /mysql-*/lib/libmyodbc*w.so`
+    /opt/mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit/bin/myodbc-installer -d -a -n MySQL -t DRIVER=`ls /opt/mysql-*/lib/libmyodbc*w.so` && \
+    rm /opt/*.tar.gz
 
 # install the mssql odbc driver:
-RUN wget https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - && \
-    wget https://packages.microsoft.com/config/debian/9/prod.list -O- > /etc/apt/sources.list.d/mssql-release.list && \
+RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - && \
+    wget -q https://packages.microsoft.com/config/debian/9/prod.list -O- > /etc/apt/sources.list.d/mssql-release.list && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install msodbcsql17 && \
     odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
 
+# install the exasol odbc driver:
+RUN cd /opt && \
+    wget -q https://www.exasol.com/support/secure/attachment/74441/EXASOL_ODBC-6.0.14.tar.gz && \
+    tar xzf EXASOL_ODBC-6.0.14.tar.gz && \
+    echo "\n[EXASOL]\nDriver=`ls /opt/EXA*/lib/linux/x86_64/libexaodbc-uo2214lv1.so`\nThreading=2\n" >> /etc/odbcinst.ini && \
+    rm /opt/*.tar.gz
 
 # create a python virtualenv at /venv that contains the necessary build and test packages:
 RUN virtualenv --python=python3.5 /venv && \
