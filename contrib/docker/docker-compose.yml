@@ -29,16 +29,10 @@ services:
       context: .
       dockerfile: Dockerfile-turbodbc
     environment:
-       - ODBCSYSINI=/turbodbc/contrib/docker
+       - ODBCINI=/turbodbc/contrib/docker/odbc.ini
        - PYTHONPATH=/turbodbc/build_docker
-       # some drivers (mysql) only work correctly using suitable locales:
-       - LC_ALL=C.UTF-8
-       # set environment variables as if 'source /venv/bin/activate' had run:
-       - VIRTUAL_ENV=/venv
-       - PATH=/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
        # configure turbodbc tests to run against all of the above databases;
        # adapt manually if needed:
        - TURBODBC_TEST_CONFIGURATION_FILES=query_fixtures_mysql.json,query_fixtures_postgres.json,query_fixtures_mssql.json
     volumes:
-       # bind-mount the repository root at /turbodbc
        - ../..:/turbodbc

@@ -1,23 +1,28 @@
 FROM debian:stretch-slim
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y unixodbc unixodbc-dev libboost-all-dev python-virtualenv cmake g++ wget odbc-postgresql && \
+    apt-get install -y unixodbc unixodbc-dev libboost-all-dev python-virtualenv cmake g++ wget \
+                       odbc-postgresql ninja-build gnupg apt-transport-https && \
     apt-get clean
 
 # install the mysql odbc driver:
 RUN wget https://dev.mysql.com/get/Downloads/Connector-ODBC/8.0/mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
-    echo 7e2102246b5342f4e8e0230c2bc86589  mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz | md5sum -c && \
     tar xzf mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit.tar.gz && \
-    cp mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit/lib/libmyodbc8w.so /usr/lib/x86_64-linux-gnu/odbc/libmyodbc.so && \
-    rm -rf mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit*
+    /mysql-connector-odbc-8.0.15-linux-debian9-x86-64bit/bin/myodbc-installer -d -a -n MySQL -t DRIVER=`ls /mysql-*/lib/libmyodbc*w.so`
 
 # install the mssql odbc driver:
-RUN wget https://packages.microsoft.com/debian/9/prod/pool/main/m/msodbcsql17/msodbcsql17_17.2.0.1-1_amd64.deb && \
-    echo ab73def14f99d72bcc50d6c70ee5aa71  msodbcsql17_17.2.0.1-1_amd64.deb | md5sum -c && \
-    ACCEPT_EULA=Y dpkg -i msodbcsql17_17.2.0.1-1_amd64.deb && \
-    rm msodbcsql17_17.2.0.1-1_amd64.deb
+RUN wget https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add - && \
+    wget https://packages.microsoft.com/config/debian/9/prod.list -O- > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install msodbcsql17 && \
+    odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
 
 
 # create a python virtualenv at /venv that contains the necessary build and test packages:
 RUN virtualenv --python=python3.5 /venv && \
     /venv/bin/pip install numpy==1.16.1 pandas==0.24.1 pytest mock pytest-cov
+
+
+# set locale to utf-8, which is required for some odbc drivers (mysql);
+# also, set environment as set after 'source /venv/bin/activate'
+ENV LC_ALL=C.UTF-8 VIRTUAL_ENV=/venv PATH=/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
