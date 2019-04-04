@@ -307,7 +307,7 @@ class Cursor(object):
             first_run = False
             yield result_batch
 
-    def fetcharrowbatches(self, strings_as_dictionary=False, adaptive_integers=False):
+    def fetcharrowbatches(self, strings_as_dictionary=False, adaptive_integers=False, truncate_timestamps=False):
         """
         Fetches rows in the active result set generated with ``execute()`` or
         ``executemany()`` as an iterable of arrow tables.
@@ -320,6 +320,8 @@ class Cursor(object):
                 smallest possible integer type in which all values can be
                 stored. Be aware that here the type depends on the resulting
                 data.
+        :param truncate_timestamps: If true, instead of throwing if a timestamp is not between
+                the valid years 1400 and 9999, a truncated value will be returned.
 
         :return: generator of ``pyarrow.Table``
         """
@@ -329,7 +331,8 @@ class Cursor(object):
             rs = make_arrow_result_set(
                 self.impl.get_result_set(),
                 strings_as_dictionary,
-                adaptive_integers)
+                adaptive_integers,
+                truncate_timestamps)
             first_run = True
             while True:
                 table = rs.fetch_next_batch()
@@ -341,7 +344,7 @@ class Cursor(object):
         else:
             raise Error(_NO_ARROW_SUPPORT_MSG)
 
-    def fetchallarrow(self, strings_as_dictionary=False, adaptive_integers=False):
+    def fetchallarrow(self, strings_as_dictionary=False, adaptive_integers=False, truncate_timestamps=False):
         """
         Fetches all rows in the active result set generated with ``execute()`` or
         ``executemany()``.
@@ -355,6 +358,9 @@ class Cursor(object):
                 stored. Be aware that here the type depends on the resulting
                 data.
 
+        :param truncate_timestamps: If true, instead of throwing if a timestamp is not between
+                the valid years 1400 and 9999, a truncated value will be returned.
+
         :return: ``pyarrow.Table``
         """
         self._assert_valid_result_set()
@@ -363,7 +369,8 @@ class Cursor(object):
             return make_arrow_result_set(
                     self.impl.get_result_set(),
                     strings_as_dictionary,
-                    adaptive_integers).fetch_all()
+                    adaptive_integers,
+                    truncate_timestamps).fetch_all()
         else:
             raise Error(_NO_ARROW_SUPPORT_MSG)
 

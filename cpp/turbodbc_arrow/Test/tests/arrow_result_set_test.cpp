@@ -29,6 +29,7 @@ namespace {
 
     bool const strings_as_strings = false;
     bool const strings_as_dictionaries = true;
+    bool const truncate_timestamps = true;
 
     bool const plain_integers = false;
     bool const compressed_integers = true;
@@ -129,7 +130,7 @@ class ArrowResultSetTest : public ::testing::Test {
             auto schema = std::make_shared<arrow::Schema>(expected_fields);
             std::shared_ptr<arrow::Table> expected_table = arrow::Table::Make(schema, expected_arrays);
 
-            turbodbc_arrow::arrow_result_set ars(rs, strings_as_dictionary, adaptive_integers);
+            turbodbc_arrow::arrow_result_set ars(rs, strings_as_dictionary, adaptive_integers, truncate_timestamps);
             std::shared_ptr<arrow::Table> table;
             ASSERT_OK(ars.fetch_all_native(&table, false));
             ASSERT_TRUE(expected_table->Equals(*table));
@@ -151,7 +152,7 @@ TEST_F(ArrowResultSetTest, SimpleSchemaConversion)
         "int_column", turbodbc::type_code::integer, size_unimportant, true}};
     EXPECT_CALL(rs, do_get_column_info()).WillRepeatedly(testing::Return(expected));
 
-    turbodbc_arrow::arrow_result_set ars(rs, strings_as_strings, plain_integers);
+    turbodbc_arrow::arrow_result_set ars(rs, strings_as_strings, plain_integers, truncate_timestamps);
     auto schema = ars.schema();
     ASSERT_EQ(schema->num_fields(), 1);
     auto field = schema->field(0);
@@ -191,7 +192,7 @@ TEST_F(ArrowResultSetTest, AllTypesSchemaConversion)
         std::make_shared<arrow::Field>("nonnull_int_column", arrow::int64(), false)
     };
 
-    turbodbc_arrow::arrow_result_set ars(rs, strings_as_strings, plain_integers);
+    turbodbc_arrow::arrow_result_set ars(rs, strings_as_strings, plain_integers, truncate_timestamps);
     auto schema = ars.schema();
 
     ASSERT_EQ(schema->num_fields(), 12);
@@ -225,7 +226,7 @@ TEST_F(ArrowResultSetTest, SingleBatchSingleColumnResultSetConversion)
     EXPECT_CALL(rs, do_get_buffers()).WillOnce(testing::Return(expected_buffers));
     EXPECT_CALL(rs, do_fetch_next_batch()).WillOnce(testing::Return(OUTPUT_SIZE)).WillOnce(testing::Return(0));
 
-    turbodbc_arrow::arrow_result_set ars(rs, strings_as_strings, plain_integers);
+    turbodbc_arrow::arrow_result_set ars(rs, strings_as_strings, plain_integers, truncate_timestamps);
     std::shared_ptr<arrow::Table> table;
     ASSERT_OK(ars.fetch_all_native(&table, false));
     ASSERT_TRUE(expected_table->Equals(*table));

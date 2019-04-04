@@ -10,6 +10,15 @@ namespace turbodbc {
  */
 int64_t timestamp_to_microseconds(char const * data_pointer);
 
+
+/**
+ * @brief Convert an SQL_TIMESTAMP_STRUCT stored at data_pointer to an
+ *        integer describing the elapsed microseconds since the POSIX epoch
+ *        and truncated to arrow valid range (year 1400 to 9999)
+ */
+int64_t timestamp_to_microseconds_truncated(char const * data_pointer);
+
+
 /**
  * @brief Convert the number of microseconds since the POSIX epoch
  *        to a timestamp and store it in an SQL_TIMESTAMP_STRUCT located
