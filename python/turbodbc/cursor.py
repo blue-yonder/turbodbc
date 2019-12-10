@@ -66,11 +66,13 @@ class Cursor(object):
     This class allows you to send SQL commands and queries to a database and retrieve
     associated result sets.
     """
-    def __init__(self, impl):
+    def __init__(self, impl, as_dict=False):
         self.impl = impl
         self.result_set = None
         self.rowcount = -1
         self.arraysize = 1
+        self._column_names = None
+        self._as_dict = True if as_dict is True else False
 
     def __iter__(self):
         return self
@@ -109,6 +111,7 @@ class Cursor(object):
             return None
 
     def _execute(self):
+        self._column_names = None
         self.impl.execute()
         self.rowcount = self.impl.get_row_count()
         cpp_result_set = self.impl.get_result_set()
@@ -228,6 +231,21 @@ class Cursor(object):
 
         return self._execute()
 
+
+    def _to_dict(self, result):
+        if not self.result_set or len(result) == 0:
+            return dict()
+
+        if self._column_names is None:
+            info = self.result_set.get_column_info()
+            self._column_names [c.name for c in info]
+
+        data = dict()
+        for i in range(len(self._column_names)):
+            data[self._column_names[i]] = result[i]
+        return data
+
+
     @translate_exceptions
     def fetchone(self):
         """
@@ -238,6 +256,8 @@ class Cursor(object):
         """
         self._assert_valid_result_set()
         result = self.result_set.fetch_row()
+        if self._as_dict:
+            return self._to_dict(result)
         if len(result) == 0:
             return None
         else:

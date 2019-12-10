@@ -14,16 +14,25 @@ class Connection(object):
     def __init__(self, impl):
         self.impl = impl
         self.cursors = WeakSet([])
+        self._as_dict = False
+
+    @property
+    def as_dict(self):
+        return self._as_dict
+
+    @as_dict.setter
+    def as_dict(self, value):
+        self._as_dict = True if value is True else False
 
     @translate_exceptions
-    def cursor(self):
+    def cursor(self, as_dict=None):
         """
         Create a new ``Cursor`` instance associated with this ``Connection``
 
         :return: A new ``Cursor`` instance
         """
         self._assert_valid()
-        c = Cursor(self.impl.cursor())
+        c = Cursor(self.impl.cursor(), as_dict=self.as_dict if as_dict is None else as_dict)
         self.cursors.add(c)
         return c
 
