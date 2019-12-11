@@ -66,13 +66,13 @@ class Cursor(object):
     This class allows you to send SQL commands and queries to a database and retrieve
     associated result sets.
     """
-    def __init__(self, impl, as_dict=False):
+    def __init__(self, impl):
         self.impl = impl
         self.result_set = None
         self.rowcount = -1
         self.arraysize = 1
         self._column_names = None
-        self._as_dict = True if as_dict is True else False
+        self._as_dict = False
 
     def __iter__(self):
         return self
@@ -93,6 +93,14 @@ class Cursor(object):
     def _assert_valid_result_set(self):
         if self.result_set is None:
             raise InterfaceError("No active result set")
+
+    @property
+    def as_dict(self):
+        return self._as_dict
+
+    @as_dict.setter
+    def as_dict(self, value):
+        self._as_dict = True if value is True else False
 
     @property
     def description(self):

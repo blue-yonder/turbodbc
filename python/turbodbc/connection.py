@@ -32,7 +32,8 @@ class Connection(object):
         :return: A new ``Cursor`` instance
         """
         self._assert_valid()
-        c = Cursor(self.impl.cursor(), as_dict=self.as_dict if as_dict is None else as_dict)
+        c = Cursor(self.impl.cursor())
+        c.as_dict = self._as_dict
         self.cursors.add(c)
         return c
 
