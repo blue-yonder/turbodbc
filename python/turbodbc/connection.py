@@ -25,7 +25,7 @@ class Connection(object):
         self._as_dict = True if value is True else False
 
     @translate_exceptions
-    def cursor(self, as_dict=None):
+    def cursor(self):
         """
         Create a new ``Cursor`` instance associated with this ``Connection``
 
