@@ -246,7 +246,7 @@ class Cursor(object):
 
         if self._column_names is None:
             info = self.result_set.get_column_info()
-            self._column_names [c.name for c in info]
+            self._column_names = [c.name for c in info]
 
         data = dict()
         for i in range(len(self._column_names)):
