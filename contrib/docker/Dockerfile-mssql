@@ -1,9 +1,0 @@
-FROM mcr.microsoft.com/mssql/server:2017-latest-ubuntu
-
-ENV ACCEPT_EULA=Y SA_PASSWORD=StrongPassword1
-
-# the while loop below waits until the server starts istening
-# (starting the server takes about 3-6s and not waiting may lead to a timeout)
-RUN /opt/mssql/bin/sqlservr & \
- while [ `cat /proc/net/tcp | wc -l` -lt 2 ]; do sleep 0.1; done && \
- /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db'

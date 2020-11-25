@@ -10,9 +10,10 @@ services:
      - "5432"
 
   mssql:
-    build:
-      context: .
-      dockerfile: Dockerfile-mssql
+    image: mcr.microsoft.com/mssql/server:2019-CU8-ubuntu-16.04
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=StrongPassword1
     ports:
       - "1433"
 
@@ -27,12 +28,9 @@ services:
   turbodbc:
     build:
       context: .
-      dockerfile: Dockerfile-turbodbc
     environment:
        - ODBCINI=/turbodbc/contrib/docker/odbc.ini
        - PYTHONPATH=/turbodbc/build_docker
-       # configure turbodbc tests to run against all of the above databases;
-       # adapt manually if needed:
-       - TURBODBC_TEST_CONFIGURATION_FILES=query_fixtures_mysql.json,query_fixtures_postgres.json,query_fixtures_mssql.json
+       - TURBODBC_TEST_CONFIGURATION_FILES
     volumes:
        - ../..:/turbodbc

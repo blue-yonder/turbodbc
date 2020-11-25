@@ -1,7 +1,7 @@
-FROM debian:stretch-slim
+FROM debian:buster-slim
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y unixodbc unixodbc-dev libboost-all-dev python-virtualenv cmake g++ wget \
+    apt-get install -y unixodbc unixodbc-dev libboost-all-dev python3.7-dev python3.7-venv cmake g++ wget \
                        odbc-postgresql ninja-build gnupg apt-transport-https && \
     apt-get clean
 
@@ -27,8 +27,8 @@ RUN cd /opt && \
     rm /opt/*.tar.gz
 
 # create a python virtualenv at /venv that contains the necessary build and test packages:
-RUN virtualenv --python=python3.5 /venv && \
-    /venv/bin/pip install numpy==1.16.1 pandas==0.24.1 pytest mock pytest-cov
+RUN python3.7 -m venv /venv && \
+    /venv/bin/pip install numpy==1.19.4 pandas==1.1.4 'pyarrow<2' pytest mock pytest-cov
 
 
 # set locale to utf-8, which is required for some odbc drivers (mysql);
