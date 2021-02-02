@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(turbodbc_intern CXX)
 
+if(POLICY CMP0042)
+  cmake_policy(SET CMP0042 NEW)
+endif()
+if(POLICY CMP0068)
+  cmake_policy(SET CMP0068 NEW)
+endif()
+
 # Take precedence over system modules
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake_scripts)
 

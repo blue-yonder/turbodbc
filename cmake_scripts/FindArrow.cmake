@@ -18,7 +18,6 @@
 # - Find ARROW (arrow/api.h, libarrow.a, libarrow.so)
 # This module defines
 #  ARROW_INCLUDE_DIR, directory containing headers
-#  ARROW_LIBS, directory containing arrow libraries
 #  ARROW_STATIC_LIB, path to libarrow.a
 #  ARROW_SHARED_LIB, path to libarrow's shared library
 #  ARROW_FOUND, whether arrow has been found
@@ -59,6 +58,16 @@ if (NOT ARROW_HOME)
     set(ARROW_SEARCH_HEADER_PATHS ${ARROW_INCLUDE_DIR})
     message(STATUS "Found candidate Arrow location: ${ARROW_SEARCH_LIB_PATH}")
   endif()
+
+  if (MSVC)
+    set(ARROW_SHARED_LIB ${ARROW_LIBS}/${ARROW_LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(ARROW_PYTHON_SHARED_LIB ${ARROW_LIBS}/${ARROW_PYTHON_LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(ARROW_SHARED_IMP_LIB ${ARROW_LIBS}/${ARROW_LIB_NAME}.lib)
+    set(ARROW_PYTHON_SHARED_IMP_LIB ${ARROW_LIBS}/${ARROW_PYTHON_LIB_NAME}.lib)
+  else()
+    set(ARROW_SHARED_LIB ${ARROW_LIBS}/libarrow${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(ARROW_PYTHON_SHARED_LIB ${ARROW_LIBS}/libarrow_python${CMAKE_SHARED_LIBRARY_SUFFIX})
+  endif()
 else()
   set(ARROW_SEARCH_HEADER_PATHS
     ${ARROW_HOME}/include
@@ -79,14 +88,26 @@ if (MSVC)
   SET(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
 endif()
 
-find_library(ARROW_LIB_PATH NAMES arrow
+# Needs to be updated once we support a new Arrow version.
+# Otherwise we won't be able to find the libraries in the wheel.
+# TODO: It would be better if we could teach CMake to look for them automatically.
+set(_Arrow_KNOWN_VERSIONS "15" "16" "100")
+set(_Arrow_LIBARROW_NAMES)
+set(_Arrow_LIBARROW_PYTHON_NAMES)
+foreach(version ${_Arrow_KNOWN_VERSIONS})
+  list(APPEND _Arrow_LIBARROW_NAMES "arrow.${version}" "libarrow.so.${version}")
+  list(APPEND _Arrow_LIBARROW_PYTHON_NAMES "arrow_python.${version}" "libarrow_python.so.${version}")
+endforeach()
+
+
+find_library(ARROW_SHARED_LIB NAMES arrow ${_Arrow_LIBARROW_NAMES}
   PATHS
   ${ARROW_SEARCH_LIB_PATH}
   NO_DEFAULT_PATH)
 message(STATUS "Found ${ARROW_LIB_PATH} in ${ARROW_SEARCH_LIB_PATH}")
-get_filename_component(ARROW_LIBS ${ARROW_LIB_PATH} DIRECTORY)
+get_filename_component(ARROW_LIBS ${ARROW_SHARED_LIB} DIRECTORY)
 
-find_library(ARROW_PYTHON_LIB_PATH NAMES arrow_python
+find_library(ARROW_PYTHON_SHARED_LIB NAMES ${_Arrow_LIBARROW_PYTHON_NAMES}
   PATHS
   ${ARROW_SEARCH_LIB_PATH}
   NO_DEFAULT_PATH)
@@ -96,21 +117,6 @@ if (ARROW_INCLUDE_DIR AND ARROW_LIBS)
 
   set(ARROW_LIB_NAME arrow)
   set(ARROW_PYTHON_LIB_NAME arrow_python)
-
-  if (MSVC)
-    set(ARROW_STATIC_LIB ${ARROW_LIBS}/${ARROW_LIB_NAME}${ARROW_MSVC_STATIC_LIB_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(ARROW_PYTHON_STATIC_LIB ${ARROW_PYTHON_LIBS}/${ARROW_PYTHON_LIB_NAME}${ARROW_MSVC_STATIC_LIB_SUFFIX}${CMAKE_STATIC_LIBRARY_SUFFIX})
-    set(ARROW_SHARED_LIB ${ARROW_LIBS}/${ARROW_LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(ARROW_PYTHON_SHARED_LIB ${ARROW_LIBS}/${ARROW_PYTHON_LIB_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(ARROW_SHARED_IMP_LIB ${ARROW_LIBS}/${ARROW_LIB_NAME}.lib)
-    set(ARROW_PYTHON_SHARED_IMP_LIB ${ARROW_LIBS}/${ARROW_PYTHON_LIB_NAME}.lib)
-  else()
-    set(ARROW_STATIC_LIB ${ARROW_PYTHON_LIB_PATH}/libarrow.a)
-    set(ARROW_PYTHON_STATIC_LIB ${ARROW_PYTHON_LIB_PATH}/libarrow_python.a)
-
-    set(ARROW_SHARED_LIB ${ARROW_LIBS}/libarrow${CMAKE_SHARED_LIBRARY_SUFFIX})
-    set(ARROW_PYTHON_SHARED_LIB ${ARROW_LIBS}/libarrow_python${CMAKE_SHARED_LIBRARY_SUFFIX})
-  endif()
 endif()
 
 if (ARROW_FOUND)
@@ -134,10 +140,6 @@ endif ()
 
 mark_as_advanced(
   ARROW_INCLUDE_DIR
-  ARROW_STATIC_LIB
   ARROW_SHARED_LIB
-  ARROW_PYTHON_STATIC_LIB
   ARROW_PYTHON_SHARED_LIB
-  ARROW_JEMALLOC_STATIC_LIB
-  ARROW_JEMALLOC_SHARED_LIB
 )

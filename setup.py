@@ -176,6 +176,12 @@ def get_extension_modules():
     """
     if _has_arrow_headers():
         import pyarrow
+
+        pyarrow_version = pyarrow.__version__.split(".")
+        pyarrow_major = int(pyarrow_version[0])
+        pyarrow_minor = int(pyarrow_version[1])
+        pyarrow_soversion = str(pyarrow_major * 100 + pyarrow_minor)
+
         pyarrow_location = os.path.dirname(pyarrow.__file__)
         # For now, assume that we build against bundled pyarrow releases.
         pyarrow_include_dir = os.path.join(pyarrow_location, 'include')
@@ -183,15 +189,18 @@ def get_extension_modules():
         pyarrow_module_link_args = list(python_module_link_args)
         if sys.platform == "win32":
             turbodbc_arrow_sources = turbodbc_sources + turbodbc_arrow_sources
+            libraries = ['arrow', 'arrow_python']
         elif sys.platform == "darwin":
             pyarrow_module_link_args.append('-Wl,-rpath,@loader_path/pyarrow')
+            libraries = [f'arrow.{pyarrow_soversion}', f'arrow_python.{pyarrow_soversion}']
         else:
             pyarrow_module_link_args.append("-Wl,-rpath,$ORIGIN/pyarrow")
+            libraries = [f':libarrow.so.{pyarrow_soversion}', f':libarrow_python.so.{pyarrow_soversion}']
         turbodbc_arrow = Extension('turbodbc_arrow_support',
                                    sources=turbodbc_arrow_sources,
                                    include_dirs=include_dirs + [pyarrow_include_dir],
                                    extra_compile_args=extra_compile_args + hidden_visibility_args,
-                                   libraries=[odbclib, 'arrow', 'arrow_python'] + turbodbc_libs,
+                                   libraries=[odbclib] + libraries + turbodbc_libs,
                                    extra_link_args=pyarrow_module_link_args,
                                    library_dirs=library_dirs + [pyarrow_location])
         extension_modules.append(turbodbc_arrow)

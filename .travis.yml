@@ -22,6 +22,14 @@ jobs:
     - ODBC_DIR=odbc
     - TURBODBC_ARROW_VERSION=0.16.0
   - os: linux
+    name: CPython3.6 Arrow 1.0.1
+    language: python
+    python: "3.6"
+    env:
+    - TURBODBC_TEST_CONFIGURATION_FILES="query_fixtures_postgresql.json,query_fixtures_mysql.json"
+    - ODBC_DIR=odbc
+    - TURBODBC_ARROW_VERSION=1.0.1
+  - os: linux
     name: CPython3.7 Arrow 0.16.0
     dist: xenial
     language: python
