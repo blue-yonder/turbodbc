@@ -17,12 +17,11 @@ environment:
     - PYTHON: C:\Python36-x64
       PYTHON_VERSION: 3.6
 
-    # second group
-    - PYTHON: C:\Python35-x64
-      PYTHON_VERSION: 3.5
-
     - PYTHON: C:\Python37-x64
       PYTHON_VERSION: 3.7
+
+    - PYTHON: C:\Python38-x64
+      PYTHON_VERSION: 3.8
 
 services:
   - mysql
@@ -79,7 +78,7 @@ test_script:
 
 after_test:
   - cmake --build . --config Release --target install
-  - pip install wheel pybind11==2.2.0
+  - pip install wheel pybind11==2.5.0
   - cd dist
   - python setup.py bdist_wheel
   - cd dist
