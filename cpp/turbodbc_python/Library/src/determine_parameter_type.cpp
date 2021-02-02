@@ -26,6 +26,12 @@ namespace {
         destination.indicator = sizeof(int64_t);
     }
 
+    void set_bool(pybind11::handle const & value, cpp_odbc::writable_buffer_element & destination)
+    {
+        *reinterpret_cast<uint8_t *>(destination.data_pointer) = static_cast<uint8_t>(value.cast<bool>());
+        destination.indicator = sizeof(uint8_t);
+    }
+
     void set_floating_point(pybind11::handle const & value, cpp_odbc::writable_buffer_element & destination)
     {
         *reinterpret_cast<double *>(destination.data_pointer) = value.cast<double>();
@@ -82,6 +88,12 @@ namespace {
 
 python_parameter_info determine_parameter_type(pybind11::handle const & value, type_code initial_type)
 {
+    // Note: order of checks below matters, because, e.g. python booleans are convertable to int64
+    auto ptr = value.ptr();
+
+    if (PyBool_Check(ptr)){
+        return {set_bool, type_code::boolean, size_not_important};
+    }
     {
         auto caster = pybind11::detail::make_caster<int64_t>();
         if (caster.load(value, true)) {
@@ -108,7 +120,6 @@ python_parameter_info determine_parameter_type(pybind11::handle const & value, t
         }
     }
 
-    auto ptr = value.ptr();
     if (PyDateTime_Check(ptr)) {
         return {set_timestamp, type_code::timestamp, size_not_important};
     }
