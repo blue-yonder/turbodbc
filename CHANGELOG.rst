@@ -6,7 +6,7 @@ From version 2.0.0, turbodbc adapts semantic versioning.
 Version 4.1.2
 -------------
 
-* Update package requirements so pyarrow<2.0 can be used.
+* Update package requirements so pyarrow>0.17.1 with no upper limit can be used.
 
 Version 4.1.1
 -------------
