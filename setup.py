@@ -215,7 +215,7 @@ setup(name = 'turbodbc',
       author_email = 'michael.koenig@blue-yonder.com',
       packages = ['turbodbc'],
       extras_require={
-          'arrow': ['pyarrow>=0.17.1'],
+          'arrow': ['pyarrow>=0.15,<3.1.0'],
           'numpy': 'numpy>=1.16.0'
       },
       classifiers = ['Development Status :: 5 - Production/Stable',
