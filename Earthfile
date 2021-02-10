@@ -162,7 +162,7 @@ test-python3.8-arrow1.x.x:
 test-python3.8-arrow2.x.x:
     ARG PYTHON_VERSION="3.8.5"
     COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=2,<3" \
+        --build-arg ARROW_VERSION_RULE=">=2,<3.1" \
         --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
         +test/result /result
 
