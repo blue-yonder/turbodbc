@@ -1,0 +1,20 @@
+FROM quay.io/pypa/manylinux1_x86_64:latest
+
+ADD scripts/build_boost.sh /
+RUN /build_boost.sh
+
+ADD scripts/build_unixodbc.sh /
+RUN /build_unixodbc.sh
+
+WORKDIR /
+# Install cmake manylinux1 package
+RUN /opt/python/cp35-cp35m/bin/pip install cmake ninja virtualenv
+RUN ln -s /opt/python/cp35-cp35m/bin/cmake /usr/bin/cmake
+RUN ln -s /opt/python/cp35-cp35m/bin/ninja /usr/bin/ninja
+RUN ln -s /opt/python/cp35-cp35m/bin/virtualenv /usr/bin/virtualenv
+
+WORKDIR /
+RUN git clone https://github.com/matthew-brett/multibuild.git
+WORKDIR /multibuild
+RUN git checkout ffe59955ad8690c2f8bb74766cb7e9b0d0ee3963
+WORKDIR /
