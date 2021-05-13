@@ -27,7 +27,7 @@ class PYBIND11_EXPORT arrow_result_set {
      *        in the base result set in a row-based fashion
      */
     arrow_result_set(turbodbc::result_sets::result_set & base, bool strings_as_dictionary,
-        bool adaptive_integers);
+        bool adaptive_integers, bool truncate_timestamps);
 
     /**
      * @brief Retrieve a native (C++) Arrow Table which contains
@@ -58,6 +58,7 @@ class PYBIND11_EXPORT arrow_result_set {
     turbodbc::result_sets::result_set & base_result_;
     bool strings_as_dictionary_;
     bool adaptive_integers_;
+    bool truncate_timestamps_;
 };
 
 }

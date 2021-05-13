@@ -8,6 +8,7 @@
 #include <sql.h>
 
 using turbodbc::timestamp_to_microseconds;
+using turbodbc::timestamp_to_microseconds_truncated;
 using turbodbc::microseconds_to_timestamp;
 using turbodbc::nanoseconds_to_timestamp;
 using turbodbc::date_to_days;
@@ -56,6 +57,24 @@ TEST(TimeHelpersTest, MicrosecondsToTimestampForYear4000)
     EXPECT_EQ(4, ts.minute);
     EXPECT_EQ(5, ts.second);
     EXPECT_EQ(123456000, ts.fraction);
+}
+
+
+TEST(TimeHelpersTest, TimestampToMicrosecondsTruncatedForYear10000)
+{
+    SQL_TIMESTAMP_STRUCT data = {10000, 01, 02, 3, 4, 5, 123456000};
+    // expectation one microsecond before year 10000
+    std::int64_t expected = 253402300799999999;
+    EXPECT_EQ(expected, timestamp_to_microseconds_truncated(reinterpret_cast<char const *>(&data)));
+}
+
+
+TEST(TimeHelpersTest, TimestampToMicrosecondsTruncatedForYear100)
+{
+    SQL_TIMESTAMP_STRUCT data = {100, 01, 02, 3, 4, 5, 0};
+    // expectation january first 1400
+    std::int64_t expected = -17987443200000000;
+    EXPECT_EQ(expected, timestamp_to_microseconds_truncated(reinterpret_cast<char const *>(&data)));
 }
 
 
