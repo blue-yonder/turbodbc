@@ -12,6 +12,15 @@ class Connection(object):
     def __init__(self, impl):
         self.impl = impl
         self.cursors = WeakSet([])
+        self._as_dict = False
+
+    @property
+    def as_dict(self):
+        return self._as_dict
+
+    @as_dict.setter
+    def as_dict(self, value):
+        self._as_dict = True if value is True else False
 
     @translate_exceptions
     def cursor(self):
@@ -22,6 +31,7 @@ class Connection(object):
         """
         self._assert_valid()
         c = Cursor(self.impl.cursor())
+        c.as_dict = self._as_dict
         self.cursors.add(c)
         return c
 
