@@ -145,8 +145,8 @@ Status AppendIntsToBuilder(size_t rows_in_batch, std::unique_ptr<ArrayBuilder> c
 
 }
 
-arrow_result_set::arrow_result_set(turbodbc::result_sets::result_set & base, bool strings_as_dictionary, bool adaptive_integers) :
-    base_result_(base), strings_as_dictionary_(strings_as_dictionary), adaptive_integers_(adaptive_integers)
+arrow_result_set::arrow_result_set(turbodbc::result_sets::result_set & base, bool strings_as_dictionary, bool adaptive_integers, bool truncate_timestamps) :
+    base_result_(base), strings_as_dictionary_(strings_as_dictionary), adaptive_integers_(adaptive_integers),  truncate_timestamps_(truncate_timestamps)
 {
 }
 
@@ -199,12 +199,14 @@ Status append_to_bool_builder(size_t rows_in_batch, std::unique_ptr<ArrayBuilder
     return typed_builder->AppendValues(data_ptr, rows_in_batch, valid_bytes);
 }
 
-Status append_to_timestamp_builder(size_t rows_in_batch, std::unique_ptr<ArrayBuilder> const& builder, cpp_odbc::multi_value_buffer const& input_buffer, uint8_t*) {
+Status append_to_timestamp_builder(size_t rows_in_batch, std::unique_ptr<ArrayBuilder> const& builder, cpp_odbc::multi_value_buffer const& input_buffer, uint8_t*, bool truncate_timestamp) {
     auto typed_builder = static_cast<TimestampBuilder*>(builder.get());
     for (std::size_t j = 0; j < rows_in_batch; ++j) {
         auto element = input_buffer[j];
         if (element.indicator == SQL_NULL_DATA) {
             ARROW_RETURN_NOT_OK(typed_builder->AppendNull());
+        } else if (truncate_timestamp) {
+            ARROW_RETURN_NOT_OK(typed_builder->Append(turbodbc::timestamp_to_microseconds_truncated(element.data_pointer)));
         } else {
             ARROW_RETURN_NOT_OK(typed_builder->Append(turbodbc::timestamp_to_microseconds(element.data_pointer)));
         }
@@ -274,7 +276,7 @@ Status arrow_result_set::process_batch(size_t rows_in_batch, std::vector<std::un
                 ARROW_RETURN_NOT_OK(append_to_bool_builder(rows_in_batch, columns[i], buffers[i].get(), valid_bytes.data()));
                 break;
             case turbodbc::type_code::timestamp:
-                ARROW_RETURN_NOT_OK(append_to_timestamp_builder(rows_in_batch, columns[i], buffers[i].get(), valid_bytes.data()));
+                ARROW_RETURN_NOT_OK(append_to_timestamp_builder(rows_in_batch, columns[i], buffers[i].get(), valid_bytes.data(), truncate_timestamps_));
                 break;
             case turbodbc::type_code::date:
                 ARROW_RETURN_NOT_OK(append_to_date_builder(rows_in_batch, columns[i], buffers[i].get(), valid_bytes.data()));

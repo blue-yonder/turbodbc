@@ -1,5 +1,4 @@
 #include <turbodbc/time_helpers.h>
-
 #ifdef _WIN32
 #include <windows.h>
 #endif
@@ -24,6 +23,21 @@ int64_t timestamp_to_microseconds(char const * data_pointer)
     boost::posix_time::ptime const ts({static_cast<unsigned short>(sql_ts.year), sql_ts.month, sql_ts.day},
             {sql_ts.hour, sql_ts.minute, sql_ts.second, microseconds});
     return (ts - timestamp_epoch).total_microseconds();
+}
+
+int64_t timestamp_to_microseconds_truncated(char const * data_pointer)
+{
+    auto & sql_ts = *reinterpret_cast<SQL_TIMESTAMP_STRUCT const *>(data_pointer);
+    if (sql_ts.year > 9999) {
+        SQL_TIMESTAMP_STRUCT new_sql_ts = {9999, 12, 31, 23, 59, 59, 999999000};
+        return timestamp_to_microseconds(reinterpret_cast<char const *>(&new_sql_ts));
+    }
+    if(sql_ts.year < 1400) {
+        SQL_TIMESTAMP_STRUCT new_sql_ts = {1400, 1, 1, 0, 0, 0, 0};
+        return timestamp_to_microseconds(reinterpret_cast<char const *>(&new_sql_ts));
+    }
+
+    return timestamp_to_microseconds(data_pointer);
 }
 
 
