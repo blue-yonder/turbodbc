@@ -70,11 +70,10 @@ build:
     ARG ARROW_VERSION_RULE="<2.0.0"
     ARG NUMPY_VERSION_RULE=""
     ARG CONDA_EXTRA=""
-    FROM --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
-        --build-arg NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE" \
-        --build-arg CONDA_EXTRA="$CONDA_EXTRA" \
-        +python
+    FROM +python --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
+        --NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE" \
+        --CONDA_EXTRA="$CONDA_EXTRA"
 
     COPY . /src
     # remove a potential available host build
@@ -102,11 +101,10 @@ test:
     ARG ARROW_VERSION_RULE=""
     ARG NUMPY_VERSION_RULE=""
     ARG CONDA_EXTRA=""
-    FROM --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
-        --build-arg NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE" \
-        --build-arg CONDA_EXTRA="$CONDA_EXTRA" \
-        +build
+    FROM +build --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
+        --NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE" \
+        --CONDA_EXTRA="$CONDA_EXTRA"
 
     WITH DOCKER --compose ../earthly/docker-compose.yml
         RUN /bin/bash -ic "\
@@ -132,220 +130,221 @@ test:
 
 test-python3.8-arrow1.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=1,<2" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=1,<2" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
+        
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.8-arrow2.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=2,<3" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=2,<3" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.8-arrow3.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=3,<4" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=3,<4" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.8-arrow4.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=4,<5" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=4,<5" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.8-arrow5.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=5,<6" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=5,<6" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.8-arrow6.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=6,<7" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=6,<7" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 
 test-python3.8-arrow7.x.x:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=7,<8" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=7,<8" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.8-arrow-nightly:
     ARG PYTHON_VERSION="3.8.12"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        --build-arg CONDA_EXTRA="-c arrow-nightlies" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --NUMPY_VERSION_RULE=">=1.20.0" \
+        CONDA_EXTRA="-c arrow-nightlies") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
 
 test-python3.9-arrow1.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=1,<2" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=1,<2" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.9-arrow2.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=2,<3" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=2,<3" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.9-arrow3.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=3,<4" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=3,<4" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.9-arrow4.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=4,<5" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=4,<5" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.9-arrow5.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=5,<6" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=5,<6" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.9-arrow6.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=6,<7" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=6,<7" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 
 test-python3.9-arrow7.x.x:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=7,<8" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=7,<8" \
+        --NUMPY_VERSION_RULE=">=1.20.0") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.9-arrow-nightly:
     ARG PYTHON_VERSION="3.9.10"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg NUMPY_VERSION_RULE=">=1.20.0" \
-        --build-arg CONDA_EXTRA="-c arrow-nightlies" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --NUMPY_VERSION_RULE=">=1.20.0" \
+        --CONDA_EXTRA="-c arrow-nightlies") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
 
 test-python3.10-arrow1.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=1,<2" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.4" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=1,<2" \
+        --NUMPY_VERSION_RULE=">=1.21.4") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.10-arrow2.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=2,<3" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.4" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=2,<3" \
+        --NUMPY_VERSION_RULE=">=1.21.4") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.10-arrow3.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=3,<4" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.4" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=3,<4" \
+        --NUMPY_VERSION_RULE=">=1.21.4") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.10-arrow4.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=4,<5" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.4" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=4,<5" \
+        --NUMPY_VERSION_RULE=">=1.21.4") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.10-arrow5.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=5,<6" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.4" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=5,<6" \
+        --NUMPY_VERSION_RULE=">=1.21.4") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.10-arrow6.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=6,<7" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=6,<7" \
+        --NUMPY_VERSION_RULE=">=1.21.2") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 
 test-python3.10-arrow7.x.x:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=7,<8" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE=">=7,<8" \
+        --NUMPY_VERSION_RULE=">=1.21.2") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.10-arrow-nightly:
     ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.4" \
-        --build-arg CONDA_EXTRA="-c arrow-nightlies" \
-        +test/result /result
+    COPY (+test/result --PYTHON_VERSION="$PYTHON_VERSION" \
+        --NUMPY_VERSION_RULE=">=1.21.4" \
+        --CONDA_EXTRA="-c arrow-nightlies") \
+        /result
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
     
@@ -389,10 +388,9 @@ docker:
     ARG ARROW_VERSION_RULE="<2.0.0"
     ARG NUMPY_VERSION_RULE="<1.20.0"
 
-    FROM --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
-        --build-arg NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE" \
-        +build
+    FROM +build --PYTHON_VERSION="$PYTHON_VERSION" \
+        --ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
+        --NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE"
 
     RUN apt-get install -y vim
 
