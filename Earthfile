@@ -105,6 +105,7 @@ test:
         --ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
         --NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE" \
         --CONDA_EXTRA="$CONDA_EXTRA"
+    BUILD +build
 
     WITH DOCKER --compose ../earthly/docker-compose.yml
         RUN /bin/bash -ic "\
@@ -134,7 +135,7 @@ test-python3.8-arrow1.x.x:
         --ARROW_VERSION_RULE=">=1,<2" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
-        
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -144,6 +145,7 @@ test-python3.8-arrow2.x.x:
         --ARROW_VERSION_RULE=">=2,<3" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -153,6 +155,7 @@ test-python3.8-arrow3.x.x:
         --ARROW_VERSION_RULE=">=3,<4" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -162,6 +165,7 @@ test-python3.8-arrow4.x.x:
         --ARROW_VERSION_RULE=">=4,<5" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -171,6 +175,7 @@ test-python3.8-arrow5.x.x:
         --ARROW_VERSION_RULE=">=5,<6" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -180,6 +185,7 @@ test-python3.8-arrow6.x.x:
         --ARROW_VERSION_RULE=">=6,<7" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -190,6 +196,7 @@ test-python3.8-arrow7.x.x:
         --ARROW_VERSION_RULE=">=7,<8" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -199,6 +206,7 @@ test-python3.8-arrow-nightly:
         --NUMPY_VERSION_RULE=">=1.20.0" \
         CONDA_EXTRA="-c arrow-nightlies") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
 
@@ -208,6 +216,7 @@ test-python3.9-arrow1.x.x:
         --ARROW_VERSION_RULE=">=1,<2" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -217,6 +226,7 @@ test-python3.9-arrow2.x.x:
         --ARROW_VERSION_RULE=">=2,<3" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -226,6 +236,7 @@ test-python3.9-arrow3.x.x:
         --ARROW_VERSION_RULE=">=3,<4" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -235,6 +246,7 @@ test-python3.9-arrow4.x.x:
         --ARROW_VERSION_RULE=">=4,<5" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -244,6 +256,7 @@ test-python3.9-arrow5.x.x:
         --ARROW_VERSION_RULE=">=5,<6" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -253,6 +266,7 @@ test-python3.9-arrow6.x.x:
         --ARROW_VERSION_RULE=">=6,<7" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -263,6 +277,7 @@ test-python3.9-arrow7.x.x:
         --ARROW_VERSION_RULE=">=7,<8" \
         --NUMPY_VERSION_RULE=">=1.20.0") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -272,6 +287,7 @@ test-python3.9-arrow-nightly:
         --NUMPY_VERSION_RULE=">=1.20.0" \
         --CONDA_EXTRA="-c arrow-nightlies") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
 
@@ -281,6 +297,7 @@ test-python3.10-arrow1.x.x:
         --ARROW_VERSION_RULE=">=1,<2" \
         --NUMPY_VERSION_RULE=">=1.21.4") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -290,6 +307,7 @@ test-python3.10-arrow2.x.x:
         --ARROW_VERSION_RULE=">=2,<3" \
         --NUMPY_VERSION_RULE=">=1.21.4") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -299,6 +317,7 @@ test-python3.10-arrow3.x.x:
         --ARROW_VERSION_RULE=">=3,<4" \
         --NUMPY_VERSION_RULE=">=1.21.4") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -308,6 +327,7 @@ test-python3.10-arrow4.x.x:
         --ARROW_VERSION_RULE=">=4,<5" \
         --NUMPY_VERSION_RULE=">=1.21.4") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -317,6 +337,7 @@ test-python3.10-arrow5.x.x:
         --ARROW_VERSION_RULE=">=5,<6" \
         --NUMPY_VERSION_RULE=">=1.21.4") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -326,6 +347,7 @@ test-python3.10-arrow6.x.x:
         --ARROW_VERSION_RULE=">=6,<7" \
         --NUMPY_VERSION_RULE=">=1.21.2") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -336,6 +358,7 @@ test-python3.10-arrow7.x.x:
         --ARROW_VERSION_RULE=">=7,<8" \
         --NUMPY_VERSION_RULE=">=1.21.2") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result
 
@@ -345,6 +368,7 @@ test-python3.10-arrow-nightly:
         --NUMPY_VERSION_RULE=">=1.21.4" \
         --CONDA_EXTRA="-c arrow-nightlies") \
         /result
+    BUILD +test
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
     
@@ -391,6 +415,7 @@ docker:
     FROM +build --PYTHON_VERSION="$PYTHON_VERSION" \
         --ARROW_VERSION_RULE="$ARROW_VERSION_RULE" \
         --NUMPY_VERSION_RULE="$NUMPY_VERSION_RULE"
+    BUILD +build
 
     RUN apt-get install -y vim
 
