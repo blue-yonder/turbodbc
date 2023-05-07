@@ -10,6 +10,7 @@ Version 4.6.0
 * Require ``numpy>=1.20.0``
 * Require ``pyarrow>=7``
 * Support ``pyarrow=12``
+* Bump pybind11 version to 2.10.4
 
 Version 4.5.10
 --------------

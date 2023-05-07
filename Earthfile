@@ -84,7 +84,7 @@ build:
 
     ENV ODBCSYSINI=/src/earthly/odbc
     ENV TURBODBC_TEST_CONFIGURATION_FILES="query_fixtures_postgresql.json,query_fixtures_mssql.json,query_fixtures_mysql.json"
-    RUN ln -s /opt/pybind11-2.9.1 /src/pybind11
+    RUN ln -s /opt/pybind11-2.10.4 /src/pybind11
 
     RUN bash -iec " \
         cmake -DBOOST_ROOT=\${CONDA_PREFIX} -DBUILD_COVERAGE=ON \
@@ -179,7 +179,7 @@ test-python3.9-arrow11.x.x:
 test-python3.9-arrow12.x.x:
     ARG PYTHON_VERSION="3.9.10"
     COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=13,<14" \
+        --build-arg ARROW_VERSION_RULE=">=12,<13" \
         --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
         +test/result /result
 
