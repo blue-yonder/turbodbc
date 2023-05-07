@@ -110,7 +110,7 @@ elif sys.platform == "win32":
     else:
         print("warning: BOOST_ROOT enviroment variable not set")
     odbclib = "odbc32"
-    conda_prefix = os.environ["CONDA_PREFIX"]
+    conda_prefix = os.getenv("CONDA_PREFIX")
     if conda_prefix:
         include_dirs.append(os.path.join(conda_prefix, "Library", "include"))
 else:
