@@ -19,7 +19,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v3
       - name: Install Python 3.9
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Run pre-commit checks
@@ -73,7 +73,7 @@ jobs:
             experimental: true
             upload: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Download earthly 0.5.0
         run: "sudo /bin/sh -c 'wget https://github.com/earthly/earthly/releases/download/v0.5.0/earthly-linux-amd64 -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly'"
       - name: Run build
