@@ -1,5 +1,5 @@
 [build-system]
-requires = ['setuptools', 'wheel', 'pyarrow>=1', 'pybind11', 'oldest-supported-numpy']
+requires = ['setuptools', 'wheel', 'pyarrow>=7', 'pybind11', 'oldest-supported-numpy']
 
 [tool.black]
 exclude = '''
@@ -11,7 +11,7 @@ exclude = '''
   | dist
 )/
 '''
-target-version = ['py38']
+target-version = ['py39']
 
 [tool.isort]
 multi_line_output = 3
