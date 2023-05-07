@@ -82,7 +82,7 @@ jobs:
 
       - name: Upload coverage for Python
         if: ${{ matrix.upload }}
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           files: result/cov/python/python_cov.xml
           fail_ci_if_error: true
@@ -90,7 +90,7 @@ jobs:
           functionalities: gcov
       - name: Upload coverage for C++
         if: ${{ matrix.upload }}
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
         with:
           directory: result/cov/cpp
           fail_ci_if_error: true

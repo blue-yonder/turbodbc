@@ -112,9 +112,7 @@ elif sys.platform == "win32":
     odbclib = "odbc32"
     conda_prefix = os.environ["CONDA_PREFIX"]
     if conda_prefix:
-        include_dirs.append(
-            os.path.join(conda_prefix, "Library", "include")
-        )
+        include_dirs.append(os.path.join(conda_prefix, "Library", "include"))
 else:
     extra_compile_args.append("--std=c++17")
     hidden_visibility_args.append("-fvisibility=hidden")
