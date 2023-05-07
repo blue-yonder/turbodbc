@@ -5,7 +5,6 @@ import os
 import os.path
 import sys
 from glob import iglob
-from typing import List
 
 import setuptools.command.build_ext
 from setuptools import Distribution, Extension, setup
@@ -76,11 +75,11 @@ class _deferred_pybind11_include:
 
 extra_compile_args = []
 hidden_visibility_args = []
-include_dirs = ["include/", _deferred_pybind11_include()]
+include_dirs: list[str] = ["include/", str(_deferred_pybind11_include())]
 
-library_dirs = []
+library_dirs: list[str] = []
 python_module_link_args = []
-base_library_link_args: List[str] = []
+base_library_link_args: list[str] = []
 
 if sys.platform == "darwin":
     extra_compile_args.append("--std=c++17")
@@ -103,25 +102,29 @@ if sys.platform == "darwin":
 elif sys.platform == "win32":
     extra_compile_args.append("-DNOMINMAX")
     extra_compile_args.append("/std:c++17")
-    if "BOOST_ROOT" in os.environ:
-        include_dirs.append(os.getenv("BOOST_ROOT"))
-        library_dirs.append(os.path.join(os.getenv("BOOST_ROOT"), "stage", "lib"))
-        library_dirs.append(os.path.join(os.getenv("BOOST_ROOT"), "lib64-msvc-14.0"))
+    boost_root = os.getenv("BOOST_ROOT")
+    if boost_root:
+        include_dirs.append(boost_root)
+        library_dirs.append(os.path.join(boost_root, "stage", "lib"))
+        library_dirs.append(os.path.join(boost_root, "lib64-msvc-14.0"))
     else:
         print("warning: BOOST_ROOT enviroment variable not set")
     odbclib = "odbc32"
-    if "CONDA_PREFIX" in os.environ:
+    conda_prefix = os.environ["CONDA_PREFIX"]
+    if conda_prefix:
         include_dirs.append(
-            os.path.join(os.environ["CONDA_PREFIX"], "Library", "include")
+            os.path.join(conda_prefix, "Library", "include")
         )
 else:
     extra_compile_args.append("--std=c++17")
     hidden_visibility_args.append("-fvisibility=hidden")
     python_module_link_args.append("-Wl,-rpath,$ORIGIN")
-    if "UNIXODBC_INCLUDE_DIR" in os.environ:
-        include_dirs.append(os.getenv("UNIXODBC_INCLUDE_DIR"))
-    if "UNIXODBC_LIBRARY_DIR" in os.environ:
-        library_dirs.append(os.getenv("UNIXODBC_LIBRARY_DIR"))
+    unixodbc_include_dir = os.getenv("UNIXODBC_INCLUDE_DIR")
+    if unixodbc_include_dir:
+        include_dirs.append(unixodbc_include_dir)
+    unixodbc_library_dir = os.getenv("UNIXODBC_LIBRARY_DIR")
+    if unixodbc_library_dir:
+        library_dirs.append(unixodbc_library_dir)
     odbclib = "odbc"
 
 

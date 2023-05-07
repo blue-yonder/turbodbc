@@ -1,5 +1,3 @@
-from typing import Optional
-
 from turbodbc_intern import connect as intern_connect
 
 from .connection import Connection
@@ -7,7 +5,7 @@ from .exceptions import ParameterError, translate_exceptions
 from .options import make_options
 
 
-def _make_connection_string(dsn: Optional[str], **kwargs) -> str:
+def _make_connection_string(dsn: str | None, **kwargs) -> str:
     if dsn:
         kwargs["dsn"] = dsn
     return ";".join([f"{key}={value}" for key, value in kwargs.items()])
@@ -15,9 +13,9 @@ def _make_connection_string(dsn: Optional[str], **kwargs) -> str:
 
 @translate_exceptions
 def connect(
-    dsn: Optional[str] = None,
+    dsn: str | None = None,
     turbodbc_options=None,
-    connection_string: Optional[str] = None,
+    connection_string: str | None = None,
     **kwargs,
 ) -> Connection:
     r"""

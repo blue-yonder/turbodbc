@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, List, cast
+from typing import Any, cast
 
 from helpers import (
     for_each_database,
@@ -227,7 +227,7 @@ def test_description_after_insert(dsn, configuration):
 def test_string_with_differing_lengths(dsn, configuration):
     long_strings = [["x" * 5], ["x" * 50], ["x" * 500]]
     # use integer to force rebind to string buffer afterwards
-    to_insert = cast(List[List[Any]], [[1]]) + long_strings
+    to_insert = cast(list[list[Any]], [[1]]) + long_strings
     expected = [["1"]] + long_strings
 
     with open_cursor(configuration) as cursor:
