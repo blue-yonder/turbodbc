@@ -264,7 +264,7 @@ setup(
     author_email="michael.koenig@blue-yonder.com",
     packages=["turbodbc"],
     setup_requires=[
-        "pybind11>=10.0.0",
+        "pybind11>=2.10.4",
         "pyarrow>=7,<13",
         "numpy>=1.20",
     ],
