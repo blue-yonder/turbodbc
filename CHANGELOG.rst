@@ -3,6 +3,14 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 4.6.0
+--------------
+
+* Drop python 3.8 support
+* Require ``numpy>=1.20.0``
+* Require ``pyarrow>=7``
+* Support ``pyarrow=12``
+
 Version 4.5.10
 --------------
 

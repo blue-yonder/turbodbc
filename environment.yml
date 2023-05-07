@@ -2,8 +2,8 @@ name: turbodbc
 channels:
   - conda-forge
 dependencies:
-  - python>=3.8
-  - pyarrow>=1.0,<12
+  - python>=3.9
+  - pyarrow>=7.0,<13
   - sel(unix): unixodbc
   - c-compiler
   - cxx-compiler
