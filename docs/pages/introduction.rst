@@ -20,8 +20,8 @@ Features
 *   Supported data types for both result sets and parameters:
     ``int``, ``float``, ``str``, ``bool``, ``datetime.date``, ``datetime.datetime``
 *   Also provides a high-level C++11 database driver under the hood
-*   Tested with Python 3.8, 3.9 and 3.10
-*   Tested on 64 bit versions of Linux, OSX, and Windows (Python 3.8+).
+*   Tested with Python 3.9, 3.10 and 3.11
+*   Tested on 64 bit versions of Linux, OSX, and Windows (Python 3.9+).
 
 
 Why should I use turbodbc instead of other ODBC modules?
@@ -72,7 +72,7 @@ Supported environments
 *   Linux (successfully built on Ubuntu 12, Ubuntu 14, Debian 7, Debian 8)
 *   OSX (successfully built on Sierra a.k.a. 10.12 and El Capitan a.k.a. 10.11)
 *   Windows (successfully built on Windows 10)
-*   Python 3.7, 3.8, 3.9
+*   Python 3.9, 3.10, 3.11
 *   More environments probably work as well, but these are the versions that
     are regularly tested on Travis or local development machines.
 

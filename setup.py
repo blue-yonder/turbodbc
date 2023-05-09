@@ -5,7 +5,6 @@ import os
 import os.path
 import sys
 from glob import iglob
-from typing import List
 
 import setuptools.command.build_ext
 from setuptools import Distribution, Extension, setup
@@ -76,11 +75,11 @@ class _deferred_pybind11_include:
 
 extra_compile_args = []
 hidden_visibility_args = []
-include_dirs = ["include/", _deferred_pybind11_include()]
+include_dirs: list[str] = ["include/", str(_deferred_pybind11_include())]
 
-library_dirs = []
+library_dirs: list[str] = []
 python_module_link_args = []
-base_library_link_args: List[str] = []
+base_library_link_args: list[str] = []
 
 if sys.platform == "darwin":
     extra_compile_args.append("--std=c++17")
@@ -103,25 +102,27 @@ if sys.platform == "darwin":
 elif sys.platform == "win32":
     extra_compile_args.append("-DNOMINMAX")
     extra_compile_args.append("/std:c++17")
-    if "BOOST_ROOT" in os.environ:
-        include_dirs.append(os.getenv("BOOST_ROOT"))
-        library_dirs.append(os.path.join(os.getenv("BOOST_ROOT"), "stage", "lib"))
-        library_dirs.append(os.path.join(os.getenv("BOOST_ROOT"), "lib64-msvc-14.0"))
+    boost_root = os.getenv("BOOST_ROOT")
+    if boost_root:
+        include_dirs.append(boost_root)
+        library_dirs.append(os.path.join(boost_root, "stage", "lib"))
+        library_dirs.append(os.path.join(boost_root, "lib64-msvc-14.0"))
     else:
         print("warning: BOOST_ROOT enviroment variable not set")
     odbclib = "odbc32"
-    if "CONDA_PREFIX" in os.environ:
-        include_dirs.append(
-            os.path.join(os.environ["CONDA_PREFIX"], "Library", "include")
-        )
+    conda_prefix = os.getenv("CONDA_PREFIX")
+    if conda_prefix:
+        include_dirs.append(os.path.join(conda_prefix, "Library", "include"))
 else:
     extra_compile_args.append("--std=c++17")
     hidden_visibility_args.append("-fvisibility=hidden")
     python_module_link_args.append("-Wl,-rpath,$ORIGIN")
-    if "UNIXODBC_INCLUDE_DIR" in os.environ:
-        include_dirs.append(os.getenv("UNIXODBC_INCLUDE_DIR"))
-    if "UNIXODBC_LIBRARY_DIR" in os.environ:
-        library_dirs.append(os.getenv("UNIXODBC_LIBRARY_DIR"))
+    unixodbc_include_dir = os.getenv("UNIXODBC_INCLUDE_DIR")
+    if unixodbc_include_dir:
+        include_dirs.append(unixodbc_include_dir)
+    unixodbc_library_dir = os.getenv("UNIXODBC_LIBRARY_DIR")
+    if unixodbc_library_dir:
+        library_dirs.append(unixodbc_library_dir)
     odbclib = "odbc"
 
 
@@ -254,7 +255,7 @@ with open(os.path.join(here, "README.md")) as f:
 
 setup(
     name="turbodbc",
-    version="4.5.10",
+    version="4.6.0",
     description="turbodbc is a Python DB API 2.0 compatible ODBC driver",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -264,13 +265,13 @@ setup(
     author_email="michael.koenig@blue-yonder.com",
     packages=["turbodbc"],
     setup_requires=[
-        "pybind11>=2.2.0",
-        "pyarrow>=1,<12",
-        "numpy>=1.18",
+        "pybind11>=2.10.4",
+        "pyarrow>=7,<13",
+        "numpy>=1.20",
     ],
     install_requires=[],
-    extras_require={"arrow": ["pyarrow>=1.0,<11"], "numpy": "numpy>=1.19.0"},
-    python_requires=">=3.8",
+    extras_require={"arrow": ["pyarrow>=7.0,<13"], "numpy": "numpy>=1.20.0"},
+    python_requires=">=3.9",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
@@ -279,9 +280,9 @@ setup(
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
         "Programming Language :: C++",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
         "Topic :: Database",
     ],
