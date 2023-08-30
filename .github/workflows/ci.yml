@@ -51,6 +51,7 @@ jobs:
           - +test-python3.11-arrow10.x.x
           - +test-python3.11-arrow11.x.x
           - +test-python3.11-arrow12.x.x
+          - +test-python3.11-arrow13.x.x
         experimental: [ false ]
         upload: [ false ]
         include:
@@ -60,7 +61,7 @@ jobs:
           - target: +test-python3.10-arrow12.x.x
             experimental: false
             upload: true
-          - target: +test-python3.11-arrow12.x.x
+          - target: +test-python3.11-arrow13.x.x
             experimental: false
             upload: true
           - target: +test-python3.9-arrow-nightly
