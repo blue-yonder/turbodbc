@@ -36,7 +36,7 @@ def mssql_connect_turbodbc() -> turbodbc.connection.Connection:
     )
 
 
-smoke()
+# smoke()
 
 
 which = input("Which query: ") if len(sys.argv) < 2 else sys.argv[-1]

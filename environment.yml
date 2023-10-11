@@ -4,7 +4,7 @@ channels:
 dependencies:
   - python>=3.9
   - pyarrow>=7.0,<14
-  - sel(unix): unixodbc
+  # - sel(unix): unixodbc
   - c-compiler
   - cxx-compiler
   - gmock=1.10.0

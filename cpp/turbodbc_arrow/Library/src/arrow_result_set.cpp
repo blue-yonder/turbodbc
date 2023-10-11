@@ -15,6 +15,8 @@
 #include <codecvt>
 #include <vector>
 
+#include <boost/locale.hpp>
+
 using arrow::default_memory_pool;
 using arrow::AdaptiveIntBuilder;
 using arrow::ArrayBuilder;
@@ -127,7 +129,11 @@ Status AppendUnicodeStringsToBuilder(size_t rows_in_batch, BuilderType& builder,
         if (element.indicator == SQL_NULL_DATA) {
             ARROW_RETURN_NOT_OK(builder.AppendNullProxy());
         } else {
+            // TODO-Simeon: throws
+            // throw std::invalid_argument("Simeon conversion in arrow_result_set");
+            // TODO-Simeon: throws
             std::u16string str_u16(reinterpret_cast<const char16_t*>(element.data_pointer), element.indicator / 2);
+            //std::string u8string = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(str_u16);
             std::string u8string = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(str_u16);
             ARROW_RETURN_NOT_OK(builder.AppendProxy(u8string.data(), u8string.size()));
         }

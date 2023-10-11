@@ -20,6 +20,8 @@
 #include <locale>
 #include <sstream>
 
+#include <boost/locale.hpp>
+
 namespace impl {
 
 template <typename Output_Handle, typename Input_Handle>
@@ -430,7 +432,12 @@ column_description level1_connector::do_describe_column_wide(statement_handle co
 
     impl::throw_on_error(return_code, *this, handle);
 
-    std::string const utf8_name = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(name);
+    // TODO-Simeon: throws
+    // throw std::invalid_argument("Simeon conversion in level1_connector");
+    // TODO-Simeon: throws
+
+    //std::string const utf8_name = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(name);
+    auto const utf8_name = boost::locale::conv::utf_to_utf<char>(static_cast<std::u16string>(name));
     return {utf8_name, data_type, size, decimal_digits, allows_nullable};
 }
 

@@ -131,10 +131,6 @@ jobs:
           if %errorlevel% neq 0 exit /b %errorlevel%
           @CALL micromamba install build
           python -m build --outdir ./dist
-      - uses: actions/upload-artifact@v3
-        with:
-          name: build-artifact
-          path: dist
       - name: Test import
         run: |
           @CALL micromamba activate turbodbc

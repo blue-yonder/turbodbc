@@ -14,6 +14,8 @@
 #include <ciso646>
 #include <codecvt>
 
+#include <boost/locale.hpp>
+
 using arrow::BooleanArray;
 using arrow::BinaryArray;
 using arrow::ChunkedArray;

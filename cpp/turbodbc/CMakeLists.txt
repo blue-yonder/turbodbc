@@ -1,4 +1,4 @@
-find_package(Boost REQUIRED COMPONENTS system date_time)
+find_package(Boost REQUIRED COMPONENTS system date_time locale)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 find_package(odbc REQUIRED)

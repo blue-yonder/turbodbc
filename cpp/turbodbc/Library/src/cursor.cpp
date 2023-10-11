@@ -14,12 +14,19 @@
 #include <sstream>
 #include <codecvt>
 
+#include <boost/locale.hpp>
+
 namespace {
 
     std::u16string as_utf16(std::string utf8_encoded) {
+        // TODO-Simeon: throws
+        // throw std::invalid_argument("Simeon conversion in cursor");
+        // TODO-Simeon: throws
+
         // not all compilers support the new C++11 conversion facets
-        static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-        return converter.from_bytes(utf8_encoded);
+        return boost::locale::conv::utf_to_utf<char16_t>(utf8_encoded);
+        //static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
+        //return converter.from_bytes(utf8_encoded);
     }
 
 }
