@@ -127,6 +127,7 @@ jobs:
           dir src
           dir src\turbodbc_arrow
           if %errorlevel% neq 0 exit /b %errorlevel%
+          set BOOST_ROOT="%CONDA_PREFIX%\Library"
           python -m pip install --no-build-isolation --no-deps --disable-pip-version-check .
           if %errorlevel% neq 0 exit /b %errorlevel%
           @CALL micromamba install build
