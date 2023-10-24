@@ -14,11 +14,11 @@
 #endif
 #include "sqlext.h"
 
-#include <boost/locale.hpp>
-
-#include <sstream>
-#include <iostream>
 #include <ciso646>
+#include <codecvt>
+#include <iostream>
+#include <locale>
+#include <sstream>
 
 namespace impl {
 
@@ -430,7 +430,7 @@ column_description level1_connector::do_describe_column_wide(statement_handle co
 
     impl::throw_on_error(return_code, *this, handle);
 
-    auto const utf8_name = boost::locale::conv::utf_to_utf<char>(static_cast<std::u16string>(name));
+    std::string const utf8_name = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(name);
     return {utf8_name, data_type, size, decimal_digits, allows_nullable};
 }
 
