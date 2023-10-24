@@ -61,6 +61,11 @@ void cursor::execute()
     }
 }
 
+bool cursor::more_results() const
+{
+    return command_->more_results();
+}
+
 std::shared_ptr<result_sets::result_set> cursor::get_result_set() const
 {
     return command_->get_results();
