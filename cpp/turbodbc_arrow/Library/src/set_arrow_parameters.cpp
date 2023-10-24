@@ -12,7 +12,8 @@
 #include <sql.h>
 
 #include <ciso646>
-#include <codecvt>
+
+#include <boost/locale.hpp>
 
 using arrow::BooleanArray;
 using arrow::BinaryArray;
@@ -138,7 +139,7 @@ namespace {
         size_t maximum_length = 0;
         for (int64_t i = 0; i != elements; ++i) {
           if (!typed_array.IsNull(start + i)) {
-	    std::u16string str = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(typed_array.GetString(start + i));
+            std::u16string str = boost::locale::conv::utf_to_utf<char16_t>(typed_array.GetString(start + i));
             maximum_length = std::max(maximum_length, str.length());
             batch.push_back({false, str});
           } else {

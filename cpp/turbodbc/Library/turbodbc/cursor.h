@@ -30,8 +30,6 @@ public:
 
     int64_t get_row_count();
 
-    bool more_results() const;
-
     std::shared_ptr <result_sets::result_set> get_result_set() const;
 
     std::shared_ptr<cpp_odbc::connection const> get_connection() const;

@@ -38,8 +38,6 @@ public:
 
     int64_t get_row_count();
 
-    bool more_results() const;
-
     /**
      * @brief discard any ressources associated with this instance
      * 

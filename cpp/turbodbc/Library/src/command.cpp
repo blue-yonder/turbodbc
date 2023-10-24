@@ -43,11 +43,6 @@ std::shared_ptr<turbodbc::result_sets::result_set> command::get_results()
     return results_;
 }
 
-bool command::more_results() const
-{
-    return statement_->more_results();
-}
-
 bound_parameter_set & command::get_parameters()
 {
     return params_;
