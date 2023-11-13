@@ -12,6 +12,7 @@ add_dependencies(cpp_odbc
 
 target_link_libraries(cpp_odbc
     ${Boost_LIBRARIES}
+    ${Simdutf_LIBRARIES}
     ${Odbc_LIBRARIES}
 )
 

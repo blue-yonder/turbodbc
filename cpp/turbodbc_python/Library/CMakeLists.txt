@@ -14,6 +14,7 @@ add_dependencies(turbodbc_python
 
 target_link_libraries(turbodbc_python
     PUBLIC ${Boost_LIBRARIES}
+    PUBLIC ${Simdutf_LIBRARIES}
     PUBLIC ${Odbc_LIBRARIES}
     PUBLIC cpp_odbc
     PUBLIC turbodbc

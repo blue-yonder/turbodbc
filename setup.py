@@ -118,6 +118,12 @@ elif sys.platform == "win32":
     conda_prefix = os.getenv("CONDA_PREFIX")
     if conda_prefix:
         include_dirs.append(os.path.join(conda_prefix, "Library", "include"))
+
+    library_dirs.append(r"C:\Users\simeon_stoykov\simdutf\installed")
+    library_dirs.append(r"C:\Users\simeon_stoykov\simdutf\installed\lib")
+
+    include_dirs.append(r"C:\Users\simeon_stoykov\simdutf\installed")
+    include_dirs.append(r"C:\Users\simeon_stoykov\simdutf\installed\include")
 else:
     extra_compile_args.append("--std=c++17")
     hidden_visibility_args.append("-fvisibility=hidden")
@@ -130,6 +136,8 @@ else:
         library_dirs.append(unixodbc_library_dir)
     odbclib = "odbc"
 
+    print("include_dirs", include_dirs)
+    print("library_dirs", library_dirs)
 
 def _get_cxx_compiler():
     cc = distutils.ccompiler.new_compiler()

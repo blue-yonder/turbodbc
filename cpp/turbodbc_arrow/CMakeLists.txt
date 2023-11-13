@@ -1,6 +1,23 @@
 find_package(Boost REQUIRED COMPONENTS system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
+
+# TODO-Simeon: install properly
+set(CMAKE_PREFIX_PATH "C:\\Users\\simeon_stoykov\\simdutf\\installed")
+# find_package(Simdutf REQUIRED)
+# include_directories(SYSTEM ${Simdutf_INCLUDE_DIRS})
+find_path(Simdutf_INCLUDE_DIRS simdutf.h)
+find_library(Simdutf_LIBRARIES simdutf)
+include_directories(SYSTEM ${Simdutf_INCLUDE_DIRS})
+
+
+message(STATUS "Simdutf Include Dirs: ${Simdutf_INCLUDE_DIRS}")
+message(STATUS "Simdutf Libraries: ${Simdutf_LIBRARIES}")
+
+
+message(STATUS "Boost Include Dirs: ${Boost_INCLUDE_DIRS}")
+message(STATUS "Boost Libraries: ${Boost_LIBRARIES}")
+
 include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
 find_package(odbc REQUIRED)
