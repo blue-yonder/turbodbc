@@ -255,7 +255,7 @@ with open(os.path.join(here, "README.md")) as f:
 
 setup(
     name="turbodbc",
-    version="4.7.0",
+    version="4.8.0",
     description="turbodbc is a Python DB API 2.0 compatible ODBC driver",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -266,11 +266,11 @@ setup(
     packages=["turbodbc"],
     setup_requires=[
         "pybind11>=2.10.4",
-        "pyarrow>=7,<14",
+        "pyarrow>=7,<15",
         "numpy>=1.20",
     ],
     install_requires=[],
-    extras_require={"arrow": ["pyarrow>=7.0,<14"], "numpy": "numpy>=1.20.0"},
+    extras_require={"arrow": ["pyarrow>=7.0,<15"], "numpy": "numpy>=1.20.0"},
     python_requires=">=3.9",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
