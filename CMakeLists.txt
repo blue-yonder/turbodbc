@@ -30,6 +30,6 @@ if(BUILD_TESTING)
 endif()
 
 install(
-	FILES setup.py setup.cfg MANIFEST.in Makefile LICENSE README.md CHANGELOG.rst
+	FILES setup.py setup.cfg MANIFEST.in Makefile LICENSE README.md CHANGELOG.rst pyproject.toml
 	DESTINATION .
 )
