@@ -57,6 +57,7 @@ python:
         numpy$NUMPY_VERSION_RULE \
         pyarrow$ARROW_VERSION_RULE \
         pybind11 \
+        simdutf \
         $CONDA_EXTRA
 
     RUN echo "conda activate turbodbc-dev" >> ~/.bashrc

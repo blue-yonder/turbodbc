@@ -248,7 +248,7 @@ def get_extension_modules():
             sources=turbodbc_arrow_sources,
             include_dirs=include_dirs + [pyarrow_include_dir],
             extra_compile_args=extra_compile_args + hidden_visibility_args,
-            libraries=[odbclib] + arrow_libs + turbodbc_libs,
+            libraries=[odbclib, "simdutf"] + arrow_libs + turbodbc_libs,
             extra_link_args=pyarrow_module_link_args,
             library_dirs=library_dirs + arrow_lib_dirs,
         )
