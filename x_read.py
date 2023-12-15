@@ -1,8 +1,8 @@
-import turbodbc
+import sys
+from pathlib import Path
 from time import perf_counter
 
-from pathlib import Path
-import sys
+import turbodbc
 
 
 def smoke():
@@ -13,10 +13,7 @@ def smoke():
         input("Press enter to continue after attaching to the process")
 
 
-
-def turbodbc_read_sql(
-    query: str, turbodbc_connection: turbodbc.connection.Connection
-):
+def turbodbc_read_sql(query: str, turbodbc_connection: turbodbc.connection.Connection):
     with turbodbc_connection.cursor() as cursor:
         cursor.execute(query)
         return cursor.fetchallarrow().to_pandas()
@@ -41,9 +38,11 @@ def mssql_connect_turbodbc() -> turbodbc.connection.Connection:
 
 which = input("Which query: ") if len(sys.argv) < 2 else sys.argv[-1]
 query = (
-    Path("./query_ops.sql").read_text(encoding="utf-8") if which == "ops" else
-    Path("./query_icd.sql").read_text(encoding="utf-8") if which == "icd" else
-    f"SELECT * FROM {which}"
+    Path("./query_ops.sql").read_text(encoding="utf-8")
+    if which == "ops"
+    else Path("./query_icd.sql").read_text(encoding="utf-8")
+    if which == "icd"
+    else f"SELECT * FROM {which}"
 )
 if not query:
     raise ValueError(which)

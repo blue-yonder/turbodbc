@@ -1,17 +1,18 @@
-import sqlalchemy as sa
-
 from pathlib import Path
 from typing import List
 
+import sqlalchemy as sa
 
 print("Hey")
 
 AT_ONCE = 1
 
-eng = sa.create_engine(Path("./x_conn_str_sa.txt").read_text(encoding="utf-8").strip("\n"))
+eng = sa.create_engine(
+    Path("./x_conn_str_sa.txt").read_text(encoding="utf-8").strip("\n")
+)
 
 
-def writeit(table_name: str, row_values: List[str], types: List[str], nrows: str):
+def writeit(table_name: str, row_values: list[str], types: list[str], nrows: str):
     with eng.begin() as transaction:
         transaction.execute(sa.text(f"DROP TABLE IF EXISTS {table_name}"))
 
@@ -20,7 +21,7 @@ def writeit(table_name: str, row_values: List[str], types: List[str], nrows: str
 
         last = None
         for idx in range(0, nrows, AT_ONCE):
-            percentage = int(idx/nrows * 100)
+            percentage = int(idx / nrows * 100)
             if percentage % 10 == 0 and percentage != last:
                 last = percentage
                 print(percentage)
@@ -43,7 +44,12 @@ elif which == "tinyint":
 elif which == "date":
     writeit("date_20m", ["2023-10-04"], ["DATE"], 20_000_000)
 elif which == "all":
-    writeit("all_100k", ["v" * 8000, "c" * 8000, 123, "2023-10-04"], ["VARCHAR(8000)", "CHAR(8000)", "TINYINT", "DATE"], 100_000)
+    writeit(
+        "all_100k",
+        ["v" * 8000, "c" * 8000, 123, "2023-10-04"],
+        ["VARCHAR(8000)", "CHAR(8000)", "TINYINT", "DATE"],
+        100_000,
+    )
 elif which == "varchar_many":
     writeit("varchar_many_100k", ["a" * 80] * 100, ["VARCHAR(80)"] * 100, 100_000)
 elif which == "tinyint_many":
