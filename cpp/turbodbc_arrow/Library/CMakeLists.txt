@@ -12,10 +12,10 @@ add_dependencies(turbodbc_arrow_support
     refresh_cmake_configuration
 )
 
-add_library(simdutf SHARED IMPORTED)
+# add_library(simdutf SHARED IMPORTED)
 
 message(STATUS "When linking Simdutf Include Dirs: ${Simdutf_INCLUDE_DIRS}")
-message(STATUS "When linking Simdutf Libraries: ${Simdutf_LIBRARIES}")
+message(STATUS "When linking Simdutf Libraries in arrow: ${Simdutf_LIBRARIES}")
 target_link_libraries(turbodbc_arrow_support
     PUBLIC ${Boost_LIBRARIES}
     PUBLIC ${Odbc_LIBRARIES}

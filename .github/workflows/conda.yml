@@ -58,7 +58,7 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=./dist  \
             -DPYTHON_EXECUTABLE=$(which python) \
             -GNinja .. && \
-          ninja && \
+          ninja -vv && \
           cmake --build . --target install
       - name: Install repository
         run: |
