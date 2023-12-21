@@ -181,7 +181,7 @@ def get_extension_modules():
         sources=turbodbc_python_sources,
         include_dirs=include_dirs,
         extra_compile_args=extra_compile_args + hidden_visibility_args,
-        libraries=[odbclib] + turbodbc_libs,
+        libraries=[odbclib, "simdutf"] + turbodbc_libs,
         extra_link_args=python_module_link_args,
         library_dirs=library_dirs,
     )
@@ -202,7 +202,7 @@ def get_extension_modules():
             sources=turbodbc_numpy_sources,
             include_dirs=include_dirs + [numpy.get_include()],
             extra_compile_args=extra_compile_args + hidden_visibility_args,
-            libraries=[odbclib] + turbodbc_libs,
+            libraries=[odbclib, "simdutf"] + turbodbc_libs,
             extra_link_args=python_module_link_args,
             library_dirs=library_dirs,
         )

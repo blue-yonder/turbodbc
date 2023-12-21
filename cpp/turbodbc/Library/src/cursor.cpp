@@ -14,14 +14,20 @@
 #include <sstream>
 #include <codecvt>
 
+#include <simdutf.h>
+
 namespace {
 
     std::u16string as_utf16(std::string utf8_encoded) {
         // not all compilers support the new C++11 conversion facets
-        static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
-        return converter.from_bytes(utf8_encoded);
-    }
+        // static std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> converter;
+        // return converter.from_bytes(utf8_encoded);
 
+        size_t expected_utf16_chars = simdutf::utf16_length_from_utf8(utf8_encoded.data(), utf8_encoded.size());
+        std::unique_ptr<char16_t[]> utf16{new char16_t[expected_utf16_chars]};
+        size_t utf16_chars = simdutf::convert_utf8_to_utf16le(utf8_encoded.data(), utf8_encoded.size(), utf16.get());
+        return std::u16string(utf16.get(), utf16_chars);
+    }
 }
 
 namespace turbodbc {
