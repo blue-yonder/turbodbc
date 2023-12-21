@@ -74,11 +74,11 @@ class _deferred_pybind11_include:
 
 
 extra_compile_args = []
-hidden_visibility_args = []
+hidden_visibility_args: list[str] = []
 include_dirs: list[str] = ["include/", str(_deferred_pybind11_include())]
 
 library_dirs: list[str] = []
-python_module_link_args = []
+python_module_link_args: list[str] = []
 base_library_link_args: list[str] = []
 
 if sys.platform == "darwin":
@@ -160,9 +160,10 @@ def get_extension_modules():
         include_dirs=include_dirs,
         extra_compile_args=extra_compile_args,
         extra_link_args=base_library_link_args,
-        libraries=[odbclib],
+        libraries=[odbclib, "simdutf"],
         library_dirs=library_dirs,
     )
+    turbodbc_libs: list[str]
     if sys.platform == "win32":
         turbodbc_libs = []
     else:

@@ -33,7 +33,7 @@ public:
     bool more_results() const;
 
     std::shared_ptr <result_sets::result_set> get_result_set() const;
-    
+
     std::shared_ptr<cpp_odbc::connection const> get_connection() const;
 
     std::shared_ptr <turbodbc::command> get_command();

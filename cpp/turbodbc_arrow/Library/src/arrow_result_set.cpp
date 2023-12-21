@@ -129,23 +129,13 @@ Status AppendUnicodeStringsToBuilder(size_t rows_in_batch, BuilderType& builder,
         if (element.indicator == SQL_NULL_DATA) {
             ARROW_RETURN_NOT_OK(builder.AppendNullProxy());
         } else {
-            /*
-            // Interpret and save the characters as utf16 string
             std::u16string str_u16(reinterpret_cast<const char16_t*>(element.data_pointer), element.indicator / 2);
-            // Convert the utf16 string to a utf8 normal string
-            std::string u8string = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(str_u16);
-            */
 
-            // throw simdutf::get_available_implementations();
-            std::u16string str_u16(reinterpret_cast<const char16_t*>(element.data_pointer), element.indicator / 2);
-            size_t expected_utf8words = simdutf::utf8_length_from_utf16le(str_u16.data(), str_u16.size());
+            size_t expected_utf8_bytes = simdutf::utf8_length_from_utf16le(str_u16.data(), str_u16.size());
+            std::unique_ptr<char[]> utf8_output{new char[expected_utf8_bytes]};
+            size_t utf8_bytes = simdutf::convert_utf16le_to_utf8(str_u16.data(), str_u16.size(), utf8_output.get());
 
-            std::unique_ptr<char[]> utf8_output{new char[expected_utf8words]};
-            size_t utf8_words = simdutf::convert_utf16le_to_utf8(str_u16.data(), str_u16.size(), utf8_output.get());
-            // std::string u8string(reinterpret_cast<const char*>(utf8_output), utf8_words);
-
-            ARROW_RETURN_NOT_OK(builder.AppendProxy(utf8_output.get(), utf8_words));
-            
+            ARROW_RETURN_NOT_OK(builder.AppendProxy(utf8_output.get(), utf8_bytes));
         }
     }
     return Status::OK();
