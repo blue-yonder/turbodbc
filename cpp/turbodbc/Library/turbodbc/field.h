@@ -2,6 +2,7 @@
 
 #include <boost/variant/variant.hpp>
 #include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>

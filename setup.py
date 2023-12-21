@@ -104,12 +104,7 @@ elif sys.platform == "win32":
     extra_compile_args.append("/std:c++17")
     boost_root = os.getenv("BOOST_ROOT")
     if boost_root:
-        # raise Exception("Hey")
-        library_dirs.append(boost_root)
-        library_dirs.append(os.path.join(boost_root, "lib"))
-
         include_dirs.append(boost_root)
-        library_dirs.append(boost_root)
         library_dirs.append(os.path.join(boost_root, "stage", "lib"))
         library_dirs.append(os.path.join(boost_root, "lib64-msvc-14.0"))
     else:
@@ -129,9 +124,6 @@ else:
     if unixodbc_library_dir:
         library_dirs.append(unixodbc_library_dir)
     odbclib = "odbc"
-
-    print("include_dirs", include_dirs)
-    print("library_dirs", library_dirs)
 
 
 def _get_cxx_compiler():
