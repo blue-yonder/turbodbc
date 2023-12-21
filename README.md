@@ -11,7 +11,7 @@ Turbodbc - Turbocharged database access for data scientists.
 
 Turbodbc is a Python module to access relational databases via the
 [Open Database Connectivity (ODBC)](https://en.wikipedia.org/wiki/Open_Database_Connectivity)
-interface. Its primary target audience are data scientist
+interface. Its primary target audience are data scientists
 that use databases for which no efficient native Python drivers are available.
 
 For maximum compatibility, turbodbc complies with the
