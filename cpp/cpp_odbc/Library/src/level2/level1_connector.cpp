@@ -439,7 +439,6 @@ column_description level1_connector::do_describe_column_wide(statement_handle co
     size_t utf8_bytes = simdutf::convert_utf16le_to_utf8(str_u16.data(), str_u16.size(), utf8_output.get());
     std::string utf8_name(utf8_output.get(), utf8_bytes);
 
-    // throw std::invalid_argument("Got to here");
     return {utf8_name, data_type, size, decimal_digits, allows_nullable};
 }
 

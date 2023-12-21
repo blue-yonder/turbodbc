@@ -64,7 +64,7 @@ def test_connect_raises_on_ambiguous_parameters():
 def test_connect_with_connection_string(dsn, configuration):
     connection_string = "DSN=%s;" % dsn
     for para, val in get_credentials(configuration).items():
-        connection_string = connection_string + f"{para}={val};"
+        connection_string = connection_string + f"{para}={val};"  # noqa
     connection = connect(connection_string=connection_string)
     connection.cursor().execute("SELECT 'foo'")
     connection.close()

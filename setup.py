@@ -96,7 +96,9 @@ if sys.platform == "darwin":
     python_module_link_args.append("-bundle")
     builder = setuptools.command.build_ext.build_ext(Distribution())
     full_name = builder.get_ext_filename("libturbodbc")
-    base_library_link_args.append(f"-Wl,-dylib_install_name,@loader_path/{full_name}")
+    base_library_link_args.append(
+        f"-Wl,-dylib_install_name,@loader_path/{full_name}"  # noqa
+    )
     base_library_link_args.append("-dynamiclib")
     odbclib = "odbc"
 elif sys.platform == "win32":
