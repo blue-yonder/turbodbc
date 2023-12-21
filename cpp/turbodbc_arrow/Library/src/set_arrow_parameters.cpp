@@ -14,6 +14,8 @@
 #include <ciso646>
 #include <codecvt>
 
+#include <simdutf.h>
+
 using arrow::BooleanArray;
 using arrow::BinaryArray;
 using arrow::ChunkedArray;
@@ -138,7 +140,14 @@ namespace {
         size_t maximum_length = 0;
         for (int64_t i = 0; i != elements; ++i) {
           if (!typed_array.IsNull(start + i)) {
-	    std::u16string str = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(typed_array.GetString(start + i));
+            // std::u16string str = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(typed_array.GetString(start + i));
+
+            std::string utf8_encoded = typed_array.GetString(start + i);
+            size_t expected_utf16_chars = simdutf::utf16_length_from_utf8(utf8_encoded.data(), utf8_encoded.size());
+            std::unique_ptr<char16_t[]> utf16{new char16_t[expected_utf16_chars]};
+            size_t utf16_chars = simdutf::convert_utf8_to_utf16le(utf8_encoded.data(), utf8_encoded.size(), utf16.get());
+            std::u16string str(utf16.get(), utf16_chars);
+
             maximum_length = std::max(maximum_length, str.length());
             batch.push_back({false, str});
           } else {
