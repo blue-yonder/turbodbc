@@ -66,7 +66,5 @@ add_custom_target(refresh_cmake_configuration
 )
 
 if(WIN32)
-    add_definitions("-std=c++17")
-    link_directories("$ENV{PYTHON}/libs")
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS "TRUE")
 endif()
