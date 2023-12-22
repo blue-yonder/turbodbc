@@ -115,6 +115,7 @@ elif sys.platform == "win32":
     conda_prefix = os.getenv("CONDA_PREFIX")
     if conda_prefix:
         include_dirs.append(os.path.join(conda_prefix, "Library", "include"))
+        library_dirs.append(os.path.join(conda_prefix, "Library", "lib"))
 else:
     extra_compile_args.append("--std=c++17")
     hidden_visibility_args.append("-fvisibility=hidden")
