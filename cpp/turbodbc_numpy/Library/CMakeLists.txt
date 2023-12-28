@@ -13,7 +13,6 @@ add_dependencies(turbodbc_numpy_support
 
 target_link_libraries(turbodbc_numpy_support
     PUBLIC ${Boost_LIBRARIES}
-    PUBLIC ${Simdutf_LIBRARIES}
     PUBLIC ${Odbc_LIBRARIES}
     PUBLIC cpp_odbc
     PUBLIC turbodbc
