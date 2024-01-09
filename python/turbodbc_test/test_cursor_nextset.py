@@ -1,4 +1,4 @@
-from helpers import for_each_database_except, for_one_database, get_credentials
+from helpers import for_each_database_except, for_one_database, get_credentials, for_specific_databases
 
 from turbodbc import connect
 
@@ -21,7 +21,7 @@ def test_nextset_with_one_result_set(dsn, configuration):
         assert True, "Found call for nextset"
 
 
-@for_one_database
+@for_specific_databases("postgres")
 def test_nextset_with_function(dsn, configuration):
     cursor = connect(dsn, **get_credentials(configuration)).cursor()
     multi_result_set_func = """CREATE FUNCTION TEST_FUNC ()
@@ -43,7 +43,7 @@ def test_nextset_with_function(dsn, configuration):
         assert True, "Found call for nextset"
 
 
-@for_one_database
+@for_specific_databases("postgres")
 def test_nextset_with_postgres_procedure(dsn, configuration):
     cursor = connect(dsn, **get_credentials(configuration)).cursor()
     multi_result_set_func = """CREATE PROCEDURE TEST_PROC(INOUT _result_one
@@ -72,7 +72,7 @@ def test_nextset_with_postgres_procedure(dsn, configuration):
         assert True, "Found call for nextset"
 
 
-@for_one_database
+@for_specific_databases("postgres")
 def test_nextset_with_postgres_function(dsn, configuration):
     cursor = connect(dsn, **get_credentials(configuration)).cursor()
     multi_result_set_func = """CREATE FUNCTION TEST_FUNC() RETURNS SETOF refcursor as $$

@@ -90,6 +90,19 @@ jobs:
           - PYTHON_VERSION: "3.11"
             PYARROW_VERSION: "14.0.1"
     steps:
+      - name: Create SQL Server
+        shell: pwsh
+        run: |
+          Write-Host "Downloading"
+          Import-Module BitsTransfer
+          Start-BitsTransfer -Source "https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi" -Destination SqlLocalDB.msi
+          Write-Host "Installing"
+          Start-Process -FilePath "SqlLocalDB.msi" -Wait -ArgumentList "/qn", "/norestart", "/l*v SqlLocalDBInstall.log", "IACCEPTSQLLOCALDBLICENSETERMS=YES"
+          sqlcmd -S '(localdb)\MSSQLLocalDB' -Q 'CREATE DATABASE test_db' -l 60
+      - name: Configure ODBC Data Source
+        run: |
+          odbcconf /a {CONFIGDSN "ODBC Driver 17 for SQL Server" "DSN=MSSQL|Server=(localdb)\MSSQLLocalDB|Database=test_db|Trusted_Connection=Yes"}
+          if %errorlevel% neq 0 exit /b %errorlevel%
       - name: Checkout branch
         uses: actions/checkout@v3
         with:
@@ -101,11 +114,13 @@ jobs:
         with:
           condarc-file: .github/workflows/.condarc
           cache-env: true
+          environment-file: environment.yml
           extra-specs: |
             python=${{ matrix.PYTHON_VERSION }}
             pyarrow=${{ matrix.PYARROW_VERSION }}
             pytest-md
             pytest-emoji
+            pytest-cov
       - name: Configure with CMake
         run: |
           @CALL micromamba activate turbodbc
@@ -142,4 +157,11 @@ jobs:
           python -c "import turbodbc"
           if %errorlevel% neq 0 exit /b %errorlevel%
           python -c "import turbodbc.arrow_support"
+          if %errorlevel% neq 0 exit /b %errorlevel%
+      - name: Run tests
+        run: |
+          @CALL micromamba activate turbodbc
+          @echo on
+          cd build
+          ctest --verbose
           if %errorlevel% neq 0 exit /b %errorlevel%
