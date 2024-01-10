@@ -1,6 +1,7 @@
 import json
 import os
 from contextlib import contextmanager
+from typing import Optional
 
 import pytest
 
@@ -110,6 +111,25 @@ def test_important_stuff(dsn, configuration):
 for_one_database = pytest.mark.parametrize(
     "dsn,configuration", [_get_configuration(_get_config_files()[0])]
 )
+
+
+def for_specific_databases(db_filter: Optional[str] = None):
+    """
+    Use this decorator to execute a test function for a specific database configuration that contains the given filter.
+
+    Please note the test function *must* take the parameters `dsn` and `configuration`,
+    and in that order.
+
+    Example:
+
+    @for_specific_databases("mssql")
+    def test_important_stuff_only_for_mssql(dsn, configuration):
+        assert 1 == 2
+    """
+    filtered_config_files = [fn for fn in _get_config_files() if db_filter in fn]
+    return pytest.mark.parametrize(
+        "dsn,configuration", [_get_configuration(cf) for cf in filtered_config_files]
+    )
 
 
 @contextmanager

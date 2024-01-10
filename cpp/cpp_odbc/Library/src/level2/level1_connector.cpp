@@ -20,6 +20,10 @@
 #include <locale>
 #include <sstream>
 
+
+#include <simdutf.h>
+
+
 namespace impl {
 
 template <typename Output_Handle, typename Input_Handle>
@@ -423,14 +427,18 @@ column_description level1_connector::do_describe_column_wide(statement_handle co
     SQLULEN size = 0;
     SQLSMALLINT decimal_digits = 0;
     SQLSMALLINT nullable = 0;
-
     auto const return_code = level1_api_->describe_column(handle.handle, column_id, name.data_pointer(), name.capacity(), name.size_pointer(), &data_type, &size, &decimal_digits, &nullable);
 
     bool const allows_nullable = (nullable == SQL_NO_NULLS) ? false : true;
 
     impl::throw_on_error(return_code, *this, handle);
 
-    std::string const utf8_name = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(name);
+    std::u16string str_u16 = name;
+    size_t expected_utf8_bytes = simdutf::utf8_length_from_utf16le(str_u16.data(), str_u16.size());
+    std::unique_ptr<char[]> utf8_output{new char[expected_utf8_bytes]};
+    size_t utf8_bytes = simdutf::convert_utf16le_to_utf8(str_u16.data(), str_u16.size(), utf8_output.get());
+    std::string utf8_name(utf8_output.get(), utf8_bytes);
+
     return {utf8_name, data_type, size, decimal_digits, allows_nullable};
 }
 

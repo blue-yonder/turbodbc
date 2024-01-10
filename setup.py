@@ -74,11 +74,11 @@ class _deferred_pybind11_include:
 
 
 extra_compile_args = []
-hidden_visibility_args = []
+hidden_visibility_args: list[str] = []
 include_dirs: list[str] = ["include/", str(_deferred_pybind11_include())]
 
 library_dirs: list[str] = []
-python_module_link_args = []
+python_module_link_args: list[str] = []
 base_library_link_args: list[str] = []
 
 if sys.platform == "darwin":
@@ -96,7 +96,9 @@ if sys.platform == "darwin":
     python_module_link_args.append("-bundle")
     builder = setuptools.command.build_ext.build_ext(Distribution())
     full_name = builder.get_ext_filename("libturbodbc")
-    base_library_link_args.append(f"-Wl,-dylib_install_name,@loader_path/{full_name}")
+    base_library_link_args.append(
+        f"-Wl,-dylib_install_name,@loader_path/{full_name}"  # noqa
+    )
     base_library_link_args.append("-dynamiclib")
     odbclib = "odbc"
 elif sys.platform == "win32":
@@ -113,6 +115,7 @@ elif sys.platform == "win32":
     conda_prefix = os.getenv("CONDA_PREFIX")
     if conda_prefix:
         include_dirs.append(os.path.join(conda_prefix, "Library", "include"))
+        library_dirs.append(os.path.join(conda_prefix, "Library", "lib"))
 else:
     extra_compile_args.append("--std=c++17")
     hidden_visibility_args.append("-fvisibility=hidden")
@@ -160,9 +163,10 @@ def get_extension_modules():
         include_dirs=include_dirs,
         extra_compile_args=extra_compile_args,
         extra_link_args=base_library_link_args,
-        libraries=[odbclib],
+        libraries=[odbclib, "simdutf"],
         library_dirs=library_dirs,
     )
+    turbodbc_libs: list[str]
     if sys.platform == "win32":
         turbodbc_libs = []
     else:
@@ -180,7 +184,7 @@ def get_extension_modules():
         sources=turbodbc_python_sources,
         include_dirs=include_dirs,
         extra_compile_args=extra_compile_args + hidden_visibility_args,
-        libraries=[odbclib] + turbodbc_libs,
+        libraries=[odbclib, "simdutf"] + turbodbc_libs,
         extra_link_args=python_module_link_args,
         library_dirs=library_dirs,
     )
@@ -201,7 +205,7 @@ def get_extension_modules():
             sources=turbodbc_numpy_sources,
             include_dirs=include_dirs + [numpy.get_include()],
             extra_compile_args=extra_compile_args + hidden_visibility_args,
-            libraries=[odbclib] + turbodbc_libs,
+            libraries=[odbclib, "simdutf"] + turbodbc_libs,
             extra_link_args=python_module_link_args,
             library_dirs=library_dirs,
         )
@@ -240,7 +244,7 @@ def get_extension_modules():
             sources=turbodbc_arrow_sources,
             include_dirs=include_dirs + [pyarrow_include_dir],
             extra_compile_args=extra_compile_args + hidden_visibility_args,
-            libraries=[odbclib] + arrow_libs + turbodbc_libs,
+            libraries=[odbclib, "simdutf"] + arrow_libs + turbodbc_libs,
             extra_link_args=pyarrow_module_link_args,
             library_dirs=library_dirs + arrow_lib_dirs,
         )

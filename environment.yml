@@ -16,3 +16,4 @@ dependencies:
   - pytest
   - numpy
   - pybind11
+  - simdutf

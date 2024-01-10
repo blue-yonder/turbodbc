@@ -8,6 +8,8 @@
 
 #include <sql.h>
 
+#include <simdutf.h>
+
 #include <turbodbc/errors.h>
 #include <turbodbc/time_helpers.h>
 
@@ -128,8 +130,12 @@ Status AppendUnicodeStringsToBuilder(size_t rows_in_batch, BuilderType& builder,
             ARROW_RETURN_NOT_OK(builder.AppendNullProxy());
         } else {
             std::u16string str_u16(reinterpret_cast<const char16_t*>(element.data_pointer), element.indicator / 2);
-            std::string u8string = std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(str_u16);
-            ARROW_RETURN_NOT_OK(builder.AppendProxy(u8string.data(), u8string.size()));
+
+            size_t expected_utf8_bytes = simdutf::utf8_length_from_utf16le(str_u16.data(), str_u16.size());
+            std::unique_ptr<char[]> utf8_output{new char[expected_utf8_bytes]};
+            size_t utf8_bytes = simdutf::convert_utf16le_to_utf8(str_u16.data(), str_u16.size(), utf8_output.get());
+
+            ARROW_RETURN_NOT_OK(builder.AppendProxy(utf8_output.get(), utf8_bytes));
         }
     }
     return Status::OK();

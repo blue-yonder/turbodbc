@@ -64,3 +64,7 @@ add_custom_target(refresh_cmake_configuration
 	cmake -E touch ${CMAKE_PARENT_LIST_FILE} # make cmake detect configuration is changed on NEXT build
 	COMMENT "Forcing refreshing of the CMake configuration. This allows to use globbing safely."
 )
+
+if(WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS "TRUE")
+endif()

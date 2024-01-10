@@ -24,18 +24,19 @@ target_link_libraries(turbodbc_test
 )
 
 IF(UNIX)
-target_link_libraries(turbodbc_test
-    pthread
-)
+    target_link_libraries(turbodbc_test
+        pthread
+    )
 ENDIF()
 
 add_test(NAME turbodbc_unit_test
          COMMAND turbodbc_test --gtest_output=xml:${CMAKE_BINARY_DIR}/turbodbc_test.xml)
 
 IF(WIN32)
-set_tests_properties(
-    turbodbc_unit_test
-    PROPERTIES
-    ENVIRONMENT "PATH=${CMAKE_BINARY_DIR};$ENV{PATH}"
-)
+    string(REPLACE ";" "\\;" MASKED_PATH "$ENV{PATH}")
+    set_tests_properties(
+        turbodbc_unit_test
+        PROPERTIES
+        ENVIRONMENT "PATH=${CMAKE_BINARY_DIR}\;${MASKED_PATH}"
+    )
 ENDIF()

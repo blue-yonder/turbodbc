@@ -1,5 +1,5 @@
 import pytest
-from helpers import for_one_database, get_credentials
+from helpers import for_one_database, for_specific_databases, get_credentials
 
 from turbodbc import DatabaseError, ParameterError, connect
 from turbodbc.connect import _make_connection_string
@@ -44,7 +44,7 @@ def test_connect_raises_on_invalid_dsn():
         connect(invalid_dsn)
 
 
-@for_one_database
+@for_specific_databases("postgres")
 def test_connect_raises_on_invalid_additional_option(dsn, configuration):
     additional_option = {
         configuration["capabilities"]["connection_user_option"]: "invalid user"
@@ -64,7 +64,7 @@ def test_connect_raises_on_ambiguous_parameters():
 def test_connect_with_connection_string(dsn, configuration):
     connection_string = "DSN=%s;" % dsn
     for para, val in get_credentials(configuration).items():
-        connection_string = connection_string + f"{para}={val};"
+        connection_string = connection_string + f"{para}={val};"  # noqa
     connection = connect(connection_string=connection_string)
     connection.cursor().execute("SELECT 'foo'")
     connection.close()

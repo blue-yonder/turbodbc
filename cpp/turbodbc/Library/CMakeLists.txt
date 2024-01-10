@@ -12,6 +12,7 @@ add_dependencies(turbodbc
 
 target_link_libraries(turbodbc
 	${Boost_LIBRARIES}
+	${Simdutf_LIBRARIES}
 	${Odbc_LIBRARIES}
 	cpp_odbc
 )

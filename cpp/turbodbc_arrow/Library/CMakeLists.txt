@@ -15,6 +15,7 @@ add_dependencies(turbodbc_arrow_support
 target_link_libraries(turbodbc_arrow_support
     PUBLIC ${Boost_LIBRARIES}
     PUBLIC ${Odbc_LIBRARIES}
+    PUBLIC ${Simdutf_LIBRARIES}
     PUBLIC cpp_odbc
     PUBLIC turbodbc
 )

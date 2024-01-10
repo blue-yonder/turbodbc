@@ -1,6 +1,10 @@
 find_package(Boost REQUIRED COMPONENTS system)
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
+find_path(Simdutf_INCLUDE_DIRS simdutf.h $ENV{CONDA_PREFIX}/Library/include)
+find_library(Simdutf_LIBRARIES simdutf  $ENV{CONDA_PREFIX}/Library/lib)
+include_directories(SYSTEM ${Simdutf_INCLUDE_DIRS})
+
 include_directories(SYSTEM ${PYTHON_INCLUDE_DIRS})
 
 find_package(odbc REQUIRED)

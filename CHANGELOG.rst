@@ -3,6 +3,11 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 4.10.0
+-------------
+
+* Fix performance bug in dealing with character columns under Windows, because of utf conversion by using `simdutf` instead of `wstring_convert`
+
 Version 4.9.0
 -------------
 
