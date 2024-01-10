@@ -97,7 +97,7 @@ jobs:
           directory: result/cov/cpp
           fail_ci_if_error: true
           verbose: true
-          functionalities: coveragepy, gcov
+          functionalities: gcov
 
       - name: Publish package
         if: matrix.upload && github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
