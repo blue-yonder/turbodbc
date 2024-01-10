@@ -1,7 +1,7 @@
 import json
 import os
 from contextlib import contextmanager
-from typing import Optional, List
+from typing import Optional
 
 import pytest
 
