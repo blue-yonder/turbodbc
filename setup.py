@@ -259,7 +259,7 @@ with open(os.path.join(here, "README.md")) as f:
 
 setup(
     name="turbodbc",
-    version="4.9.0",
+    version="4.10.1",
     description="turbodbc is a Python DB API 2.0 compatible ODBC driver",
     long_description=long_description,
     long_description_content_type="text/markdown",
