@@ -33,6 +33,8 @@ jobs:
             PYARROW_VERSION: "13.0.0"
           - PYTHON_VERSION: "3.11"
             PYARROW_VERSION: "14.0.1"
+          - PYTHON_VERSION: "3.11"
+            PYARROW_VERSION: "15.0.0"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -89,6 +91,8 @@ jobs:
             PYARROW_VERSION: "13.0.0"
           - PYTHON_VERSION: "3.11"
             PYARROW_VERSION: "14.0.1"
+          - PYTHON_VERSION: "3.11"
+            PYARROW_VERSION: "15.0.0"
     steps:
       - name: Create SQL Server
         shell: pwsh
