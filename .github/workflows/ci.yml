@@ -55,17 +55,17 @@ jobs:
           - +test-python3.11-arrow14.x.x
           - +test-python3.11-arrow15.x.x
         experimental: [ false ]
-        upload: [ false ]
+        upload: [false]
         include:
           - target: +test-python3.9-arrow12.x.x
             experimental: false
-            upload: true
+            upload: false
           - target: +test-python3.10-arrow12.x.x
             experimental: false
-            upload: true
+            upload: false
           - target: +test-python3.11-arrow14.x.x
             experimental: false
-            upload: true
+            upload: false
           - target: +test-python3.11-arrow15.x.x
             experimental: false
             upload: true
@@ -85,24 +85,6 @@ jobs:
       - name: Run build
         run: earthly --allow-privileged ${{ matrix.target }}
         continue-on-error: ${{ matrix.experimental }}
-
-      - name: Upload coverage for Python
-        if: ${{ matrix.upload }}
-        uses: codecov/codecov-action@v3
-        with:
-          files: result/cov/python/python_cov.xml
-          fail_ci_if_error: true
-          verbose: true
-          functionalities: gcov
-      - name: Upload coverage for C++
-        if: ${{ matrix.upload }}
-        uses: codecov/codecov-action@v3
-        with:
-          directory: result/cov/cpp
-          fail_ci_if_error: true
-          verbose: true
-          functionalities: gcov
-
       - name: Publish package
         if: matrix.upload && github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
 
