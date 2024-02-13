@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: 3.9
       - name: Run pre-commit checks
-        uses: pre-commit/action@v3.0.0
+        uses: pre-commit/action@v3.0.1
 
   tests:
     runs-on: ubuntu-latest
