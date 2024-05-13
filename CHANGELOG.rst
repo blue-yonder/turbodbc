@@ -8,6 +8,7 @@ Version 4.12.0
 --------------
 
 * Support ``pyarrow=16``
+* Drop Python 3.9
 
 Version 4.11.1
 --------------

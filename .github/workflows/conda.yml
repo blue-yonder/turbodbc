@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        PYTHON_VERSION: ['3.9', '3.10', '3.11']
+        PYTHON_VERSION: ['3.10', '3.11']
         PYARROW_VERSION: ['10.0.1']
         include:
           - PYTHON_VERSION: "3.10"

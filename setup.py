@@ -275,7 +275,7 @@ setup(
     ],
     install_requires=[],
     extras_require={"arrow": ["pyarrow>=7.0,<17"], "numpy": "numpy>=1.20.0"},
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
-      - name: Install Python 3.9
+      - name: Install Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
       - name: Run pre-commit checks
         uses: pre-commit/action@v3.0.1
 
@@ -33,12 +33,6 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - +test-python3.9-arrow7.x.x
-          - +test-python3.9-arrow8.x.x
-          - +test-python3.9-arrow9.x.x
-          - +test-python3.9-arrow10.x.x
-          - +test-python3.9-arrow11.x.x
-          - +test-python3.9-arrow12.x.x
           - +test-python3.10-arrow7.x.x
           - +test-python3.10-arrow8.x.x
           - +test-python3.10-arrow9.x.x
@@ -58,7 +52,7 @@ jobs:
         experimental: [ false ]
         upload: [false]
         include:
-          - target: +test-python3.9-arrow12.x.x
+          - target: +test-python3.10-arrow12.x.x
             experimental: false
             upload: false
           - target: +test-python3.10-arrow12.x.x
@@ -70,9 +64,6 @@ jobs:
           - target: +test-python3.11-arrow15.x.x
             experimental: false
             upload: true
-          - target: +test-python3.9-arrow-nightly
-            experimental: true
-            upload: false
           - target: +test-python3.10-arrow-nightly
             experimental: true
             upload: false
