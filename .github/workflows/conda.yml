@@ -18,11 +18,11 @@ defaults:
 
 jobs:
   macos-tests:
-    runs-on: macos-latest
+    runs-on: macos-13
     strategy:
       fail-fast: false
       matrix:
-        PYTHON_VERSION: ['3.9', '3.10', '3.11']
+        PYTHON_VERSION: ['3.10', '3.11']
         PYARROW_VERSION: ['10.0.1']
         include:
           - PYTHON_VERSION: "3.10"
@@ -35,6 +35,8 @@ jobs:
             PYARROW_VERSION: "14.0.1"
           - PYTHON_VERSION: "3.11"
             PYARROW_VERSION: "15.0.0"
+          - PYTHON_VERSION: "3.11"
+            PYARROW_VERSION: "16.0.0"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
