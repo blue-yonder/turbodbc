@@ -1,4 +1,4 @@
-import pkg_resources
+from importlib.metadata import version
 from turbodbc_intern import Megabytes, Rows
 
 from .api_constants import apilevel, paramstyle, threadsafety
@@ -9,7 +9,7 @@ from .exceptions import DatabaseError, Error, InterfaceError, ParameterError
 from .options import make_options
 
 try:
-    __version__ = pkg_resources.get_distribution(__name__).version
+    __version__ = version(__name__)
 except:  # noqa: E722
     __version__ = "unknown"
 
