@@ -1,4 +1,5 @@
 from importlib.metadata import version
+
 from turbodbc_intern import Megabytes, Rows
 
 from .api_constants import apilevel, paramstyle, threadsafety
