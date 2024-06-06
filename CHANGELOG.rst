@@ -3,6 +3,10 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 4.12.1
+--------------
+
+* Remove usage of ``pkg_resources``
 
 Version 4.12.0
 --------------
