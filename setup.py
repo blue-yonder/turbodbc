@@ -271,10 +271,10 @@ setup(
     setup_requires=[
         "pybind11>=2.10.4",
         "pyarrow>=7,<18",
-        "numpy>=1.20",
+        "numpy>=1.20,<2",
     ],
     install_requires=[],
-    extras_require={"arrow": ["pyarrow>=7.0,<18"], "numpy": "numpy>=1.20.0"},
+    extras_require={"arrow": ["pyarrow>=7.0,<18"], "numpy": "numpy>=1.20.0,<2"},
     python_requires=">=3.10",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
