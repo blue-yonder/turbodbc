@@ -222,7 +222,7 @@ test-python3.10-arrow16.x.x:
 
     SAVE ARTIFACT /result AS LOCAL result
 
-test-python3.10-arrow15.x.x:
+test-python3.10-arrow17.x.x:
     ARG PYTHON_VERSION="3.10.2"
     COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
         --build-arg ARROW_VERSION_RULE=">=17,<18" \
