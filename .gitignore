@@ -12,3 +12,6 @@ pybind11
 
 PyTest/PyTest
 contrib/sdist
+# pixi environments
+.pixi
+*.egg-info
