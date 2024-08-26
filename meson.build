@@ -4,12 +4,12 @@ project(
   meson_version: '>= 1.0.0',
   default_options: [
     'buildtype=release',
-    'cpp_std=c++14',
+    'cpp_std=c++17',
   ]
 )
 
 cpp = meson.get_compiler('cpp')
-
+add_global_arguments('-DBOOST_NO_CXX98_FUNCTION_BASE', language: 'cpp')
 unixodbc = cpp.find_library('odbc')
 
 # unixodbc = dependency('unixodbc')
@@ -142,8 +142,11 @@ py.extension_module(
     'cpp/turbodbc_numpy/Library/src/set_numpy_parameters.cpp',
     'cpp/turbodbc_numpy/Library/src/string_column.cpp',
     'cpp/turbodbc_numpy/Library/src/unicode_column.cpp',
+    'cpp/turbodbc_arrow/Library/src/arrow_result_set.cpp',
+    'cpp/turbodbc_arrow/Library/src/python_bindings.cpp',
+    'cpp/turbodbc_arrow/Library/src/set_arrow_parameters.cpp',
   ],
   dependencies: [unixodbc, np_dep],
-  include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library'),
+  include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
