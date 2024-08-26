@@ -1,15 +1,23 @@
-file(GLOB_RECURSE LIBRARY_FILES "src/*.cpp")
-
-pybind11_add_module(turbodbc_python ${LIBRARY_FILES})
+pybind11_add_module(turbodbc_python
+  src/determine_parameter_type.cpp
+  src/python_bindings/buffer_size.cpp
+  src/python_bindings/column_info.cpp
+  src/python_bindings/connect.cpp
+  src/python_bindings/connection.cpp
+  src/python_bindings/cursor.cpp
+  src/python_bindings/error.cpp
+  src/python_bindings/module.cpp
+  src/python_bindings/options.cpp
+  src/python_bindings/python_parameter_set.cpp
+  src/python_bindings/python_result_set.cpp
+  src/python_parameter_set.cpp
+  src/python_result_set.cpp
+)
 
 set_target_properties(turbodbc_python PROPERTIES 
     PREFIX ""
     OUTPUT_NAME turbodbc_intern
     INSTALL_RPATH "../../.."
-)
-
-add_dependencies(turbodbc_python
-    refresh_cmake_configuration
 )
 
 target_link_libraries(turbodbc_python

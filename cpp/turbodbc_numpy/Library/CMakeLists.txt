@@ -1,14 +1,19 @@
-file(GLOB_RECURSE LIBRARY_FILES "src/*.cpp")
-
-pybind11_add_module(turbodbc_numpy_support ${LIBRARY_FILES})
+pybind11_add_module(turbodbc_numpy_support
+  src/binary_column.cpp
+  src/datetime_column.cpp
+  src/make_numpy_array.cpp
+  src/masked_column.cpp
+  src/numpy_result_set.cpp
+  src/numpy_type.cpp
+  src/python_bindings.cpp
+  src/set_numpy_parameters.cpp
+  src/string_column.cpp
+  src/unicode_column.cpp
+)
 
 set_target_properties(turbodbc_numpy_support PROPERTIES 
     PREFIX ""
     INSTALL_RPATH "../../.."
-)
-
-add_dependencies(turbodbc_numpy_support
-    refresh_cmake_configuration
 )
 
 target_link_libraries(turbodbc_numpy_support
