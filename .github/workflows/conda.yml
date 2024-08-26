@@ -22,23 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        PYTHON_VERSION: ['3.10', '3.11']
-        PYARROW_VERSION: ['10.0.1']
-        #include:
-        #  - PYTHON_VERSION: "3.10"
-        #    PYARROW_VERSION: "9.0.0"
-        #  - PYTHON_VERSION: "3.11"
-        #    PYARROW_VERSION: "12.0.0"
-        #  - PYTHON_VERSION: "3.11"
-        #    PYARROW_VERSION: "13.0.0"
-        #  - PYTHON_VERSION: "3.11"
-        #    PYARROW_VERSION: "14.0.1"
-        #  - PYTHON_VERSION: "3.11"
-        #    PYARROW_VERSION: "15.0.0"
-        #  - PYTHON_VERSION: "3.11"
-        #    PYARROW_VERSION: "16.0.0"
-        #  - PYTHON_VERSION: "3.11"
-        #    PYARROW_VERSION: "17.0.0"
+        environment: ["py310-pa13"]
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -46,34 +30,17 @@ jobs:
           submodules: true
       - name: Fetch full git history
         run: git fetch --prune --unshallow
-      - name: Set up Conda env
-        uses: mamba-org/provision-with-micromamba@e2b397b12d0a38069451664382b769c9456e3d6d
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
-          condarc-file: .github/workflows/.condarc
-          cache-env: true
-          extra-specs: |
-            python=${{ matrix.PYTHON_VERSION }}
-            pyarrow=${{ matrix.PYARROW_VERSION }}
-            pytest-md
-            pytest-emoji
-      - name: Build with CMake
+          environments: ${{ matrix.environment }}
+      - name: Build and test
+        shell: pixi run bash -e {0}
         run: |
-          mkdir build && \
-          cd build && \
-          cmake -DBOOST_ROOT=${CONDA_PREFIX} -DBUILD_COVERAGE=ON \
-            -DCMAKE_INSTALL_PREFIX=./dist  \
-            -DPYTHON_EXECUTABLE=$(which python) \
-            -GNinja .. && \
-          ninja && \
-          cmake --build . --target install
-      - name: Install repository
-        run: |
-          cd build/dist && python -m pip install --no-build-isolation --no-deps --disable-pip-version-check -e .
-      - name: Test import
-        run: |
-          cd /
-          python -c 'import turbodbc'
-          python -c "import turbodbc.arrow_support"
+          mkdir build
+          pushd build
+          meson setup ..
+          ninja
   windows-tests:
     runs-on: windows-latest
     defaults:
