@@ -1,15 +1,13 @@
-file(GLOB_RECURSE LIBRARY_FILES "src/*.cpp")
-
 # We need to disable LTO on Arrow builds
-pybind11_add_module(turbodbc_arrow_support SHARED ${LIBRARY_FILES} NO_EXTRAS)
+pybind11_add_module(turbodbc_arrow_support SHARED 
+  src/arrow_result_set.cpp
+  src/python_bindings.cpp
+  src/set_arrow_parameters.cpp
+  NO_EXTRAS)
 
 set_target_properties(turbodbc_arrow_support PROPERTIES
     PREFIX ""
     INSTALL_RPATH "../../.."
-)
-
-add_dependencies(turbodbc_arrow_support
-    refresh_cmake_configuration
 )
 
 target_link_libraries(turbodbc_arrow_support
