@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.10
-  - pyarrow>=7.0,<18
+  - pyarrow>=13,<18
   - sel(unix): unixodbc
   - c-compiler
   - cxx-compiler

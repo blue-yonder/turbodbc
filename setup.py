@@ -270,7 +270,7 @@ setup(
     packages=["turbodbc"],
     setup_requires=[
         "pybind11>=2.10.4",
-        "pyarrow>=7,<18",
+        "pyarrow>=13,<18",
         "numpy>=2",
     ],
     install_requires=[],

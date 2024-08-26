@@ -132,60 +132,6 @@ test:
     SAVE ARTIFACT ../gcov /result/cov/cpp
     SAVE ARTIFACT /src/build/dist/dist /result/dist
 
-test-python3.10-arrow7.x.x:
-    ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=7,<8" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.10-arrow8.x.x:
-    ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=8,<9" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.10-arrow9.x.x:
-    ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=9,<10" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.10-arrow10.x.x:
-    ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=10,<11" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.10-arrow11.x.x:
-    ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=11,<12" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.10-arrow12.x.x:
-    ARG PYTHON_VERSION="3.10.2"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=12,<13" \
-        --build-arg NUMPY_VERSION_RULE=">=1.21.2" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
 test-python3.10-arrow13.x.x:
     ARG PYTHON_VERSION="3.10.2"
     COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
@@ -239,60 +185,6 @@ test-python3.10-arrow-nightly:
         +test/result /result
 
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
-
-test-python3.11-arrow7.x.x:
-    ARG PYTHON_VERSION="3.11.3"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=7,<8" \
-        --build-arg NUMPY_VERSION_RULE=">=1.23.3" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.11-arrow8.x.x:
-    ARG PYTHON_VERSION="3.11.3"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=8,<9" \
-        --build-arg NUMPY_VERSION_RULE=">=1.23.3" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.11-arrow9.x.x:
-    ARG PYTHON_VERSION="3.11.3"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=9,<10" \
-        --build-arg NUMPY_VERSION_RULE=">=1.23.3" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.11-arrow10.x.x:
-    ARG PYTHON_VERSION="3.11.3"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=10,<11" \
-        --build-arg NUMPY_VERSION_RULE=">=1.23.3" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.11-arrow11.x.x:
-    ARG PYTHON_VERSION="3.11.3"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=11,<12" \
-        --build-arg NUMPY_VERSION_RULE=">=1.23.3" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
-
-test-python3.11-arrow12.x.x:
-    ARG PYTHON_VERSION="3.11.3"
-    COPY --build-arg PYTHON_VERSION="$PYTHON_VERSION" \
-        --build-arg ARROW_VERSION_RULE=">=12,<13" \
-        --build-arg NUMPY_VERSION_RULE=">=1.23.3" \
-        +test/result /result
-
-    SAVE ARTIFACT /result AS LOCAL result
 
 test-python3.11-arrow13.x.x:
     ARG PYTHON_VERSION="3.11.3"
@@ -349,11 +241,6 @@ test-python3.11-arrow-nightly:
     SAVE ARTIFACT /result AS LOCAL result/$EARTHLY_TARGET_NAME
 
 test-python3.10-all:
-    BUILD test-python3.10-arrow7.x.x
-    BUILD test-python3.10-arrow8.x.x
-    BUILD test-python3.10-arrow9.x.x
-    BUILD test-python3.10-arrow11.x.x
-    BUILD test-python3.10-arrow12.x.x
     BUILD test-python3.10-arrow13.x.x
     BUILD test-python3.10-arrow14.x.x
     BUILD test-python3.10-arrow15.x.x
@@ -362,12 +249,6 @@ test-python3.10-all:
     BUILD test-python3.10-arrow-nightly
 
 test-python3.11-all:
-    BUILD test-python3.11-arrow7.x.x
-    BUILD test-python3.11-arrow8.x.x
-    BUILD test-python3.11-arrow9.x.x
-    BUILD test-python3.11-arrow10.x.x
-    BUILD test-python3.11-arrow11.x.x
-    BUILD test-python3.11-arrow12.x.x
     BUILD test-python3.11-arrow13.x.x
     BUILD test-python3.11-arrow14.x.x
     BUILD test-python3.11-arrow15.x.x

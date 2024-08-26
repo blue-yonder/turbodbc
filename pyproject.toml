@@ -1,5 +1,5 @@
 [build-system]
-requires = ['setuptools', 'wheel', 'pyarrow>=7,<16', 'pybind11', 'numpy>=2']
+requires = ['setuptools', 'wheel', 'pyarrow>=13,<18', 'pybind11', 'numpy>=2']
 
 [tool.black]
 exclude = '''
