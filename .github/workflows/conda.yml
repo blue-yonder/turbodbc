@@ -17,8 +17,33 @@ defaults:
     shell: bash -el {0}
 
 jobs:
-  macos-tests:
-    runs-on: macos-13
+  unix-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: ["py310-pa13"]
+        os: ["macos-latest", "ubuntu-latest"]
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Fetch full git history
+        run: git fetch --prune --unshallow
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: ${{ matrix.environment }}
+      - name: Build and test
+        shell: pixi run bash -e {0}
+        run: |
+          mkdir build
+          pushd build
+          meson setup ..
+          ninja
+  windows-pixi-tests:
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
