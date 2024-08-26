@@ -63,6 +63,34 @@ inc_np = include_directories(incdir_numpy)
 numpy_nodepr_api = ['-DNPY_NO_DEPRECATED_API=NPY_1_9_API_VERSION']
 np_dep = declare_dependency(include_directories: inc_np, compile_args: numpy_nodepr_api)
 
+incdir_pyarrow = meson.get_external_property('pyarrow-include-dir', 'not-given')
+if incdir_pyarrow == 'not-given'
+  incdir_pyarrow = run_command(py,
+    [
+      '-c',
+      '''import os
+import pyarrow as pa
+try:
+  incdir = os.path.relpath(pa.get_include())
+except Exception:
+  incdir = pa.get_include()
+print(incdir)
+  '''
+    ],
+    check: true
+  ).stdout().strip()
+
+  # We do need an absolute path to feed to `cc.find_library` below
+  _incdir_pyarrow_abs = run_command(py,
+    ['-c', 'import pyarrow; print(pyarrow.get_include())'],
+    check: true
+  ).stdout().strip()
+else
+  _incdir_pyarrow_abs = incdir_pyarrow
+endif
+inc_pa = include_directories(incdir_pyarrow)
+pa_dep = declare_dependency(include_directories: inc_pa)
+
 
 py.extension_module(
   'turbodbc',
@@ -146,7 +174,7 @@ py.extension_module(
     'cpp/turbodbc_arrow/Library/src/python_bindings.cpp',
     'cpp/turbodbc_arrow/Library/src/set_arrow_parameters.cpp',
   ],
-  dependencies: [unixodbc, np_dep],
+  dependencies: [unixodbc, np_dep, pa_dep],
   include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
