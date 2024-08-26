@@ -20,6 +20,7 @@ cmake = ">=3.30.2,<3.31"
 libboost-devel = ">=1.86.0,<1.87"
 simdutf = ">=5.4.15,<5.5"
 pyarrow = ">=13,<18"
+pybind11 = ">=2.13.5,<2.14"
 
 [target.unix.dependencies]
 unixodbc = ">=2"
