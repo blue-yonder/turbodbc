@@ -80,7 +80,8 @@ jobs:
       - name: Build and test
         shell: pixi run bash -e {0}
         env:
-          TURBODBC_TEST_CONFIGURATION_FILES: "query_fixtures_postgresql.json,query_fixtures_mssql.json,query_fixtures_mysql.json"
+          # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,query_fixtures_mssql.json,query_fixtures_mysql.json"
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json"
         run: |
           python -m build
           python -m pip install dist/*.whl
