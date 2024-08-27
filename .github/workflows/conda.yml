@@ -56,6 +56,7 @@ jobs:
           python -m pip install dist/*.whl
           ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
           python -c 'import turbodbc'
+          pytest
   macos-tests:
     runs-on: macos-latest
     strategy:
@@ -80,6 +81,7 @@ jobs:
           python -m pip install dist/*.whl
           ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
           python -c 'import turbodbc'
+          pytest
   windows-pixi-tests:
     defaults:
       run:
@@ -120,3 +122,4 @@ jobs:
         shell: pixi run pwsh -Command {0}
         run: |
           python -m pip install dist/*.whl
+          pytest
