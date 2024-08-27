@@ -48,6 +48,19 @@ jobs:
       matrix:
         environment: ["py310-pa13"]
     steps:
+      - name: Create SQL Server
+        shell: pwsh
+        run: |
+          Write-Host "Downloading"
+          Import-Module BitsTransfer
+          Start-BitsTransfer -Source "https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi" -Destination SqlLocalDB.msi
+          Write-Host "Installing"
+          Start-Process -FilePath "SqlLocalDB.msi" -Wait -ArgumentList "/qn", "/norestart", "/l*v SqlLocalDBInstall.log", "IACCEPTSQLLOCALDBLICENSETERMS=YES"
+          sqlcmd -S '(localdb)\MSSQLLocalDB' -Q 'CREATE DATABASE test_db' -l 60
+      - name: Configure ODBC Data Source
+        run: |
+          odbcconf /a {CONFIGDSN "ODBC Driver 17 for SQL Server" "DSN=MSSQL|Server=(localdb)\MSSQLLocalDB|Database=test_db|Trusted_Connection=Yes"}
+          if %errorlevel% neq 0 exit /b %errorlevel%
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
@@ -62,9 +75,10 @@ jobs:
       - name: Build wheel
         shell: pixi run pwsh -Command {0}
         run: python -m build
-      - name: Install wheel
+      - name: Install and test wheel
         shell: pixi run pwsh -Command {0}
-        run: python -m pip install dist/*.whl
+        run: |
+          python -m pip install dist/*.whl
   windows-tests:
     runs-on: windows-latest
     defaults:
