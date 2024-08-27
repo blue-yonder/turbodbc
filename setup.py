@@ -253,16 +253,7 @@ def get_extension_modules():
     return extension_modules
 
 
-here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, "README.md")) as f:
-    long_description = f.read()
-
 setup(
-    name="turbodbc",
-    version="4.14.0",
-    description="turbodbc is a Python DB API 2.0 compatible ODBC driver",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
     include_package_data=True,
     url="https://github.com/blue-yonder/turbodbc",
     author="Michael Koenig",
@@ -274,22 +265,6 @@ setup(
         "numpy>=2",
     ],
     install_requires=[],
-    extras_require={"arrow": ["pyarrow>=7.0,<18"], "numpy": "numpy>=1.20.0"},
-    python_requires=">=3.10",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS :: MacOS X",
-        "Operating System :: Microsoft :: Windows",
-        "Programming Language :: C++",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: Implementation :: CPython",
-        "Topic :: Database",
-    ],
     cmdclass=dict(build_ext=TurbodbcExtensionBuilder),
     ext_modules=get_extension_modules(),
 )

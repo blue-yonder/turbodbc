@@ -38,10 +38,9 @@ jobs:
       - name: Build and test
         shell: pixi run bash -e {0}
         run: |
-          mkdir build
-          pushd build
-          meson setup ..
-          ninja
+          mv pyproject.toml.meson pyproject.toml
+          python -m build
+          python -m pip install dist/*.whl
   windows-pixi-tests:
     runs-on: windows-latest
     strategy:
@@ -59,13 +58,13 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
-      - name: Build and test
+      - run: mv pyproject.toml.meson pyproject.toml
+      - name: Build wheel
         shell: pixi run pwsh -Command {0}
-        run: |
-          mkdir build
-          pushd build
-          meson setup ..
-          ninja
+        run: python -m build
+      - name: Install wheel
+        shell: pixi run pwsh -Command {0}
+        run: python -m pip install dist/*.whl
   windows-tests:
     runs-on: windows-latest
     defaults:
