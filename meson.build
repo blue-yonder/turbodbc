@@ -8,6 +8,8 @@ project(
   ]
 )
 
+fs = import('fs')
+
 cpp = meson.get_compiler('cpp')
 add_global_arguments('-DBOOST_NO_CXX98_FUNCTION_BASE', language: 'cpp')
 unixodbc = cpp.find_library('odbc')
@@ -91,6 +93,7 @@ else
 endif
 inc_pa = include_directories(incdir_pyarrow)
 pa_dep = declare_dependency(include_directories: inc_pa)
+arrow_python = cpp.find_library('arrow_python', dirs: [fs.parent(_incdir_pyarrow_abs)])
 
 
 py.extension_module(
@@ -175,7 +178,7 @@ py.extension_module(
     'cpp/turbodbc_arrow/Library/src/python_bindings.cpp',
     'cpp/turbodbc_arrow/Library/src/set_arrow_parameters.cpp',
   ],
-  dependencies: [unixodbc, np_dep, pa_dep, arrow],
+  dependencies: [unixodbc, np_dep, pa_dep, arrow, arrow_python],
   include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
