@@ -17,6 +17,21 @@ defaults:
     shell: bash -el {0}
 
 jobs:
+  # TODO:
+  #linux-release:
+  #  runs-on: ubuntu-latest
+  #  strategy:
+  #    fail-fast: false
+  #    matrix:
+  #      environment: ["py310-pa13"]
+  #  steps:
+  #    - name: Publish package
+  #      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
+  #      uses: pypa/gh-action-pypi-publish@v1.9.0
+  #      with:
+  #        user: __token__
+  #        password: ${{ secrets.PYPI_UPLOAD }}
+  #        packages_dir: result/dist
   linux-tests:
     runs-on: ubuntu-latest
     strategy:
@@ -37,7 +52,6 @@ jobs:
       - name: Build and test
         shell: pixi run bash -e {0}
         run: |
-          mv pyproject.toml.meson pyproject.toml
           python -m build
           python -m pip install dist/*.whl
           ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
@@ -62,7 +76,6 @@ jobs:
       - name: Build and test
         shell: pixi run bash -e {0}
         run: |
-          mv pyproject.toml.meson pyproject.toml
           python -m build
           python -m pip install dist/*.whl
           ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
@@ -100,7 +113,6 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
-      - run: mv pyproject.toml.meson pyproject.toml
       - name: Build wheel
         shell: pixi run pwsh -Command {0}
         run: python -m build

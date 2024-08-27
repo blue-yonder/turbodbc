@@ -3,6 +3,13 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 5.0.0
+-------------
+
+* Switch to ``meson-python`` as the sole build system.
+* Support only ``pyarrow>=13`` and have a hard dependency on it and ``numpy``.
+* Switch to a single binary module.
+
 Version 4.14.0
 --------------
 
