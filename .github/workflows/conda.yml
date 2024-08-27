@@ -38,6 +38,34 @@ jobs:
       fail-fast: false
       matrix:
         environment: ["py310-pa13"]
+    services:
+      postgres:
+        image: postgres:11
+        options: "--hostname postgres"
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+      mysql:
+        # test do not run with a newer mysql at the moment
+        image: mysql:5.6
+        # command: --default-authentication-plugin=mysql_native_password
+        env:
+          MYSQL_ROOT_PASSWORD: StrongPassword1
+          MYSQL_USER: mysqluser
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2017-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword1
+        ports:
+          - 1433:1433
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
