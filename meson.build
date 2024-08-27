@@ -93,7 +93,7 @@ pa_dep = declare_dependency(include_directories: inc_pa)
 
 
 py.extension_module(
-  'turbodbc_native',
+  'turbodbc_intern',
   [
     'cpp/cpp_odbc/Library/src/level1/api.cpp',
     'cpp/cpp_odbc/Library/src/level1/level1.cpp',
