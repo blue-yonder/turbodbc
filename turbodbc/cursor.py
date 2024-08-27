@@ -209,7 +209,7 @@ class Cursor:
                 return c.num_chunks
 
             if isinstance(columns, pa.Table):
-                from turbodbc.arrow_support import set_arrow_parameters
+                from turbodbc.arrow_support import set_arrow_parameters  # type: ignore
 
                 for column in columns.itercolumns():
                     if _num_chunks(column) != 1:
@@ -352,7 +352,7 @@ class Cursor:
         """
         self._assert_valid_result_set()
         if _has_arrow_support():
-            from turbodbc.arrow_support import make_arrow_result_set
+            from turbodbc.arrow_support import make_arrow_result_set  # type: ignore
 
             rs = make_arrow_result_set(
                 self.impl.get_result_set(), strings_as_dictionary, adaptive_integers
@@ -386,7 +386,7 @@ class Cursor:
         """
         self._assert_valid_result_set()
         if _has_arrow_support():
-            from turbodbc.arrow_support import make_arrow_result_set
+            from turbodbc.arrow_support import make_arrow_result_set  # type: ignore
 
             return make_arrow_result_set(
                 self.impl.get_result_set(), strings_as_dictionary, adaptive_integers
