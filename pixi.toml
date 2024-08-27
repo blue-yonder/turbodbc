@@ -27,6 +27,7 @@ pytest = ">=8.3.2,<8.4"
 
 [target.unix.dependencies]
 unixodbc = ">=2"
+postgresql = ">=15,<16"
 
 [feature.py310.dependencies]
 python = "3.10.*"

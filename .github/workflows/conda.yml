@@ -79,11 +79,14 @@ jobs:
           environments: ${{ matrix.environment }}
       - name: Build and test
         shell: pixi run bash -e {0}
+        env:
+          TURBODBC_TEST_CONFIGURATION_FILES: "query_fixtures_postgresql.json,query_fixtures_mssql.json,query_fixtures_mysql.json"
         run: |
           python -m build
           python -m pip install dist/*.whl
           ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
           python -c 'import turbodbc'
+          export ODBCSYSINI=$(pwd)/odbc_test_linux
           pytest
   macos-tests:
     runs-on: macos-latest
@@ -102,6 +105,11 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
+      - name: Setup postgres
+        shell: pixi run bash -e {0}
+        run: |
+          initdb -D mylocal_db
+          pg_ctl -D mylocal_db -l logfile start
       - name: Build and test
         shell: pixi run bash -e {0}
         run: |
