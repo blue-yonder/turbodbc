@@ -178,3 +178,19 @@ py.extension_module(
   include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
+
+py.install_sources(
+  [
+    'turbodbc/options.py',
+    'turbodbc/connect.py',
+    'turbodbc/__init__.py',
+    'turbodbc/data_types.py',
+    'turbodbc/api_constants.py',
+    'turbodbc/connection.py',
+    'turbodbc/arrow_support.py',
+    'turbodbc/exceptions.py',
+    'turbodbc/constructors.py',
+    'turbodbc/cursor.py',
+  ],
+  subdir: 'turbodbc',
+)
