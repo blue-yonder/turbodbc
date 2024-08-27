@@ -40,6 +40,7 @@ jobs:
           mv pyproject.toml.meson pyproject.toml
           python -m build
           python -m pip install dist/*.whl
+          ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
           python -c 'import turbodbc'
   macos-tests:
     runs-on: macos-latest
@@ -64,6 +65,7 @@ jobs:
           mv pyproject.toml.meson pyproject.toml
           python -m build
           python -m pip install dist/*.whl
+          ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
           python -c 'import turbodbc'
   windows-pixi-tests:
     defaults:
