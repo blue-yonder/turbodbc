@@ -134,7 +134,7 @@ jobs:
           sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_osx/odbcinst.ini
           python -c 'import turbodbc'
           ulimit -c unlimited
-          pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt" -o "quit"; exit 1)
+          pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt all" -o "quit"; exit 1)
   windows-pixi-tests:
     defaults:
       run:
