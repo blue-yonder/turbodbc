@@ -179,7 +179,6 @@ py.extension_module(
     'cpp/turbodbc_numpy/Library/src/masked_column.cpp',
     'cpp/turbodbc_numpy/Library/src/numpy_result_set.cpp',
     'cpp/turbodbc_numpy/Library/src/numpy_type.cpp',
-    'cpp/turbodbc_numpy/Library/src/python_bindings.cpp',
     'cpp/turbodbc_numpy/Library/src/set_numpy_parameters.cpp',
     'cpp/turbodbc_numpy/Library/src/string_column.cpp',
     'cpp/turbodbc_numpy/Library/src/unicode_column.cpp',

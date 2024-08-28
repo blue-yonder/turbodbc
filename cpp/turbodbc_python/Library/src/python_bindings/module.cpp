@@ -1,8 +1,16 @@
 #include <turbodbc_arrow/arrow_result_set.h>
 #include <turbodbc_arrow/set_arrow_parameters.h>
+#include <turbodbc_numpy/numpy_result_set.h>
+#include <turbodbc_numpy/set_numpy_parameters.h>
 #include <turbodbc/cursor.h>
 
+// compare http://docs.scipy.org/doc/numpy/reference/c-api.array.html#importing-the-api
+// as to why this define is necessary
+#define PY_ARRAY_UNIQUE_SYMBOL turbodbc_numpy_API
+#include <numpy/ndarrayobject.h>
+
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace turbodbc { namespace bindings {
 
@@ -36,12 +44,29 @@ void set_arrow_parameters(turbodbc::cursor & cursor, pybind11::object const & py
     turbodbc_arrow::set_arrow_parameters(cursor.get_command()->get_parameters(), pyarrow_table);
 }
 
+turbodbc_numpy::numpy_result_set make_numpy_result_set(std::shared_ptr<turbodbc::result_sets::result_set> result_set_pointer)
+{
+    return turbodbc_numpy::numpy_result_set(*result_set_pointer);
+}
+
+void set_numpy_parameters(turbodbc::cursor & cursor, std::vector<std::tuple<pybind11::array, pybind11::array_t<bool>, std::string>> const & columns)
+{
+    turbodbc_numpy::set_numpy_parameters(cursor.get_command()->get_parameters(), columns);
+}
+
 }
 
 using namespace turbodbc;
 
+void * enable_numpy_support()
+{
+    import_array();
+    return nullptr;
+}
+
 PYBIND11_MODULE(turbodbc_intern, module)
 {
+    enable_numpy_support();
     result_sets::python_result_set_init();
     determine_parameter_type_init();
 
@@ -62,4 +87,10 @@ PYBIND11_MODULE(turbodbc_intern, module)
 
     module.def("make_arrow_result_set", make_arrow_result_set);
     module.def("set_arrow_parameters", set_arrow_parameters);
+
+    pybind11::class_<turbodbc_numpy::numpy_result_set>(module, "NumpyResultSet")
+        .def("fetch_next_batch", &turbodbc_numpy::numpy_result_set::fetch_next_batch);
+
+    module.def("make_numpy_result_set", make_numpy_result_set);
+    module.def("set_numpy_parameters", set_numpy_parameters);
 }
