@@ -87,7 +87,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Build and test
-        shell: pixi run bash -e {0}
+        shell: pixi run -e ${{ matrix.environment }} bash -e {0}
         env:
           # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
           TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mssql.json"
@@ -117,13 +117,13 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Setup postgres
-        shell: pixi run bash -e {0}
+        shell: pixi run -e ${{ matrix.environment }} bash -e {0}
         run: |
           initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")
           pg_ctl -D test_db -l logfile start
           createdb --owner=runner test_db
       - name: Build and test
-        shell: pixi run bash -e {0}
+        shell: pixi run -e ${{ matrix.environment }} bash -e {0}
         env:
           TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json"
         run: |
