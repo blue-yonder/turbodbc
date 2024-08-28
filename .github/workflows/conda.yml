@@ -134,7 +134,7 @@ jobs:
           sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_osx/odbcinst.ini
           python -c 'import turbodbc'
           ulimit -c unlimited
-          pytest -sv
+          pytest -sv || (ls -l; exit 1)
   windows-pixi-tests:
     defaults:
       run:
@@ -169,10 +169,10 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Build wheel
-        shell: pixi run pwsh -Command {0}
-        run: python -m build
-      - name: Install and test wheel
+        run: pixi run python -m build
+      - name: Install wheel
         shell: pixi run pwsh -Command {0}
         run: |
           python -m pip install dist/*.whl
-          pytest
+      - name: Test
+        run: pixi run pytest -sv
