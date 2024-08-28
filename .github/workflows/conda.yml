@@ -168,6 +168,8 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
+      - run: pixi run meson setup builddir
+      - run: pixi run ninja -C builddir
       - name: Build wheel
         run: pixi run python -m build
       - name: Install wheel
