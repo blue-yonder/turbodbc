@@ -95,7 +95,6 @@ jobs:
       - name: Prepare ODBC
         run: pixi run -e ${{ matrix.environment }} sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini
       - name: Build and test
-        shell: pixi run -e ${{ matrix.environment }} bash -e {0}
         run: ODBCSYSINI=$(pwd)/odbc_test_linux pixi run -e ${{ matrix.environment }} pytest
         env:
           # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
