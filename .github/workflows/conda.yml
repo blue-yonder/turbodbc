@@ -133,7 +133,7 @@ jobs:
           export ODBCSYSINI=$(pwd)/odbc_test_osx
           sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_osx/odbcinst.ini
           python -c 'import turbodbc'
-          pytest
+          pytest -sv
   windows-pixi-tests:
     defaults:
       run:
