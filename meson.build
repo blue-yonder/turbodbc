@@ -223,18 +223,22 @@ cpp_odbc_test_sources = [
   'cpp/cpp_odbc/Test/cpp_odbc_test/level2_mock_api.cpp',
 ]
 
-
-column_description_test = executable(
+cpp_odbc_tests = [
   'column_description_test',
-  cpp_odbc_sources + cpp_odbc_test_sources + ['cpp/cpp_odbc/Test/tests/column_description_test.cpp'],
-  dependencies: deps + [gtest, gtest_main, gmock],
-  include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/cpp_odbc/Test'),
-)
-test('column_description_test', column_description_test)
-#connection_test.cpp
-#credentials_test.cpp
-#environment_test.cpp
-#error_test.cpp
-#make_environment_test.cpp
-#multi_value_buffer_test.cpp
-#statement_test.cpp
+  'connection_test',
+  'credentials_test',
+  'environment_test',
+  'error_test',
+  'make_environment_test',
+  'multi_value_buffer_test',
+  'statement_test',
+]
+foreach t: cpp_odbc_tests
+  e = executable(
+    t,
+    cpp_odbc_sources + cpp_odbc_test_sources + ['cpp/cpp_odbc/Test/tests/' + t + '.cpp'],
+    dependencies: deps + [gtest, gtest_main, gmock],
+    include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/cpp_odbc/Test'),
+  )
+  test(t, e)
+endforeach
