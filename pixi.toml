@@ -29,6 +29,7 @@ pytest = ">=8.3.2,<8.4"
 unixodbc = ">=2"
 postgresql = ">=16,<17"
 psqlodbc = ">=16,<17"
+mysql-connector-odbc = ">=8.3,<8.4"
 sed = "*"
 
 [feature.py310.dependencies]
