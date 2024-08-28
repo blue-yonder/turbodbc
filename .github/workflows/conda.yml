@@ -169,6 +169,8 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - run: pixi run meson setup builddir
+      - run: type builddir\meson-logs\meson-log.txt
+        if: always()
       - run: pixi run ninja -C builddir
       - name: Build wheel
         run: pixi run python -m build
