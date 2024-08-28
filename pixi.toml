@@ -24,6 +24,7 @@ pybind11 = ">=2.13.5,<2.14"
 pip = ">=24.2,<25"
 python-build = ">=1.2.1,<1.3"
 pytest = ">=8.3.2,<8.4"
+pkg-config = ">=0.29.2,<0.30"
 
 [target.unix.dependencies]
 unixodbc = ">=2"

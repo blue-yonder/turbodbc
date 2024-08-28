@@ -12,7 +12,7 @@ fs = import('fs')
 
 cpp = meson.get_compiler('cpp')
 add_global_arguments('-DBOOST_NO_CXX98_FUNCTION_BASE', language: 'cpp')
-simdutf = cpp.find_library('simdutf')
+simdutf = dependency('simdutf')
 arrow = cpp.find_library('arrow')
 
 # unixodbc = dependency('unixodbc')
