@@ -50,7 +50,7 @@ jobs:
           POSTGRES_DB: test_db
       mysql:
         # test do not run with a newer mysql at the moment
-        image: mysql:5.6
+        image: mysql:8.3
         # command: --default-authentication-plugin=mysql_native_password
         env:
           MYSQL_ROOT_PASSWORD: StrongPassword1
@@ -89,8 +89,8 @@ jobs:
       - name: Build and test
         shell: pixi run bash -e {0}
         env:
-          # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
-          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mssql.json"
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
+          # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mssql.json"
         run: |
           python -m build
           python -m pip install dist/*.whl
