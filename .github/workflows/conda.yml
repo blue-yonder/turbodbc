@@ -80,7 +80,7 @@ jobs:
           sudo apt-get update
           ACCEPT_EULA=Y sudo apt-get install msodbcsql17 mssql-tools
           ls -l  /opt/microsoft/msodbcsql17/lib64/
-          odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
+          sudo odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
