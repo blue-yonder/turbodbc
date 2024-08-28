@@ -86,19 +86,20 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} python -m build
+      - name: Install the built wheel
+        run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
+      - name: Import test
+        run: pixi run -e ${{ matrix.environment }} python -c 'import turbodbc'
+      - name: Prepare ODBC
+        run: pixi run -e ${{ matrix.environment }} sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini
       - name: Build and test
         shell: pixi run -e ${{ matrix.environment }} bash -e {0}
+        run: ODBCSYSINI=$(pwd)/odbc_test_linux pixi run -e ${{ matrix.environment }} pytest
         env:
           # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
           TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mssql.json"
-        run: |
-          python -m build
-          python -m pip install dist/*.whl
-          ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
-          python -c 'import turbodbc'
-          export ODBCSYSINI=$(pwd)/odbc_test_linux
-          sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini
-          pytest
   macos-tests:
     runs-on: macos-latest
     strategy:
@@ -117,13 +118,13 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Setup postgres
-        shell: pixi run -e ${{ matrix.environment }} bash -e {0}
+        shell: pixi run bash -e {0}
         run: |
           initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")
           pg_ctl -D test_db -l logfile start
           createdb --owner=runner test_db
       - name: Build and test
-        shell: pixi run -e ${{ matrix.environment }} bash -e {0}
+        shell: pixi run bash -e {0}
         env:
           TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json"
         run: |
