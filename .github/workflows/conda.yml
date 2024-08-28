@@ -149,7 +149,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Create postgres test_db
-        run: pixi run -e ${{ matrix.environment }} initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")
+        run: pixi run -e ${{ matrix.environment }} bash -c 'initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")'
       - name: Start postgres
         run: pixi run -e ${{ matrix.environment }} pg_ctl -D test_db -l logfile start
       - name: Create inner database
