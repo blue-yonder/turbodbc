@@ -88,6 +88,7 @@ jobs:
           ls -l $(python3 -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')
           python -c 'import turbodbc'
           export ODBCSYSINI=$(pwd)/odbc_test_linux
+          sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini
           pytest
   macos-tests:
     runs-on: macos-latest
