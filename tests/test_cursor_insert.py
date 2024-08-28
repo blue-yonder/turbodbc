@@ -111,10 +111,7 @@ def test_insert_unicode_column_with_truncation(dsn, configuration):
 
 @for_each_database
 def test_insert_bool_column(dsn, configuration):
-    if dsn.lower() == "mysql":
-        _test_insert_many(configuration, "INSERT BOOL", [[0], [1], [1]])
-    else:
-        _test_insert_many(configuration, "INSERT BOOL", [[False], [True], [True]])
+    _test_insert_many(configuration, "INSERT BOOL", [[False], [True], [True]])
 
 
 @for_one_database
