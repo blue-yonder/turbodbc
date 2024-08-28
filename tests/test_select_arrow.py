@@ -4,6 +4,7 @@ import sys
 from collections import OrderedDict
 from unittest.mock import patch
 
+import pyarrow as pa
 import pytest
 from helpers import (
     for_each_database,
@@ -14,12 +15,6 @@ from helpers import (
 from query_fixture import query_fixture
 
 import turbodbc
-
-# Skip all parquet tests if we can't import pyarrow.parquet
-pa = pytest.importorskip("pyarrow")
-
-# Ignore these with pytest ... -m 'not parquet'
-pyarrow = pytest.mark.pyarrow
 
 
 def _fix_case(configuration, string):
@@ -34,7 +29,6 @@ def _fix_case(configuration, string):
 
 
 @for_one_database
-@pyarrow
 def test_no_arrow_support(dsn, configuration):
     with open_cursor(configuration) as cursor:
         cursor.execute("SELECT 42")
@@ -44,7 +38,6 @@ def test_no_arrow_support(dsn, configuration):
 
 
 @for_one_database
-@pyarrow
 def test_arrow_without_result_set_raises(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with pytest.raises(turbodbc.InterfaceError):
@@ -52,7 +45,6 @@ def test_arrow_without_result_set_raises(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_empty_column(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(cursor, configuration, "INSERT INTEGER") as table_name:
@@ -64,7 +56,6 @@ def test_arrow_empty_column(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_reference_count(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(cursor, configuration, "INSERT INTEGER") as table_name:
@@ -75,7 +66,6 @@ def test_arrow_reference_count(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_int_column(dsn, configuration):
     with open_cursor(configuration) as cursor:
         cursor.execute("SELECT 42 AS a")
@@ -89,7 +79,6 @@ def test_arrow_int_column(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_int_column_adaptive(dsn, configuration):
     with open_cursor(configuration) as cursor:
         cursor.execute("SELECT 42 AS a")
@@ -99,7 +88,6 @@ def test_arrow_int_column_adaptive(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_double_column(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(cursor, configuration, "SELECT DOUBLE") as query:
@@ -114,7 +102,6 @@ def test_arrow_double_column(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_boolean_column(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(cursor, configuration, "INSERT INDEXED BOOL") as table_name:
@@ -133,7 +120,6 @@ def test_arrow_boolean_column(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_binary_column_with_null(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(
@@ -154,7 +140,6 @@ def test_arrow_binary_column_with_null(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_binary_column_larger_than_batch_size(dsn, configuration):
     with open_cursor(configuration, rows_to_buffer=2) as cursor:
         with query_fixture(cursor, configuration, "INSERT INTEGER") as table_name:
@@ -169,7 +154,6 @@ def test_arrow_binary_column_larger_than_batch_size(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_timestamp_column(dsn, configuration):
     supported_digits = configuration["capabilities"]["fractional_second_digits"]
     fractional = generate_microseconds_with_precision(supported_digits)
@@ -184,7 +168,6 @@ def test_arrow_timestamp_column(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_date_column(dsn, configuration):
     date = datetime.date(2015, 12, 31)
 
@@ -197,7 +180,6 @@ def test_arrow_date_column(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_timelike_column_with_null(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(cursor, configuration, "INSERT TIMESTAMP") as table_name:
@@ -208,7 +190,6 @@ def test_arrow_timelike_column_with_null(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_timelike_column_larger_than_batch_size(dsn, configuration):
     timestamps = [
         datetime.datetime(2015, 12, 31, 1, 2, 3),
@@ -230,7 +211,6 @@ def test_arrow_timelike_column_larger_than_batch_size(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 @pytest.mark.parametrize("strings_as_dictionary", [True, False])
 def test_arrow_string_column(dsn, configuration, strings_as_dictionary):
     with open_cursor(configuration) as cursor:
@@ -242,7 +222,6 @@ def test_arrow_string_column(dsn, configuration, strings_as_dictionary):
 
 
 @for_each_database
-@pyarrow
 @pytest.mark.parametrize("strings_as_dictionary", [True, False])
 def test_arrow_string_column_with_null(dsn, configuration, strings_as_dictionary):
     with open_cursor(configuration) as cursor:
@@ -255,7 +234,6 @@ def test_arrow_string_column_with_null(dsn, configuration, strings_as_dictionary
 
 
 @for_each_database
-@pyarrow
 @pytest.mark.parametrize("strings_as_dictionary", [True, False])
 def test_arrow_string_column_larger_than_batch_size(
     dsn, configuration, strings_as_dictionary
@@ -273,7 +251,6 @@ def test_arrow_string_column_larger_than_batch_size(
 
 
 @for_each_database
-@pyarrow
 def test_arrow_two_columns(dsn, configuration):
     with open_cursor(configuration) as cursor:
         with query_fixture(
@@ -293,7 +270,6 @@ def test_arrow_two_columns(dsn, configuration):
 
 
 @for_each_database
-@pyarrow
 def test_arrow_two_columns_single_row_buffer(dsn, configuration):
     with open_cursor(configuration, rows_to_buffer=1) as cursor:
         with query_fixture(
