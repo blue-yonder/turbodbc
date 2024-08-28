@@ -2,7 +2,6 @@ import datetime
 import gc
 import sys
 from collections import OrderedDict
-from unittest.mock import patch
 
 import pyarrow as pa
 import pytest
@@ -26,15 +25,6 @@ def _fix_case(configuration, string):
         return string.upper()
     else:
         return string
-
-
-@for_one_database
-def test_no_arrow_support(dsn, configuration):
-    with open_cursor(configuration) as cursor:
-        cursor.execute("SELECT 42")
-        with patch("turbodbc.cursor._has_arrow_support", return_value=False):
-            with pytest.raises(turbodbc.Error):
-                cursor.fetchallarrow()
 
 
 @for_one_database

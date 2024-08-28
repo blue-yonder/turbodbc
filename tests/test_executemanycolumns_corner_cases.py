@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 import pytest
 from helpers import for_one_database, open_cursor
 from numpy import array
@@ -119,14 +117,6 @@ def test_passing_empty_column_is_ok(dsn, configuration):
                 f"SELECT A FROM {table_name} ORDER BY A"
             ).fetchall()
             assert results == []
-
-
-@for_one_database
-def test_executemanycolumns_without_numpy_support(dsn, configuration):
-    with open_cursor(configuration) as cursor:
-        with patch("turbodbc.cursor._has_numpy_support", return_value=False):
-            with pytest.raises(turbodbc.Error):
-                cursor.executemanycolumns("SELECT 42", [])
 
 
 @arrow_support

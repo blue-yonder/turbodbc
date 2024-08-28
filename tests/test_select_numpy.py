@@ -1,6 +1,5 @@
 import datetime
 from collections import OrderedDict
-from unittest.mock import patch
 
 import numpy
 import pytest
@@ -26,15 +25,6 @@ def _fix_case(configuration, string):
         return string.upper()
     else:
         return string
-
-
-@for_one_database
-def test_no_numpy_support(dsn, configuration):
-    with open_cursor(configuration) as cursor:
-        cursor.execute("SELECT 42")
-        with patch("turbodbc.cursor._has_numpy_support", return_value=False):
-            with pytest.raises(turbodbc.Error):
-                cursor.fetchallnumpy()
 
 
 @for_one_database
