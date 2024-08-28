@@ -169,6 +169,8 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - run: pixi run meson setup builddir
+      - run: dir D:\a\turbodbc\turbodbc\.pixi\envs\default\Library\lib\pkgconfig
+        if: always()
       - run: type builddir\meson-logs\meson-log.txt
         if: always()
       - run: pixi run ninja -C builddir
