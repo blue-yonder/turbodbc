@@ -110,8 +110,8 @@ jobs:
       - name: Setup postgres
         shell: pixi run bash -e {0}
         run: |
-          initdb -D mylocal_db
-          pg_ctl -D mylocal_db -l logfile start
+          initdb -D test_db --username="postgres" --pwfile=<(printf "%s\n" "password")
+          pg_ctl -D test_db -l logfile start
       - name: Build and test
         shell: pixi run bash -e {0}
         env:
