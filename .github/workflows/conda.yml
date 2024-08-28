@@ -110,9 +110,9 @@ jobs:
       - name: Setup postgres
         shell: pixi run bash -e {0}
         run: |
-          initdb -D test_db --username="postgres" --pwfile=<(printf "%s\n" "password")
+          initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")
           pg_ctl -D test_db -l logfile start
-          createdb --owner=postgres test_db
+          createdb --owner=runner test_db
       - name: Build and test
         shell: pixi run bash -e {0}
         env:
