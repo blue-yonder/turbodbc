@@ -184,7 +184,6 @@ py.extension_module(
     'cpp/turbodbc_numpy/Library/src/string_column.cpp',
     'cpp/turbodbc_numpy/Library/src/unicode_column.cpp',
     'cpp/turbodbc_arrow/Library/src/arrow_result_set.cpp',
-    'cpp/turbodbc_arrow/Library/src/python_bindings.cpp',
     'cpp/turbodbc_arrow/Library/src/set_arrow_parameters.cpp',
   ],
   dependencies: [unixodbc, np_dep, pa_dep, arrow, arrow_python, simdutf],
