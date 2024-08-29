@@ -354,7 +354,7 @@ void set_numpy_parameters(turbodbc::bound_parameter_set & parameters, std::vecto
 
     auto converters = make_converters(columns, parameters);
 
-    auto const total_sets = std::get<0>(columns.front()).size();
+    std::size_t total_sets = static_cast<std::size_t>(std::get<0>(columns.front()).size());
 
     for (std::size_t start = 0; start < total_sets; start += parameters.buffered_sets()) {
         auto const in_this_batch = std::min(parameters.buffered_sets(), total_sets - start);
