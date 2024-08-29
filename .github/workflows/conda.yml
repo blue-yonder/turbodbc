@@ -165,7 +165,7 @@ jobs:
       - name: Build and test
         env:
           TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json"
-        run: pixi run -e ${{ matrix.environment }} bash -c 'ulimit -c unlimited && pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt all" -o "quit"; exit 1)'
+        run: pixi run -e ${{ matrix.environment }} bash -c 'ulimit -c unlimited && ODBCSYSINI=$(pwd)/odbc_test_osx pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt all" -o "quit"; exit 1)'
   windows-pixi-tests:
     defaults:
       run:
