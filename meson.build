@@ -12,6 +12,9 @@ fs = import('fs')
 
 cpp = meson.get_compiler('cpp')
 add_global_arguments('-DBOOST_NO_CXX98_FUNCTION_BASE', language: 'cpp')
+if target_machine.system() == 'windows'
+  add_global_arguments('-DNOMINMAX', language: 'cpp')
+endif
 simdutf = dependency('simdutf')
 arrow = dependency('arrow')
 gtest = dependency('gtest')
