@@ -155,7 +155,7 @@ jobs:
       - name: Create inner database
         run: pixi run -e ${{ matrix.environment }} createdb --owner=runner test_db
       - name: Build the wheel
-        run: pixi run -e ${{ matrix.environment }} python -m build
+        run: pixi run -e ${{ matrix.environment }} bash -c 'CXXFLAGS="$CXXFLAGS -ggdb -fno-omit-frame-pointer" python -m build'
       - name: Install the built wheel
         run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
       - name: Import test
