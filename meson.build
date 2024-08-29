@@ -141,7 +141,7 @@ cpp_odbc_sources = [
 cpp_odbc = static_library(
   'cpp_odbc',
   cpp_odbc_sources,
-  deps: [simdutf],
+  dependencies: [simdutf],
   include_directories: include_directories('cpp/cpp_odbc/Library'),
 )
 
