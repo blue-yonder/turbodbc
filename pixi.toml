@@ -19,7 +19,7 @@ numpy = ">=1.21,<3"
 cmake = ">=3.30.2,<3.31"
 libboost-devel = ">=1.86.0,<1.87"
 simdutf = ">=5.4.15,<5.5"
-pyarrow = ">=13,<18"
+pyarrow = ">=14,<18"
 pybind11 = ">=2.13.5,<2.14"
 pip = ">=24.2,<25"
 python-build = ">=1.2.1,<1.3"
@@ -39,8 +39,6 @@ python = "3.10.*"
 python = "3.11.*"
 [feature.py312.dependencies]
 python = "3.12.*"
-[feature.pyarrow13.dependencies]
-pyarrow = ">=13,<14"
 [feature.pyarrow14.dependencies]
 pyarrow = ">=14,<15"
 [feature.pyarrow15.dependencies]
@@ -55,9 +53,6 @@ default = ["py311", "pyarrow17"]
 py310 = ["py310"]
 py311 = ["py311"]
 py312 = ["py312"]
-py310-pa13 = ["py310", "pyarrow13"]
-py311-pa13 = ["py311", "pyarrow13"]
-py312-pa13 = ["py312", "pyarrow13"]
 py310-pa14 = ["py310", "pyarrow14"]
 py311-pa14 = ["py311", "pyarrow14"]
 py312-pa14 = ["py312", "pyarrow14"]

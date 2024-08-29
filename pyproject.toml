@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "pyarrow>=13,<18",
+    "pyarrow>=14,<18",
     "pybind11",
     "numpy>=2",
     "meson>=1.0.0",
