@@ -38,10 +38,6 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          # XXX: These three fail.
-          # - "py310-pa13"
-          # - "py311-pa13"
-          # - "py312-pa13"
           # Everything below seems to work.
           # - "py310-pa14"
           # - "py311-pa14"
@@ -122,9 +118,6 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py310-pa13"
-          - "py311-pa13"
-          - "py312-pa13"
           - "py310-pa14"
           - "py311-pa14"
           - "py312-pa14"
@@ -175,9 +168,6 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          # - "py310-pa13"
-          # - "py311-pa13"
-          # - "py312-pa13"
           # - "py310-pa14"
           # - "py311-pa14"
           # - "py312-pa14"
