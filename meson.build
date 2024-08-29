@@ -138,8 +138,13 @@ cpp_odbc_sources = [
   'cpp/cpp_odbc/Library/src/multi_value_buffer.cpp',
   'cpp/cpp_odbc/Library/src/statement.cpp',
 ]
+cpp_odbc = static_library(
+  'cpp_odbc',
+  cpp_odbc_sources,
+  include_directories: include_directories('cpp/cpp_odbc/Library'),
+)
 
-turbodbc_sources = cpp_odbc_sources + [
+turbodbc_sources = [
   'cpp/turbodbc/Library/src/buffer_size.cpp',
   'cpp/turbodbc/Library/src/column.cpp',
   'cpp/turbodbc/Library/src/command.cpp',
@@ -206,6 +211,7 @@ py.extension_module(
   'turbodbc_intern',
   turbodbc_sources,
   dependencies: deps,
+  link_with: [cpp_odbc],
   include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
