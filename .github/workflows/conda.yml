@@ -214,3 +214,5 @@ jobs:
         run: pixi run -e ${{ matrix.environment }} python -m pip install 'dist\*.whl'
       - name: Test
         run: pixi run -e ${{ matrix.environment }} pytest -sv
+        env:
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_mssql.json"
