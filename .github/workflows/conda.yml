@@ -214,17 +214,15 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
-      - run: pixi run meson setup builddir
+      - run: pixi run -e ${{ matrix.environment }} meson setup builddir
       - run: dir D:\a\turbodbc\turbodbc\.pixi\envs\default\Library\lib\pkgconfig
         if: always()
       - run: type builddir\meson-logs\meson-log.txt
         if: always()
-      - run: pixi run ninja -C builddir
+      - run: pixi run -e ${{ matrix.environment }} ninja -C builddir
       - name: Build wheel
-        run: pixi run python -m build
+        run: pixi run -e ${{ matrix.environment }} python -m build
       - name: Install wheel
-        shell: pixi run pwsh -Command {0}
-        run: |
-          python -m pip install dist/*.whl
+        run: pixi run -e ${{ matrix.environment }} bash -c 'python -m pip install dist/*.whl'
       - name: Test
-        run: pixi run pytest -sv
+        run: pixi run -e ${{ matrix.environment }} pytest -sv
