@@ -112,38 +112,7 @@ else
   deps += unixodbc
 endif
 
-cpp_odbc_sources = [
-  'cpp/cpp_odbc/Library/src/level1/api.cpp',
-  'cpp/cpp_odbc/Library/src/level1/level1.cpp',
-  'cpp/cpp_odbc/Library/src/level1/unixodbc_backend.cpp',
-  'cpp/cpp_odbc/Library/src/level1/unixodbc_backend_debug.cpp',
-  'cpp/cpp_odbc/Library/src/level2/api.cpp',
-  'cpp/cpp_odbc/Library/src/level2/handles.cpp',
-  'cpp/cpp_odbc/Library/src/level2/input_string_buffer.cpp',
-  'cpp/cpp_odbc/Library/src/level2/input_u16string_buffer.cpp',
-  'cpp/cpp_odbc/Library/src/level2/level1_connector.cpp',
-  'cpp/cpp_odbc/Library/src/level2/level2.cpp',
-  'cpp/cpp_odbc/Library/src/level2/string_buffer.cpp',
-  'cpp/cpp_odbc/Library/src/level2/u16string_buffer.cpp',
-  'cpp/cpp_odbc/Library/src/level3/level3.cpp',
-  'cpp/cpp_odbc/Library/src/level3/raii_connection.cpp',
-  'cpp/cpp_odbc/Library/src/level3/raii_environment.cpp',
-  'cpp/cpp_odbc/Library/src/level3/raii_statement.cpp',
-  'cpp/cpp_odbc/Library/src/column_description.cpp',
-  'cpp/cpp_odbc/Library/src/connection.cpp',
-  'cpp/cpp_odbc/Library/src/cpp_odbc.cpp',
-  'cpp/cpp_odbc/Library/src/environment.cpp',
-  'cpp/cpp_odbc/Library/src/error.cpp',
-  'cpp/cpp_odbc/Library/src/make_environment.cpp',
-  'cpp/cpp_odbc/Library/src/multi_value_buffer.cpp',
-  'cpp/cpp_odbc/Library/src/statement.cpp',
-]
-cpp_odbc = static_library(
-  'cpp_odbc',
-  cpp_odbc_sources,
-  dependencies: [simdutf],
-  include_directories: include_directories('cpp/cpp_odbc/Library'),
-)
+subdir('cpp/cpp_odbc')
 
 turbodbc_sources = [
   'cpp/turbodbc/Library/src/buffer_size.cpp',
@@ -251,8 +220,9 @@ cpp_odbc_tests = [
 foreach t: cpp_odbc_tests
   e = executable(
     t,
-    cpp_odbc_sources + cpp_odbc_test_sources + ['cpp/cpp_odbc/Test/tests/' + t + '.cpp'],
+    cpp_odbc_test_sources + ['cpp/cpp_odbc/Test/tests/' + t + '.cpp'],
     dependencies: deps + [gtest, gtest_main, gmock],
+    link_with: [cpp_odbc],
     include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/cpp_odbc/Test'),
   )
   test(t, e)
