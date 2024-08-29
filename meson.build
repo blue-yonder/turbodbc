@@ -103,7 +103,10 @@ pa_dep = declare_dependency(include_directories: inc_pa)
 arrow_python = cpp.find_library('arrow_python', dirs: [fs.parent(_incdir_pyarrow_abs)])
 
 deps = [np_dep, pa_dep, arrow, arrow_python, simdutf]
-if target_machine.system() != 'windows'
+if target_machine.system() == 'windows'
+  odbc32 = cpp.find_library('odbc32')
+  deps += odbc32
+else
   unixodbc = cpp.find_library('odbc')
   deps += unixodbc
 endif
