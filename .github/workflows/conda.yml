@@ -210,6 +210,7 @@ jobs:
       - run: type builddir\meson-logs\meson-log.txt
         if: always()
       - run: pixi run -e ${{ matrix.environment }} ninja -C builddir
+      - run: pixi run -e ${{ matrix.environment }} ninja -C test
       - name: Build wheel
         run: pixi run -e ${{ matrix.environment }} python -m build
       - name: Install wheel
