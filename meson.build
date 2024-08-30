@@ -113,44 +113,9 @@ else
 endif
 
 subdir('cpp/cpp_odbc')
+subdir('cpp/turbodbc')
 
 turbodbc_sources = [
-  'cpp/turbodbc/Library/src/buffer_size.cpp',
-  'cpp/turbodbc/Library/src/column.cpp',
-  'cpp/turbodbc/Library/src/command.cpp',
-  'cpp/turbodbc/Library/src/configuration.cpp',
-  'cpp/turbodbc/Library/src/connect.cpp',
-  'cpp/turbodbc/Library/src/connection.cpp',
-  'cpp/turbodbc/Library/src/cursor.cpp',
-  'cpp/turbodbc/Library/src/description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/boolean_description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/date_description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/floating_point_description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/integer_description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/string_description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/timestamp_description.cpp',
-  'cpp/turbodbc/Library/src/descriptions/unicode_description.cpp',
-  'cpp/turbodbc/Library/src/errors.cpp',
-  'cpp/turbodbc/Library/src/field_translator.cpp',
-  'cpp/turbodbc/Library/src/field_translators/boolean_translator.cpp',
-  'cpp/turbodbc/Library/src/field_translators/date_translator.cpp',
-  'cpp/turbodbc/Library/src/field_translators/float64_translator.cpp',
-  'cpp/turbodbc/Library/src/field_translators/int64_translator.cpp',
-  'cpp/turbodbc/Library/src/field_translators/string_translator.cpp',
-  'cpp/turbodbc/Library/src/field_translators/timestamp_translator.cpp',
-  'cpp/turbodbc/Library/src/make_description.cpp',
-  'cpp/turbodbc/Library/src/make_field_translator.cpp',
-  'cpp/turbodbc/Library/src/parameter.cpp',
-  'cpp/turbodbc/Library/src/parameter_sets/bound_parameter_set.cpp',
-  'cpp/turbodbc/Library/src/parameter_sets/field_parameter_set.cpp',
-  'cpp/turbodbc/Library/src/parameter_sets/set_field.cpp',
-  'cpp/turbodbc/Library/src/result_sets/bound_result_set.cpp',
-  'cpp/turbodbc/Library/src/result_sets/double_buffered_result_set.cpp',
-  'cpp/turbodbc/Library/src/result_sets/field_result_set.cpp',
-  'cpp/turbodbc/Library/src/result_sets/result_set.cpp',
-  'cpp/turbodbc/Library/src/result_sets/row_based_result_set.cpp',
-  'cpp/turbodbc/Library/src/string_helpers.cpp',
-  'cpp/turbodbc/Library/src/time_helpers.cpp',
   'cpp/turbodbc_python/Library/src/determine_parameter_type.cpp',
   'cpp/turbodbc_python/Library/src/python_bindings/buffer_size.cpp',
   'cpp/turbodbc_python/Library/src/python_bindings/column_info.cpp',
@@ -181,7 +146,7 @@ py.extension_module(
   'turbodbc_intern',
   turbodbc_sources,
   dependencies: deps,
-  link_with: [cpp_odbc],
+  link_with: [cpp_odbc, turbodbc],
   include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
@@ -202,28 +167,3 @@ py.install_sources(
   subdir: 'turbodbc',
 )
 
-cpp_odbc_test_sources = [
-  'cpp/cpp_odbc/Test/cpp_odbc_test/level1_mock_api.cpp',
-  'cpp/cpp_odbc/Test/cpp_odbc_test/level2_mock_api.cpp',
-]
-
-cpp_odbc_tests = [
-  'column_description_test',
-  'connection_test',
-  'credentials_test',
-  'environment_test',
-  'error_test',
-  'make_environment_test',
-  'multi_value_buffer_test',
-  'statement_test',
-]
-foreach t: cpp_odbc_tests
-  e = executable(
-    t,
-    cpp_odbc_test_sources + ['cpp/cpp_odbc/Test/tests/' + t + '.cpp'],
-    dependencies: deps + [gtest, gtest_main, gmock],
-    link_with: [cpp_odbc],
-    include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/cpp_odbc/Test'),
-  )
-  test(t, e)
-endforeach

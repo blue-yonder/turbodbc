@@ -31,3 +31,29 @@ cpp_odbc = static_library(
   include_directories: include_directories('Library'),
 )
 
+cpp_odbc_test_sources = [
+  'Test/cpp_odbc_test/level1_mock_api.cpp',
+  'Test/cpp_odbc_test/level2_mock_api.cpp',
+]
+
+cpp_odbc_tests = [
+  'column_description_test',
+  'connection_test',
+  'credentials_test',
+  'environment_test',
+  'error_test',
+  'make_environment_test',
+  'multi_value_buffer_test',
+  'statement_test',
+]
+foreach t: cpp_odbc_tests
+  e = executable(
+    t,
+    cpp_odbc_test_sources + ['Test/tests/' + t + '.cpp'],
+    dependencies: deps + [gtest, gtest_main, gmock],
+    link_with: [cpp_odbc],
+    include_directories: include_directories('Library', 'Test'),
+  )
+  test(t, e)
+endforeach
+
