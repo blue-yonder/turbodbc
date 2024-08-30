@@ -17,37 +17,39 @@ defaults:
     shell: bash -el {0}
 
 jobs:
-  # TODO:
-  #linux-release:
-  #  runs-on: ubuntu-latest
-  #  strategy:
-  #    fail-fast: false
-  #    matrix:
-  #      environment: ["py310-pa13"]
-  #  steps:
-  #    - name: Publish package
-  #      if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
-  #      uses: pypa/gh-action-pypi-publish@v1.9.0
-  #      with:
-  #        user: __token__
-  #        password: ${{ secrets.PYPI_UPLOAD }}
-  #        packages_dir: result/dist
+  linux-release:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: default
+      - name: Build the sdist
+        run: pixi run -e ${{ matrix.environment }} python -m build --sdist
+      - name: Publish package
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
+        uses: pypa/gh-action-pypi-publish@v1.9.0
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_UPLOAD }}
+          packages_dir: dist
   linux-tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         environment:
-          # Everything below seems to work.
-          # - "py310-pa14"
+          - "py310-pa14"
           # - "py311-pa14"
           # - "py312-pa14"
           # - "py310-pa15"
-          # - "py311-pa15"
+          - "py311-pa15"
           # - "py312-pa15"
           # - "py310-pa16"
           # - "py311-pa16"
-          # - "py312-pa16"
+          - "py312-pa16"
           # - "py310-pa17"
           # - "py311-pa17"
           - "py312-pa17"
@@ -121,11 +123,11 @@ jobs:
           - "py310-pa14"
           #- "py311-pa14"
           #- "py312-pa14"
-          #- "py310-pa15"
+          - "py310-pa15"
           #- "py311-pa15"
           #- "py312-pa15"
           #- "py310-pa16"
-          #- "py311-pa16"
+          - "py311-pa16"
           #- "py312-pa16"
           #- "py310-pa17"
           #- "py311-pa17"
@@ -168,15 +170,15 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          # - "py310-pa14"
+          - "py310-pa14"
           # - "py311-pa14"
           # - "py312-pa14"
           # - "py310-pa15"
-          # - "py311-pa15"
+          - "py311-pa15"
           # - "py312-pa15"
           # - "py310-pa16"
           # - "py311-pa16"
-          # - "py312-pa16"
+          - "py312-pa16"
           # - "py310-pa17"
           # - "py311-pa17"
           - "py312-pa17"
