@@ -24,8 +24,6 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
-        with:
-          submodules: true
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
@@ -88,8 +86,6 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
-        with:
-          submodules: true
       - name: Fetch full git history
         run: git fetch --prune --unshallow
       - name: Install MS SQL Drivers
@@ -139,8 +135,6 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
-        with:
-          submodules: true
       - name: Fetch full git history
         run: git fetch --prune --unshallow
       - name: Set up pixi
@@ -202,8 +196,6 @@ jobs:
           if %errorlevel% neq 0 exit /b %errorlevel%
       - name: Checkout branch
         uses: actions/checkout@v4
-        with:
-          submodules: true
       - name: Fetch full git history
         run: git fetch --prune --unshallow
       - name: Set up pixi
