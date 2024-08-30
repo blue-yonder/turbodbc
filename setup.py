@@ -93,6 +93,7 @@ if sys.platform == "darwin":
 
     config_vars = distutils.sysconfig.get_config_vars()
     config_vars["LDSHARED"] = config_vars["LDSHARED"].replace("-bundle", "")  # type: ignore
+    config_vars["LDCXXSHARED"] = config_vars["LDCXXSHARED"].replace("-bundle", "")  # type: ignore
     python_module_link_args.append("-bundle")
     builder = setuptools.command.build_ext.build_ext(Distribution())
     full_name = builder.get_ext_filename("libturbodbc")
