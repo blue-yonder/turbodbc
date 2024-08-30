@@ -22,6 +22,10 @@ jobs:
     strategy:
       fail-fast: false
     steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          submodules: true
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
