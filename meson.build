@@ -114,6 +114,7 @@ endif
 
 subdir('cpp/cpp_odbc')
 subdir('cpp/turbodbc')
+subdir('cpp/turbodbc_arrow')
 
 turbodbc_sources = [
   'cpp/turbodbc_python/Library/src/determine_parameter_type.cpp',
@@ -138,15 +139,13 @@ turbodbc_sources = [
   'cpp/turbodbc_numpy/Library/src/set_numpy_parameters.cpp',
   'cpp/turbodbc_numpy/Library/src/string_column.cpp',
   'cpp/turbodbc_numpy/Library/src/unicode_column.cpp',
-  'cpp/turbodbc_arrow/Library/src/arrow_result_set.cpp',
-  'cpp/turbodbc_arrow/Library/src/set_arrow_parameters.cpp',
 ]
 
 py.extension_module(
   'turbodbc_intern',
   turbodbc_sources,
   dependencies: deps,
-  link_with: [cpp_odbc, turbodbc],
+  link_with: [cpp_odbc, turbodbc, turbodbc_arrow],
   include_directories: include_directories('cpp/cpp_odbc/Library', 'cpp/turbodbc/Library', 'cpp/turbodbc_python/Library', 'cpp/turbodbc_numpy/Library', 'cpp/turbodbc_arrow/Library'),
   install: true
 )
