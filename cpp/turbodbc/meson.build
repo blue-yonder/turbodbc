@@ -39,6 +39,7 @@ turbodbc = static_library(
     'Library/src/time_helpers.cpp',
   ],
   include_directories: include_directories('Library', '../cpp_odbc/Library'),
+  dependencies: [simdutf],
   link_with: [cpp_odbc],
 )
 
