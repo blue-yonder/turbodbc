@@ -29,7 +29,7 @@ jobs:
         with:
           environments: default
       - name: Build the sdist
-        run: pixi run python -m build --sdist
+        run: pixi run python -m build --sdist --no-isolation
       - name: Publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
         uses: pypa/gh-action-pypi-publish@v1.9.0
@@ -133,7 +133,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Build the wheel
-        run: pixi run -e ${{ matrix.environment }} python -m build
+        run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
       - name: Install the built wheel
         run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
       - name: Import test
@@ -179,7 +179,7 @@ jobs:
       - name: Create inner database
         run: pixi run -e ${{ matrix.environment }} createdb --owner=runner test_db
       - name: Build the wheel
-        run: pixi run -e ${{ matrix.environment }} bash -c 'CXXFLAGS="$CXXFLAGS -ggdb -fno-omit-frame-pointer" python -m build'
+        run: pixi run -e ${{ matrix.environment }} bash -c 'CXXFLAGS="$CXXFLAGS -ggdb -fno-omit-frame-pointer" python -m build --no-isolation'
       - name: Install the built wheel
         run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
       - name: Import test
@@ -234,7 +234,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Build wheel
-        run: pixi run -e ${{ matrix.environment }} python -m build
+        run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
       - name: Install wheel
         run: pixi run -e ${{ matrix.environment }} python -m pip install 'dist\*.whl'
       - name: Test
