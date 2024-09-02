@@ -362,7 +362,7 @@ pybind11::object arrow_result_set::fetch_all()
         pybind11::gil_scoped_release release;
         auto st = fetch_all_native(&table, false);
         if (not st.ok()) {
-            throw turbodbc::interface_error("Fetching Arrow result set failed.\n" + st.ToString());
+            throw turbodbc::interface_error("Fetching Arrow result set failed.\n"/* + st.ToString()*/);
         }
     }
     arrow::py::import_pyarrow();
