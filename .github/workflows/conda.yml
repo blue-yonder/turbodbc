@@ -134,6 +134,8 @@ jobs:
           environments: ${{ matrix.environment }}
       - name: pip list
         run: pixi run -e ${{ matrix.environment }} python -m pip list
+      - name: pip list
+        run: pixi run -e ${{ matrix.environment }} python -m pip check
       - name: Build the wheel
         run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation --wheel --verbose
       - name: Install the built wheel
