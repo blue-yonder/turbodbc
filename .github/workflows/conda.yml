@@ -135,7 +135,7 @@ jobs:
       - name: pip list
         run: pixi run -e ${{ matrix.environment }} python -m pip list
       - name: Build the wheel
-        run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
+        run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation --wheel --verbose
       - name: Install the built wheel
         run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
       - name: Import test
