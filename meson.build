@@ -1,11 +1,12 @@
 project(
   'turbodbc', 'cpp',
   license: 'MIT',
-  meson_version: '>= 1.0.0',
+  meson_version: '>= 1.1.0',
   default_options: [
     'buildtype=release',
     'cpp_std=c++17',
     'warning_level=3',
+    'build_testing=false',
   ]
 )
 
@@ -19,9 +20,12 @@ if target_machine.system() == 'windows'
 endif
 simdutf = dependency('simdutf')
 arrow = dependency('arrow')
-gtest = dependency('gtest')
-gtest_main = dependency('gtest_main')
-gmock = dependency('gmock')
+build_testing = get_option('build_testing')
+if build_testing
+  gtest = dependency('gtest')
+  gtest_main = dependency('gtest_main')
+  gmock = dependency('gmock')
+endif
 
 # unixodbc = dependency('unixodbc')
 py = import('python').find_installation()

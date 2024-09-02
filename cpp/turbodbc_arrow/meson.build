@@ -9,11 +9,13 @@ turbodbc_arrow = static_library(
   link_with: [turbodbc]
 )
 
-arrow_result_set_test = executable(
-    'arrow_result_set_test',
-    ['Test/tests/arrow_result_set_test.cpp'],
-    dependencies: [py.dependency(embed: true), arrow, arrow_python, gtest, gtest_main, gmock],
-    link_with: [turbodbc_arrow],
-    include_directories: include_directories('Library', 'Test', '../cpp_odbc/Library', '../turbodbc/Library'),
-  )
-test('arrow_result_set_test', arrow_result_set_test)
+if build_testing
+  arrow_result_set_test = executable(
+      'arrow_result_set_test',
+      ['Test/tests/arrow_result_set_test.cpp'],
+      dependencies: [py.dependency(embed: true), arrow, arrow_python, gtest, gtest_main, gmock],
+      link_with: [turbodbc_arrow],
+      include_directories: include_directories('Library', 'Test', '../cpp_odbc/Library', '../turbodbc/Library'),
+    )
+  test('arrow_result_set_test', arrow_result_set_test)
+endif

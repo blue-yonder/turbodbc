@@ -44,56 +44,55 @@ turbodbc = static_library(
 )
 
 
-turbodbc_test_sources = [
-  'Test/tests/mock_classes.cpp',
-]
-
-turbodbc_tests = [
-  'parameter_sets/bound_parameter_set_test',
-  'parameter_sets/set_field_test',
-  'descriptions/boolean_description_test',
-  'descriptions/date_description_test',
-  'descriptions/floating_point_description_test',
-  'descriptions/integer_description_test',
-  'descriptions/string_description_test',
-  'descriptions/timestamp_description_test',
-  'descriptions/unicode_description_test',
-  'field_translators/boolean_translator_test',
-  'field_translators/date_translator_test',
-  'field_translators/float64_translator_test',
-  'field_translators/int64_translator_test',
-  'field_translators/string_translator_test',
-  'field_translators/timestamp_translator_test',
-  'result_sets/bound_result_set_test',
-  # 'result_sets/double_buffered_result_set_test',
-  'result_sets/field_result_set_test',
-  'result_sets/result_set_test',
-  'result_sets/row_based_result_set_test',
-  'buffer_size_test',
-  'column_test',
-  'command_test',
-  'configuration_test',
-  'connection_test',
-  'description_test',
-  'errors_test',
-  'field_translator_test',
-  'make_description_of_description_test',
-  'make_description_of_type_test',
-  'make_description_of_value_test',
-  'make_field_translator_test',
-  'parameter_test',
-  'string_helpers_test',
-  'time_helpers_test',
-]
-
-foreach t: turbodbc_tests
-  e = executable(
-    t.replace('/', '_'),
-    turbodbc_test_sources + ['Test/tests/' + t + '.cpp'],
-    dependencies: [gtest, gtest_main, gmock],
-    link_with: [turbodbc],
-    include_directories: include_directories('Library', 'Test', '../cpp_odbc/Library'),
-  )
-  test(t, e)
-endforeach
-
+if build_testing
+  turbodbc_test_sources = [
+    'Test/tests/mock_classes.cpp',
+  ]
+  turbodbc_tests = [
+    'parameter_sets/bound_parameter_set_test',
+    'parameter_sets/set_field_test',
+    'descriptions/boolean_description_test',
+    'descriptions/date_description_test',
+    'descriptions/floating_point_description_test',
+    'descriptions/integer_description_test',
+    'descriptions/string_description_test',
+    'descriptions/timestamp_description_test',
+    'descriptions/unicode_description_test',
+    'field_translators/boolean_translator_test',
+    'field_translators/date_translator_test',
+    'field_translators/float64_translator_test',
+    'field_translators/int64_translator_test',
+    'field_translators/string_translator_test',
+    'field_translators/timestamp_translator_test',
+    'result_sets/bound_result_set_test',
+    # 'result_sets/double_buffered_result_set_test',
+    'result_sets/field_result_set_test',
+    'result_sets/result_set_test',
+    'result_sets/row_based_result_set_test',
+    'buffer_size_test',
+    'column_test',
+    'command_test',
+    'configuration_test',
+    'connection_test',
+    'description_test',
+    'errors_test',
+    'field_translator_test',
+    'make_description_of_description_test',
+    'make_description_of_type_test',
+    'make_description_of_value_test',
+    'make_field_translator_test',
+    'parameter_test',
+    'string_helpers_test',
+    'time_helpers_test',
+  ]
+  foreach t: turbodbc_tests
+    e = executable(
+      t.replace('/', '_'),
+      turbodbc_test_sources + ['Test/tests/' + t + '.cpp'],
+      dependencies: [gtest, gtest_main, gmock],
+      link_with: [turbodbc],
+      include_directories: include_directories('Library', 'Test', '../cpp_odbc/Library'),
+    )
+    test(t, e)
+  endforeach
+endif

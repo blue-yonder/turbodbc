@@ -37,6 +37,37 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_UPLOAD }}
           packages_dir: dist
+  linux-unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          # - "py310-pa14"
+          # - "py311-pa14"
+          - "py312-pa14"
+          # - "py310-pa15"
+          # - "py311-pa15"
+          # - "py312-pa15"
+          # - "py310-pa16"
+          # - "py311-pa16"
+          # - "py312-pa16"
+          - "py310-pa17"
+          # - "py311-pa17"
+          # - "py312-pa17"
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: ${{ matrix.environment }}
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} meson setup -Dbuild_testing=true builddir .
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} ninja -C builddir
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} ninja -C builddir test
   linux-tests:
     runs-on: ubuntu-latest
     strategy:
@@ -202,11 +233,6 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
-      - run: pixi run -e ${{ matrix.environment }} meson setup builddir
-      - run: type builddir\meson-logs\meson-log.txt
-        if: always()
-      - run: pixi run -e ${{ matrix.environment }} ninja -C builddir
-      - run: pixi run -e ${{ matrix.environment }} ninja -C builddir test
       - name: Build wheel
         run: pixi run -e ${{ matrix.environment }} python -m build
       - name: Install wheel
