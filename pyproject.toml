@@ -2,7 +2,7 @@
 requires = [
     "pyarrow>=14,<18",
     "pybind11",
-    "numpy>=2",
+    "numpy",
     "meson>=1.0.0",
     "meson-python>=0.14.0",
 ]
