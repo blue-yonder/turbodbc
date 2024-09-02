@@ -132,6 +132,8 @@ jobs:
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
           environments: ${{ matrix.environment }}
+      - name: pip list
+        run: pixi run -e ${{ matrix.environment }} python -m pip list
       - name: Build the wheel
         run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
       - name: Install the built wheel
