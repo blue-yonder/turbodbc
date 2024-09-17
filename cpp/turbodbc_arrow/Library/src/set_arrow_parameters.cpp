@@ -99,7 +99,7 @@ namespace {
       void rebind_to_maximum_length(BinaryArray const & array, std::size_t start, std::size_t elements)
       {
           int32_t maximum_length = 0;
-          for (int64_t i = 0; i != elements; ++i) {
+          for (std::size_t i = 0; i != elements; ++i) {
             if (!array.IsNull(start + i)) {
               maximum_length = std::max(maximum_length, array.value_length(start + i));
             }
@@ -119,7 +119,7 @@ namespace {
           auto & buffer = get_buffer();
           auto const character_size = sizeof(typename String::value_type);
 
-          for (int64_t i = 0; i != elements; ++i) {
+          for (std::size_t i = 0; i != elements; ++i) {
             auto element = buffer[i];
             if (typed_array.IsNull(start + i)) {
               element.indicator = SQL_NULL_DATA;
@@ -138,7 +138,7 @@ namespace {
         auto const& typed_array = static_cast<const BinaryArray&>(*data->chunk(0));
         std::vector<std::pair<bool, std::u16string>> batch;
         size_t maximum_length = 0;
-        for (int64_t i = 0; i != elements; ++i) {
+        for (std::size_t i = 0; i != elements; ++i) {
           if (!typed_array.IsNull(start + i)) {
             std::string utf8_encoded = typed_array.GetString(start + i);
             size_t expected_utf16_chars = simdutf::utf16_length_from_utf8(utf8_encoded.data(), utf8_encoded.size());

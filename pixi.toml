@@ -1,0 +1,67 @@
+[project]
+name = "turbodbc"
+version = "0.1.0"
+description = "Add a short description here"
+authors = ["Uwe L. Korn <uwe.korn@quantco.com>"]
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
+
+[tasks]
+
+[dependencies]
+gtest = ">=1.10.0,<1.16"
+gmock = ">=1.10.0,<1.16"
+meson-python = ">=0.16.0,<0.17"
+ninja = ">=1,<2"
+c-compiler = "*"
+cxx-compiler = "*"
+numpy = ">=1.21,<3"
+cmake = ">=3.20,<3.31"
+libboost-devel = ">=1.80.0,<1.87"
+simdutf = ">=5,<6"
+pyarrow = ">=14,<18"
+pybind11 = ">=2,<3"
+pip = ">=20,<25"
+python-build = ">=1,<2"
+pytest = ">=8,<9"
+pkg-config = ">=0.20,<1"
+
+[target.unix.dependencies]
+unixodbc = ">=2"
+postgresql = ">=16,<17"
+psqlodbc = ">=16,<17"
+mysql-connector-odbc = ">=8.3,<9"
+sed = "*"
+
+[feature.py310.dependencies]
+python = "3.10.*"
+[feature.py311.dependencies]
+python = "3.11.*"
+[feature.py312.dependencies]
+python = "3.12.*"
+[feature.pyarrow14.dependencies]
+pyarrow = ">=14,<15"
+[feature.pyarrow15.dependencies]
+pyarrow = ">=15,<16"
+[feature.pyarrow16.dependencies]
+pyarrow = ">=16,<17"
+[feature.pyarrow17.dependencies]
+pyarrow = ">=17,<18"
+
+[environments]
+default = ["py311", "pyarrow17"]
+py310 = ["py310"]
+py311 = ["py311"]
+py312 = ["py312"]
+py310-pa14 = ["py310", "pyarrow14"]
+py311-pa14 = ["py311", "pyarrow14"]
+py312-pa14 = ["py312", "pyarrow14"]
+py310-pa15 = ["py310", "pyarrow15"]
+py311-pa15 = ["py311", "pyarrow15"]
+py312-pa15 = ["py312", "pyarrow15"]
+py310-pa16 = ["py310", "pyarrow16"]
+py311-pa16 = ["py311", "pyarrow16"]
+py312-pa16 = ["py312", "pyarrow16"]
+py310-pa17 = ["py310", "pyarrow17"]
+py311-pa17 = ["py311", "pyarrow17"]
+py312-pa17 = ["py312", "pyarrow17"]
