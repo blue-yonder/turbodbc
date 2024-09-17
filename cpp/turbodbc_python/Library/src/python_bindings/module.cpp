@@ -4,8 +4,6 @@
 #include <turbodbc_numpy/set_numpy_parameters.h>
 #include <turbodbc/cursor.h>
 
-// compare http://docs.scipy.org/doc/numpy/reference/c-api.array.html#importing-the-api
-// as to why this define is necessary
 #define PY_ARRAY_UNIQUE_SYMBOL turbodbc_numpy_API
 #include <numpy/ndarrayobject.h>
 
