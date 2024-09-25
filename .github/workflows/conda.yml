@@ -126,6 +126,7 @@ jobs:
           sudo apt-get update
           ACCEPT_EULA=Y sudo apt-get install msodbcsql17 mssql-tools
           ls -l  /opt/microsoft/msodbcsql17/lib64/
+          sleep 30
           sudo odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
           /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db' -l 60
       - name: Set up pixi
