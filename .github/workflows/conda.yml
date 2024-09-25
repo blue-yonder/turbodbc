@@ -14,7 +14,7 @@ concurrency:
 
 defaults:
   run:
-    shell: bash -e {0}
+    shell: bash -ex {0}
 
 jobs:
   linux-release:
