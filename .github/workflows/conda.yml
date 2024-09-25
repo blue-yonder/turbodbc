@@ -14,7 +14,7 @@ concurrency:
 
 defaults:
   run:
-    shell: bash -e {0}
+    shell: bash -ex {0}
 
 jobs:
   linux-release:
@@ -32,7 +32,7 @@ jobs:
         run: pixi run python -m build --sdist --no-isolation
       - name: Publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
-        uses: pypa/gh-action-pypi-publish@v1.10.1
+        uses: pypa/gh-action-pypi-publish@v1.10.2
         with:
           user: __token__
           password: ${{ secrets.PYPI_UPLOAD }}
@@ -108,12 +108,18 @@ jobs:
         ports:
           - 3306:3306
       mssql:
-        image: mcr.microsoft.com/mssql/server:2017-latest
+        image: mcr.microsoft.com/mssql/server:2019-latest
         env:
           ACCEPT_EULA: Y
           SA_PASSWORD: StrongPassword1
+          MSSQL_SA_PASSWORD: StrongPassword1
         ports:
           - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -U sa -P \"${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\""
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -127,7 +133,7 @@ jobs:
           ACCEPT_EULA=Y sudo apt-get install msodbcsql17 mssql-tools
           ls -l  /opt/microsoft/msodbcsql17/lib64/
           sudo odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
-          /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db'
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db' -l 60
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
         with:
