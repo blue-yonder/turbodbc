@@ -116,7 +116,10 @@ jobs:
         ports:
           - 1433:1433
         options: >-
-          --health-cmd "/opt/mssql-tools/bin/sqlcmd -U sa -P \"${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\""
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -U sa -P \"${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\""
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
