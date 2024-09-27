@@ -80,27 +80,31 @@ np_dep = declare_dependency(include_directories: inc_np, compile_args: numpy_nod
 
 incdir_pyarrow = meson.get_external_property('pyarrow-include-dir', 'not-given')
 if incdir_pyarrow == 'not-given'
-  incdir_pyarrow = run_command(py,
-    [
-      '-c',
-      '''import os
-import pyarrow as pa
-try:
-  incdir = os.path.relpath(pa.get_include())
-except Exception:
-  incdir = pa.get_include()
-print(incdir)
-  '''
-    ],
-    check: true
-  ).stdout().strip()
-
-  # We do need an absolute path to feed to `cc.find_library` below
-  _incdir_pyarrow_abs = run_command(py,
-    ['-c', 'import pyarrow; print(pyarrow.get_include())'],
-    check: true
-  ).stdout().strip()
-else
+  incdir_pyarrow = py.get_path('platlib') + '/pyarrow/include'
+  _incdir_pyarrow_abs = incdir_pyarrow
+# We would rather like to use the following code, but sadly pyarrow (in contrast to numpy)
+# does not name the correct directory in a cross-compilation setting.
+#  incdir_pyarrow = run_command(py,
+#    [
+#      '-c',
+#      '''import os
+#import pyarrow as pa
+#try:
+#  incdir = os.path.relpath(pa.get_include())
+#except Exception:
+#  incdir = pa.get_include()
+#print(incdir)
+#  '''
+#    ],
+#    check: true
+#  ).stdout().strip()
+#
+#  # We do need an absolute path to feed to `cc.find_library` below
+#  _incdir_pyarrow_abs = run_command(py,
+#    ['-c', 'import pyarrow; print(pyarrow.get_include())'],
+#    check: true
+#  ).stdout().strip()
+#else
   _incdir_pyarrow_abs = incdir_pyarrow
 endif
 inc_pa = include_directories(incdir_pyarrow)
