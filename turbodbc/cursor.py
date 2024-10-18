@@ -8,7 +8,8 @@ from turbodbc_intern import (
     make_numpy_result_set,
     make_parameter_set,
     make_row_based_result_set,
-    set_numpy_parameters,
+    set_arrow_parameters,
+    set_numpy_parameters
 )
 
 from .exceptions import InterfaceError, translate_exceptions
@@ -184,8 +185,6 @@ class Cursor:
             return c.num_chunks
 
         if isinstance(columns, pa.Table):
-            from turbodbc.arrow_support import set_arrow_parameters  # type: ignore
-
             for column in columns.itercolumns():
                 if _num_chunks(column) != 1:
                     raise NotImplementedError("Chunked Arrays are " "not yet supported")

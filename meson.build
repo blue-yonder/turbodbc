@@ -190,7 +190,6 @@ py.install_sources(
     'turbodbc/data_types.py',
     'turbodbc/api_constants.py',
     'turbodbc/connection.py',
-    'turbodbc/arrow_support.py',
     'turbodbc/exceptions.py',
     'turbodbc/constructors.py',
     'turbodbc/cursor.py',
