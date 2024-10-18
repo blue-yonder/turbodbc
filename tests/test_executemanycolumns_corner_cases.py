@@ -1,3 +1,4 @@
+import pyarrow as pa
 import pytest
 from helpers import for_one_database, open_cursor
 from numpy import array
@@ -7,18 +8,6 @@ from query_fixture import query_fixture
 import turbodbc
 from turbodbc import InterfaceError
 
-try:
-    import pyarrow as pa
-    import turbodbc_arrow_support  # noqa: F401
-
-    HAVE_ARROW = True
-except ImportError:
-    HAVE_ARROW = False
-
-
-arrow_support = pytest.mark.skipif(
-    not HAVE_ARROW, reason="not build with Arrow support"
-)
 
 
 @for_one_database
@@ -119,7 +108,6 @@ def test_passing_empty_column_is_ok(dsn, configuration):
             assert results == []
 
 
-@arrow_support
 @for_one_database
 def test_arrow_table_exceeds_expected_columns(dsn, configuration):
     with open_cursor(configuration) as cursor:
@@ -140,7 +128,6 @@ def test_arrow_table_exceeds_expected_columns(dsn, configuration):
                 )
 
 
-@arrow_support
 @for_one_database
 def test_arrow_table_chunked_arrays_not_supported(dsn, configuration):
     with open_cursor(configuration) as cursor:

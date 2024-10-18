@@ -1,5 +1,6 @@
 import datetime
 
+import pyarrow as pa
 import pytest
 from helpers import (
     for_each_database,
@@ -11,17 +12,7 @@ from numpy import array
 from numpy.ma import MaskedArray
 from query_fixture import query_fixture
 
-column_backends = ["numpy"]
-
-try:
-    import pyarrow as pa
-    import turbodbc_arrow_support  # noqa: F401
-
-    column_backends.append("arrow")
-    # column_backends.append('pandas')
-except ImportError:
-    pass
-
+column_backends = ["numpy", "arrow"]
 for_each_column_backend = pytest.mark.parametrize("column_backend", column_backends)
 
 

@@ -3,6 +3,11 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 5.0.2
+-------------
+
+* Fix and clean up the PyArrow integration
+
 Version 5.0.0
 -------------
 
