@@ -8,4 +8,4 @@ if sys.platform == "win32":
     for lib_dir in pyarrow.get_library_dirs():
         os.add_dll_directory(lib_dir)
 
-from turbodbc_arrow_support import *  # noqa
+from turbodbc_intern import *  # noqa
