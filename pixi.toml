@@ -19,7 +19,7 @@ numpy = ">=1.21,<3"
 cmake = ">=3.20,<3.31"
 libboost-devel = ">=1.80.0,<1.87"
 simdutf = ">=5,<6"
-pyarrow = ">=14,<18"
+pyarrow = ">=14,<19"
 pybind11 = ">=2,<3"
 pip = ">=20,<25"
 python-build = ">=1,<2"
@@ -39,6 +39,8 @@ python = "3.10.*"
 python = "3.11.*"
 [feature.py312.dependencies]
 python = "3.12.*"
+[feature.py313.dependencies]
+python = "3.13.*"
 [feature.pyarrow14.dependencies]
 pyarrow = ">=14,<15"
 [feature.pyarrow15.dependencies]
@@ -47,12 +49,15 @@ pyarrow = ">=15,<16"
 pyarrow = ">=16,<17"
 [feature.pyarrow17.dependencies]
 pyarrow = ">=17,<18"
+[feature.pyarrow18.dependencies]
+pyarrow = ">=18,<19"
 
 [environments]
-default = ["py311", "pyarrow17"]
+default = ["py312", "pyarrow18"]
 py310 = ["py310"]
 py311 = ["py311"]
 py312 = ["py312"]
+py313 = ["py313"]
 py310-pa14 = ["py310", "pyarrow14"]
 py311-pa14 = ["py311", "pyarrow14"]
 py312-pa14 = ["py312", "pyarrow14"]
@@ -65,3 +70,7 @@ py312-pa16 = ["py312", "pyarrow16"]
 py310-pa17 = ["py310", "pyarrow17"]
 py311-pa17 = ["py311", "pyarrow17"]
 py312-pa17 = ["py312", "pyarrow17"]
+py310-pa18 = ["py310", "pyarrow18"]
+py311-pa18 = ["py311", "pyarrow18"]
+py312-pa18 = ["py312", "pyarrow18"]
+py313-pa18 = ["py313", "pyarrow18"]
