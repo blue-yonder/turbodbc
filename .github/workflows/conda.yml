@@ -86,6 +86,7 @@ jobs:
           # - "py310-pa17"
           # - "py311-pa17"
           - "py312-pa17"
+          - "py313-pa18"
     services:
       postgres:
         image: postgres:11
@@ -173,6 +174,7 @@ jobs:
           #- "py310-pa17"
           #- "py311-pa17"
           - "py312-pa17"
+          - "py313-pa18"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v4
@@ -221,6 +223,7 @@ jobs:
           # - "py310-pa17"
           # - "py311-pa17"
           - "py312-pa17"
+          - "py313-pa18"
     steps:
       - name: Create SQL Server
         shell: pwsh
