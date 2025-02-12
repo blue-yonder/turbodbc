@@ -1,9 +1,0 @@
-Collecting meson
-  Downloading meson-1.7.0-py3-none-any.whl (990 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 990.5/990.5 KB 19.9 MB/s eta 0:00:00
-Installing collected packages: meson
-  Attempting uninstall: meson
-    Found existing installation: meson 0.63.3
-    Uninstalling meson-0.63.3:
-      Successfully uninstalled meson-0.63.3
-Successfully installed meson-1.7.0
