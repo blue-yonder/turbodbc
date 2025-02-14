@@ -1,0 +1,17 @@
+.git/*
+.tmp-earth*
+
+.idea
+.project
+.pydevproject
+.pytest_cache
+build_docker
+cmake-build-debug
+.coverage
+*.pyc
+.cache
+.pytest_cache
+build
+pybind11
+PyTest/PyTest
+contrib/sdist

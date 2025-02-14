@@ -1,0 +1,128 @@
+{
+	"data_source_name": "MSSQL",
+	"prefer_unicode": true,
+
+	"capabilities": {
+		"supports_row_count": false,
+		"indicates_null_columns": true,
+		"reports_column_names_as_upper_case": false,
+		"fractional_second_digits": 6,
+		"connection_user_option": "uid",
+		"connection_password_option": "pwd"
+	},
+
+	"setup": {
+		"view": {
+			"create": ["DROP VIEW IF EXISTS {table_name}",
+			           "CREATE VIEW {table_name} AS {content}"],
+			"drop": ["DROP VIEW {table_name}"]
+		},
+		"table": {
+			"create": ["DROP TABLE IF EXISTS {table_name}",
+			           "CREATE TABLE {table_name} ({content})"],
+			"drop": ["DROP TABLE {table_name}"]
+		}
+	},
+
+	"queries": {
+		"SELECT DOUBLE": {
+			"view": "SELECT CAST(3.14 AS DOUBLE PRECISION) AS a",
+			"payload": "SELECT a FROM {table_name}"
+		},
+
+		"SELECT TRUE": {
+			"payload": "SELECT CAST(1 AS BIT) AS a"
+		},
+
+		"SELECT FALSE": {
+			"payload": "SELECT CAST(0 AS BIT) AS a"
+		},
+
+		"SELECT UNICODE": {
+			"payload": "SELECT N'I \u2665 unicode' AS a"
+		},
+
+		"SELECT MULTIPLE INTEGERS": {
+			"table": "a INTEGER",
+			"setup": ["INSERT INTO {table_name} VALUES (42), (43), (44)"],
+			"payload": "SELECT a FROM {table_name} ORDER BY a ASC"
+		},
+		
+		"SELECT TIMESTAMP": {
+			"payload": "SELECT CAST('2015-12-31 01:02:03' AS DATETIME2(6)) AS a"
+		},
+
+		"SELECT LARGE INTEGER DECIMAL": {
+			"payload": "SELECT CAST(42 AS DECIMAL(24, 0)) AS a"
+		},
+
+		"SELECT LARGE FRACTIONAL DECIMAL": {
+			"payload": "SELECT CAST(3.14 AS DECIMAL(24, 8)) AS a"
+		},
+	
+		"INSERT STRING": {
+			"table": "a VARCHAR(20)"
+		},
+
+		"INSERT STRING MAX": {
+			"table": "a VARCHAR(max)"
+		},
+
+		"INSERT UNICODE": {
+			"table": "a NVARCHAR(20)"
+		},
+
+		"INSERT UNICODE MAX": {
+			"table": "a NVARCHAR(max)"
+		},
+
+		"INSERT LONG STRING": {
+			"table": "a VARCHAR(1000)"
+		},
+	
+		"INSERT INTEGER": {
+			"table": "a INTEGER"
+		},
+		
+		"INSERT TWO INTEGER COLUMNS": {
+			"table": "a INTEGER, b INTEGER"
+		},
+		
+		"INSERT MIXED": {
+			"table": "a INTEGER, b DOUBLE PRECISION"
+		},
+	
+		"INSERT DOUBLE": {
+			"table": "a DOUBLE PRECISION"
+		},
+	
+		"INSERT BOOL": {
+			"table": "a BIT"
+		},
+		
+		"INSERT INDEXED BOOL": {
+			"table": "a BIT, b INTEGER"
+		},
+	
+		"INSERT DATE": {
+			"table": "a DATE"
+		},
+	
+		"INSERT TIMESTAMP": {
+			"table": "a DATETIME2(6)"
+		},
+
+		"INSERT DUPLICATE UNIQUECOL": {
+			"table": "a int NOT NULL, CONSTRAINT AK_a UNIQUE(a)",
+			"setup": ["INSERT INTO {table_name} VALUES (1)"]
+		},
+	
+		"DESCRIPTION": {
+			"table": "as_int INTEGER, as_double DOUBLE PRECISION, as_varchar VARCHAR(100), as_date DATE, as_timestamp DATETIME2(6), as_int_not_null INTEGER NOT NULL"
+		},
+
+		"UNICODE COLUMN NAME": {
+			"table": "[I \u2665 Unicode] INTEGER"
+		}
+	}
+}

@@ -1,0 +1,256 @@
+name: Build and test with conda
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '47 6 * * *'
+
+
+# Automatically stop old builds on the same branch/PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -ex {0}
+
+jobs:
+  linux-release:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: default
+      - name: Build the sdist
+        run: pixi run python -m build --sdist --no-isolation
+      - name: Publish package
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
+        uses: pypa/gh-action-pypi-publish@v1.12.3
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_UPLOAD }}
+          packages_dir: dist
+  linux-unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          # - "py310-pa14"
+          # - "py311-pa14"
+          - "py312-pa14"
+          # - "py310-pa15"
+          # - "py311-pa15"
+          # - "py312-pa15"
+          # - "py310-pa16"
+          # - "py311-pa16"
+          # - "py312-pa16"
+          - "py310-pa17"
+          # - "py311-pa17"
+          # - "py312-pa17"
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: ${{ matrix.environment }}
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} meson setup -Dbuild_testing=true builddir .
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} ninja -C builddir
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} ninja -C builddir test
+  linux-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - "py310-pa14"
+          # - "py311-pa14"
+          # - "py312-pa14"
+          # - "py310-pa15"
+          - "py311-pa15"
+          # - "py312-pa15"
+          # - "py310-pa16"
+          # - "py311-pa16"
+          - "py312-pa16"
+          # - "py310-pa17"
+          # - "py311-pa17"
+          - "py312-pa17"
+          - "py313-pa18"
+    services:
+      postgres:
+        image: postgres:11
+        options: "--hostname postgres"
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+      mysql:
+        # test do not run with a newer mysql at the moment
+        image: mysql:8.3
+        # command: --default-authentication-plugin=mysql_native_password
+        env:
+          MYSQL_ROOT_PASSWORD: StrongPassword1
+          MYSQL_USER: mysqluser
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: StrongPassword1
+          MSSQL_SA_PASSWORD: StrongPassword1
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -U sa -P \"${MSSQL_SA_PASSWORD}\" -Q \"SELECT 1\""
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Fetch full git history
+        run: git fetch --prune --unshallow
+      - name: Install MS SQL Drivers
+        run: |
+          wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+          wget -q https://packages.microsoft.com/config/debian/9/prod.list -O- | sudo tee -a /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          ACCEPT_EULA=Y sudo apt-get install msodbcsql17 mssql-tools
+          ls -l  /opt/microsoft/msodbcsql17/lib64/
+          sudo odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db' -l 60
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: ${{ matrix.environment }}
+      - name: pip list
+        run: pixi run -e ${{ matrix.environment }} python -m pip list
+      - name: pip list
+        run: pixi run -e ${{ matrix.environment }} python -m pip check
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation --wheel --verbose
+      - name: Install the built wheel
+        run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
+      - name: Import test
+        run: pixi run -e ${{ matrix.environment }} python -c 'import turbodbc'
+      - name: Prepare ODBC
+        run: pixi run -e ${{ matrix.environment }} bash -c 'sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini'
+      - name: Build and test
+        run: ODBCSYSINI=$(pwd)/odbc_test_linux pixi run -e ${{ matrix.environment }} pytest
+        env:
+          # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mssql.json"
+  macos-tests:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - "py310-pa14"
+          #- "py311-pa14"
+          #- "py312-pa14"
+          - "py310-pa15"
+          #- "py311-pa15"
+          #- "py312-pa15"
+          #- "py310-pa16"
+          - "py311-pa16"
+          #- "py312-pa16"
+          #- "py310-pa17"
+          #- "py311-pa17"
+          - "py312-pa17"
+          - "py313-pa18"
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Fetch full git history
+        run: git fetch --prune --unshallow
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: ${{ matrix.environment }}
+      - name: Create postgres test_db
+        run: pixi run -e ${{ matrix.environment }} bash -c 'initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")'
+      - name: Start postgres
+        run: pixi run -e ${{ matrix.environment }} pg_ctl -D test_db -l logfile start
+      - name: Create inner database
+        run: pixi run -e ${{ matrix.environment }} createdb --owner=runner test_db
+      - name: Build the wheel
+        run: pixi run -e ${{ matrix.environment }} bash -c 'CXXFLAGS="$CXXFLAGS -ggdb -fno-omit-frame-pointer" python -m build --no-isolation'
+      - name: Install the built wheel
+        run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
+      - name: Import test
+        run: pixi run -e ${{ matrix.environment }} python -c 'import turbodbc'
+      - name: Prepare ODBC
+        run: pixi run -e ${{ matrix.environment }} bash -c 'sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_osx/odbcinst.ini'
+      - name: Build and test
+        env:
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json"
+        run: pixi run -e ${{ matrix.environment }} bash -c 'ulimit -c unlimited && ODBCSYSINI=$(pwd)/odbc_test_osx pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt all" -o "quit"; exit 1)'
+  windows-pixi-tests:
+    defaults:
+      run:
+        shell: cmd /C call {0}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - "py310-pa14"
+          # - "py311-pa14"
+          # - "py312-pa14"
+          # - "py310-pa15"
+          - "py311-pa15"
+          # - "py312-pa15"
+          # - "py310-pa16"
+          # - "py311-pa16"
+          - "py312-pa16"
+          # - "py310-pa17"
+          # - "py311-pa17"
+          - "py312-pa17"
+          - "py313-pa18"
+    steps:
+      - name: Create SQL Server
+        shell: pwsh
+        run: |
+          Write-Host "Downloading"
+          Import-Module BitsTransfer
+          Start-BitsTransfer -Source "https://download.microsoft.com/download/3/8/d/38de7036-2433-4207-8eae-06e247e17b25/SqlLocalDB.msi" -Destination SqlLocalDB.msi
+          Write-Host "Installing"
+          Start-Process -FilePath "SqlLocalDB.msi" -Wait -ArgumentList "/qn", "/norestart", "/l*v SqlLocalDBInstall.log", "IACCEPTSQLLOCALDBLICENSETERMS=YES"
+          sqlcmd -S '(localdb)\MSSQLLocalDB' -Q 'CREATE DATABASE test_db' -l 60
+      - name: Configure ODBC Data Source
+        run: |
+          odbcconf /a {CONFIGDSN "ODBC Driver 17 for SQL Server" "DSN=MSSQL|Server=(localdb)\MSSQLLocalDB|Database=test_db|Trusted_Connection=Yes"}
+          if %errorlevel% neq 0 exit /b %errorlevel%
+      - name: Checkout branch
+        uses: actions/checkout@v4
+      - name: Fetch full git history
+        run: git fetch --prune --unshallow
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@ba3bb36eb2066252b2363392b7739741bb777659
+        with:
+          environments: ${{ matrix.environment }}
+      - name: Build wheel
+        run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
+      - name: Install wheel
+        run: pixi run -e ${{ matrix.environment }} python -m pip install 'dist\*.whl'
+      - name: Test
+        run: pixi run -e ${{ matrix.environment }} pytest -sv
+        env:
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_mssql.json"

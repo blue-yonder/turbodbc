@@ -1,5 +1,5 @@
 project(
-  'turbodbc', 'cpp',
+  'cnvxaturbodbc', 'cpp',
   license: 'MIT',
   meson_version: '>= 1.1.0',
   default_options: [
@@ -184,16 +184,16 @@ py.extension_module(
 
 py.install_sources(
   [
-    'turbodbc/options.py',
-    'turbodbc/connect.py',
-    'turbodbc/__init__.py',
-    'turbodbc/data_types.py',
-    'turbodbc/api_constants.py',
-    'turbodbc/connection.py',
-    'turbodbc/exceptions.py',
-    'turbodbc/constructors.py',
-    'turbodbc/cursor.py',
+    'cnvxaturbodbc/options.py',
+    'cnvxaturbodbc/connect.py',
+    'cnvxaturbodbc/__init__.py',
+    'cnvxaturbodbc/data_types.py',
+    'cnvxaturbodbc/api_constants.py',
+    'cnvxaturbodbc/connection.py',
+    'cnvxaturbodbc/exceptions.py',
+    'cnvxaturbodbc/constructors.py',
+    'cnvxaturbodbc/cursor.py',
   ],
-  subdir: 'turbodbc',
+  subdir: 'cnvxaturbodbc',
 )
 
