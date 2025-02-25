@@ -7,6 +7,7 @@
 #include <turbodbc/descriptions/string_description.h>
 #include <turbodbc/descriptions/unicode_description.h>
 #include <variant>
+#include <cstring>
 
 namespace {
 

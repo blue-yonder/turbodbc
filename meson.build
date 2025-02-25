@@ -13,7 +13,6 @@ project(
 fs = import('fs')
 
 cpp = meson.get_compiler('cpp')
-add_global_arguments('-DBOOST_NO_CXX98_FUNCTION_BASE', language: 'cpp')
 add_global_arguments('-DGTEST_LINKED_AS_SHARED_LIBRARY=1', language: 'cpp')
 if target_machine.system() == 'windows'
   add_global_arguments('-DNOMINMAX', language: 'cpp')
