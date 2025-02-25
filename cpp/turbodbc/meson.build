@@ -39,7 +39,7 @@ turbodbc = static_library(
     'Library/src/time_helpers.cpp',
   ],
   include_directories: include_directories('Library', '../cpp_odbc/Library'),
-  dependencies: [simdutf],
+  dependencies: [simdutf, boost],
   link_with: [cpp_odbc],
 )
 
@@ -89,7 +89,7 @@ if build_testing
     e = executable(
       t.replace('/', '_'),
       turbodbc_test_sources + ['Test/tests/' + t + '.cpp'],
-      dependencies: [gtest, gtest_main, gmock],
+      dependencies: [gtest, gtest_main, gmock, boost],
       link_with: [turbodbc],
       include_directories: include_directories('Library', 'Test', '../cpp_odbc/Library'),
     )
