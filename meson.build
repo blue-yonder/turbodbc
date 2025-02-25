@@ -19,7 +19,7 @@ if target_machine.system() == 'windows'
   add_global_arguments('-DNOMINMAX', language: 'cpp')
 endif
 simdutf = dependency('simdutf')
-boost = dependency('libboost')
+boost = dependency('boost', required: true, method: 'cmake')
 arrow = dependency('arrow')
 build_testing = get_option('build_testing')
 if build_testing
