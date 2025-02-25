@@ -25,7 +25,6 @@ pip = ">=20,<25"
 python-build = ">=1,<2"
 pytest = ">=8,<9"
 pkg-config = ">=0.20,<1"
-boost-cpp = ">=1.85.0,<2"
 
 [target.unix.dependencies]
 unixodbc = ">=2"
