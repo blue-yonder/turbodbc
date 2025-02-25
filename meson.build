@@ -19,6 +19,7 @@ if target_machine.system() == 'windows'
   add_global_arguments('-DNOMINMAX', language: 'cpp')
 endif
 simdutf = dependency('simdutf')
+boost = dependency('boost')
 arrow = dependency('arrow')
 build_testing = get_option('build_testing')
 if build_testing
@@ -135,7 +136,7 @@ inc_pa = include_directories(incdir_pyarrow)
 pa_dep = declare_dependency(include_directories: inc_pa)
 arrow_python = cpp.find_library('arrow_python', dirs: [fs.parent(_incdir_pyarrow_abs)])
 
-deps = [np_dep, pa_dep, arrow, arrow_python, simdutf]
+deps = [np_dep, pa_dep, arrow, arrow_python, simdutf, boost]
 if target_machine.system() == 'windows'
   odbc32 = cpp.find_library('odbc32')
   deps += odbc32
