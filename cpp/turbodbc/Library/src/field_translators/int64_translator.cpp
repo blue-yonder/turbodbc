@@ -1,6 +1,6 @@
 #include <turbodbc/field_translators/int64_translator.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 #include <sqlext.h>
 
 namespace turbodbc { namespace field_translators {

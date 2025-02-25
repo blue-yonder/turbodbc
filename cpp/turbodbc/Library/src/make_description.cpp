@@ -3,12 +3,14 @@
 #include <turbodbc/descriptions.h>
 #include <sqlext.h>
 
-#include <boost/variant/apply_visitor.hpp>
+#include <chrono>
+#include <variant>
 
 #include <stdexcept>
 #include <sstream>
 #include <algorithm>
 
+#include <cmath> // for std::ceil
 
 namespace turbodbc {
 
@@ -64,7 +66,7 @@ std::unique_ptr<description const> make_decimal_description(cpp_odbc::column_des
 
 using description_ptr = description const *;
 
-struct description_by_value : public boost::static_visitor<description_ptr> {
+struct description_by_value {
     description_ptr operator()(int64_t const &) const
     {
         return new integer_description;
@@ -80,12 +82,12 @@ struct description_by_value : public boost::static_visitor<description_ptr> {
         return new boolean_description;
     }
 
-    description_ptr operator()(boost::gregorian::date const &) const
+    description_ptr operator()(std::chrono::year_month_day const &) const
     {
         return new date_description;
     }
 
-    description_ptr operator()(boost::posix_time::ptime const &) const
+    description_ptr operator()(std::chrono::system_clock::time_point const &) const
     {
         return new timestamp_description;
     }
@@ -164,7 +166,7 @@ std::unique_ptr<description const> make_description(cpp_odbc::column_description
 
 std::unique_ptr<description const> make_description(field const & value)
 {
-    return std::unique_ptr<description const>(boost::apply_visitor(description_by_value{}, value));
+    return std::unique_ptr<description const>(std::visit(description_by_value{}, value));
 }
 
 std::unique_ptr<description const> make_description(type_code type, std::size_t size)

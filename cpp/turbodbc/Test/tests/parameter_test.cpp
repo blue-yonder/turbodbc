@@ -6,7 +6,7 @@
 #include <turbodbc/descriptions/integer_description.h>
 #include <turbodbc/descriptions/string_description.h>
 #include <turbodbc/descriptions/unicode_description.h>
-#include <boost/variant/get.hpp>
+#include <variant>
 
 namespace {
 

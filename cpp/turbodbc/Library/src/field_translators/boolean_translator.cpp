@@ -1,6 +1,6 @@
 #include <turbodbc/field_translators/boolean_translator.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 
 
 namespace turbodbc { namespace field_translators {

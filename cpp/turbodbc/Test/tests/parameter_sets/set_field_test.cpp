@@ -4,13 +4,12 @@
 #include <tests/mock_classes.h>
 
 #include <turbodbc/descriptions.h>
-
-
+#include <chrono>
 
 namespace {
 
-std::size_t const param_index = 42;
-std::size_t const n_params = 23;
+    std::size_t const param_index = 42;
+    std::size_t const n_params = 23;
 
 }
 
@@ -65,7 +64,9 @@ TEST(SetFieldTest, ParameterIsSuitableForTimestamp)
     parameter const boolean_parameter(statement, param_index, n_params,
                                       std::unique_ptr<description>(new boolean_description()));
 
-    field const value(boost::posix_time::ptime({2016, 9, 23}, {1, 2, 3}));
+    using namespace std::chrono;
+    field const value(system_clock::time_point{sys_days{year{2016}/month{9}/day{23}}
+                                                + hours{1} + minutes{2} + seconds{3}});
     EXPECT_TRUE(parameter_is_suitable_for(ts_parameter, value));
     EXPECT_FALSE(parameter_is_suitable_for(boolean_parameter, value));
 }
@@ -78,7 +79,8 @@ TEST(SetFieldTest, ParameterIsSuitableForDate)
     parameter const boolean_parameter(statement, param_index, n_params,
                                       std::unique_ptr<description>(new boolean_description()));
 
-    field const value(boost::gregorian::date{2016, 9, 23});
+    using namespace std::chrono;
+    field const value(year_month_day{year{2016}, month{9}, day{23}});
     EXPECT_TRUE(parameter_is_suitable_for(date_parameter, value));
     EXPECT_FALSE(parameter_is_suitable_for(boolean_parameter, value));
 }
@@ -141,7 +143,10 @@ TEST(SetFieldTest, SetFieldFloatingPoint)
 
 TEST(SetFieldTest, SetFieldTimestamp)
 {
-    boost::posix_time::ptime const timestamp{{2015, 12, 31}, {1, 2, 3, 123456}};
+    using namespace std::chrono;
+    system_clock::time_point const timestamp =
+         sys_days{year{2015}/month{12}/day{31}}
+       + hours{1} + minutes{2} + seconds{3} + microseconds{123456};
 
     cpp_odbc::multi_value_buffer buffer(sizeof(SQL_TIMESTAMP_STRUCT), 1);
     auto element = buffer[0];
@@ -161,7 +166,8 @@ TEST(SetFieldTest, SetFieldTimestamp)
 
 TEST(SetFieldTest, SetFieldDate)
 {
-    boost::gregorian::date const date{2015, 12, 31};
+    using namespace std::chrono;
+    year_month_day const date{year{2015}, month{12}, day{31}};
 
     cpp_odbc::multi_value_buffer buffer(sizeof(SQL_DATE_STRUCT), 1);
     auto element = buffer[0];

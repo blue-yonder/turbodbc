@@ -6,7 +6,7 @@
 #include <cpp_odbc/statement.h>
 #include <cpp_odbc/error.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 #include <sqlext.h>
 #include <stdexcept>
 
