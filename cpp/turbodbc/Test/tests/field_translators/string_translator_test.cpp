@@ -1,7 +1,7 @@
 #include "turbodbc/field_translators/string_translator.h"
 
 #include <gtest/gtest.h>
-
+#include <cstring>
 
 using turbodbc::field_translators::string_translator;
 

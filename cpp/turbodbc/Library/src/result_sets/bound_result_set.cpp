@@ -5,6 +5,7 @@
 #include <turbodbc/buffer_size.h>
 
 #include <sqlext.h>
+#include <variant>
 
 namespace turbodbc { namespace result_sets {
 
@@ -21,7 +22,7 @@ namespace {
             descriptions.push_back(make_description(from_db, options));
         }
 
-        return boost::apply_visitor(turbodbc::determine_rows_to_buffer(descriptions), options.read_buffer_size);
+        return std::visit(turbodbc::determine_rows_to_buffer(descriptions), options.read_buffer_size);
     }
 
 }

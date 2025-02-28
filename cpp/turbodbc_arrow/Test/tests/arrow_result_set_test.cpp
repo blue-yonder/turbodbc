@@ -71,7 +71,9 @@ class ArrowResultSetTest : public ::testing::Test {
             size_t bytes_per_value = std::dynamic_pointer_cast<arrow::FixedWidthType>(array->type())->bit_width() / 8;
             auto typed_array = std::dynamic_pointer_cast<arrow::PrimitiveArray>(array);
             buffers.emplace_back(cpp_odbc::multi_value_buffer(bytes_per_value, size));
-            memcpy(buffers.back().data_pointer(), typed_array->values()->data() + (bytes_per_value * offset), bytes_per_value * size);
+            memcpy(buffers.back().data_pointer(),
+                   typed_array->values()->data() + (bytes_per_value * offset),
+                   bytes_per_value * size);
             for (size_t i = 0; i < size; i++) {
                 if (array->IsNull(i + offset)) {
                     buffers.back().indicator_pointer()[i] = SQL_NULL_DATA;
@@ -84,15 +86,21 @@ class ArrowResultSetTest : public ::testing::Test {
             {
                 testing::InSequence sequence;
                 for (auto&& buffers: buffers_vec) {
-                    EXPECT_CALL(rs, do_get_buffers()).WillOnce(testing::Return(buffers)).RetiresOnSaturation();
+                    EXPECT_CALL(rs, do_get_buffers())
+                        .WillOnce(testing::Return(buffers))
+                        .RetiresOnSaturation();
                 }
             }
             {
                 testing::InSequence sequence;
                 for (auto&& buffers: buffers_vec) {
-                    EXPECT_CALL(rs, do_fetch_next_batch()).WillOnce(testing::Return(buffers[0].get().number_of_elements())).RetiresOnSaturation();
+                    EXPECT_CALL(rs, do_fetch_next_batch())
+                        .WillOnce(testing::Return(buffers[0].get().number_of_elements()))
+                        .RetiresOnSaturation();
                 }
-                EXPECT_CALL(rs, do_fetch_next_batch()).WillOnce(testing::Return(0)).RetiresOnSaturation();
+                EXPECT_CALL(rs, do_fetch_next_batch())
+                    .WillOnce(testing::Return(0))
+                    .RetiresOnSaturation();
             }
         }
 
@@ -422,21 +430,30 @@ TEST_F(ArrowResultSetTest, MultiBatchConversionTimestamp)
                 }
             } else {
                 ASSERT_OK(builder.Append(i));
-                auto td = boost::posix_time::microseconds(i);
-                auto ts = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1), td);
+                auto tp = std::chrono::system_clock::time_point{} + std::chrono::microseconds(i);
                 SQL_TIMESTAMP_STRUCT* sql_ts;
                 if (i < OUTPUT_SIZE) {
                     sql_ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT*>(buffer_1.data_pointer()) + i;
                 } else {
                     sql_ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT*>(buffer_1_2.data_pointer()) + (i - OUTPUT_SIZE);
                 }
-                sql_ts->year = ts.date().year();
-                sql_ts->month = ts.date().month();
-                sql_ts->day = ts.date().day();
-                sql_ts->hour = ts.time_of_day().hours();
-                sql_ts->minute = ts.time_of_day().minutes();
-                sql_ts->second = ts.time_of_day().seconds();
-                sql_ts->fraction = ts.time_of_day().fractional_seconds() * 1000;
+                auto dp = std::chrono::floor<std::chrono::days>(tp);
+                std::chrono::year_month_day ymd{dp};
+                auto tod = tp - dp;
+                auto hrs = std::chrono::duration_cast<std::chrono::hours>(tod);
+                tod -= hrs;
+                auto mins = std::chrono::duration_cast<std::chrono::minutes>(tod);
+                tod -= mins;
+                auto secs = std::chrono::duration_cast<std::chrono::seconds>(tod);
+                tod -= secs;
+                auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tod);
+                sql_ts->year = static_cast<SQLSMALLINT>(int(ymd.year()));
+                sql_ts->month = static_cast<SQLUSMALLINT>(unsigned(ymd.month()));
+                sql_ts->day = static_cast<SQLUSMALLINT>(unsigned(ymd.day()));
+                sql_ts->hour = static_cast<SQLUSMALLINT>(hrs.count());
+                sql_ts->minute = static_cast<SQLUSMALLINT>(mins.count());
+                sql_ts->second = static_cast<SQLUSMALLINT>(secs.count());
+                sql_ts->fraction = static_cast<SQLUINTEGER>(micros.count() * 1000);
             }
         }
         ASSERT_OK(builder.Finish(&array));
@@ -451,21 +468,30 @@ TEST_F(ArrowResultSetTest, MultiBatchConversionTimestamp)
         arrow::TimestampBuilder builder(arrow::timestamp(arrow::TimeUnit::MICRO), pool);
         for (int64_t i = 0; i < 2 * OUTPUT_SIZE; i++) {
             ASSERT_OK(builder.Append(i));
-            auto td = boost::posix_time::microseconds(i);
-            auto ts = boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1), td);
+            auto tp = std::chrono::system_clock::time_point{} + std::chrono::microseconds(i);
             SQL_TIMESTAMP_STRUCT* sql_ts;
             if (i < OUTPUT_SIZE) {
                 sql_ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT*>(buffer_2.data_pointer()) + i;
             } else {
                 sql_ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT*>(buffer_2_2.data_pointer()) + (i - OUTPUT_SIZE);
             }
-            sql_ts->year = ts.date().year();
-            sql_ts->month = ts.date().month();
-            sql_ts->day = ts.date().day();
-            sql_ts->hour = ts.time_of_day().hours();
-            sql_ts->minute = ts.time_of_day().minutes();
-            sql_ts->second = ts.time_of_day().seconds();
-            sql_ts->fraction = ts.time_of_day().fractional_seconds() * 1000;
+            auto dp = std::chrono::floor<std::chrono::days>(tp);
+            std::chrono::year_month_day ymd{dp};
+            auto tod = tp - dp;
+            auto hrs = std::chrono::duration_cast<std::chrono::hours>(tod);
+            tod -= hrs;
+            auto mins = std::chrono::duration_cast<std::chrono::minutes>(tod);
+            tod -= mins;
+            auto secs = std::chrono::duration_cast<std::chrono::seconds>(tod);
+            tod -= secs;
+            auto micros = std::chrono::duration_cast<std::chrono::microseconds>(tod);
+            sql_ts->year = static_cast<SQLSMALLINT>(int(ymd.year()));
+            sql_ts->month = static_cast<SQLUSMALLINT>(unsigned(ymd.month()));
+            sql_ts->day = static_cast<SQLUSMALLINT>(unsigned(ymd.day()));
+            sql_ts->hour = static_cast<SQLUSMALLINT>(hrs.count());
+            sql_ts->minute = static_cast<SQLUSMALLINT>(mins.count());
+            sql_ts->second = static_cast<SQLUSMALLINT>(secs.count());
+            sql_ts->fraction = static_cast<SQLUINTEGER>(micros.count() * 1000);
         }
         ASSERT_OK(builder.Finish(&nonnull_array));
     }

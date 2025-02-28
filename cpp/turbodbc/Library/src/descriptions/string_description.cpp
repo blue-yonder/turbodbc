@@ -1,6 +1,6 @@
 #include <turbodbc/descriptions/string_description.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 
 #include <sqlext.h>
 #include <cstring>

@@ -1,6 +1,6 @@
 #include <turbodbc/descriptions/unicode_description.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 
 #ifdef _WIN32
 #include <windows.h>

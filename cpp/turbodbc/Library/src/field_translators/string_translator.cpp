@@ -1,6 +1,6 @@
 #include <turbodbc/field_translators/string_translator.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 
 #include <stdexcept>
 

@@ -2,7 +2,7 @@
 
 #include <sqlext.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 #include <cstring>
 
 namespace turbodbc {

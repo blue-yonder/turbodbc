@@ -3,8 +3,7 @@
 #include <pybind11/pybind11.h>
 
 #include <ciso646>
-
-#include <boost/variant.hpp>
+#include <variant>
 
 // The following conversion logic is adapted from https://github.com/pybind/pybind11/issues/576
 // it is placed in this file because it is the only place where a function requiring
@@ -12,17 +11,16 @@
 // so the only other way to place the conversion logic is in a header file.
 namespace pybind11 { namespace detail {
 
-struct variant_caster_visitor : boost::static_visitor<handle> {
-    variant_caster_visitor(return_value_policy policy, handle parent) :
-        policy(policy),
-        parent(parent)
+struct variant_caster_visitor {
+    variant_caster_visitor(return_value_policy policy, handle parent)
+        : policy(policy), parent(parent)
     {}
 
     return_value_policy policy;
     handle parent;
 
     template<class T>
-    handle operator()(T const& src) const {
+    handle operator()(T const & src) const {
         return make_caster<T>::cast(src, policy, parent);
     }
 };
@@ -49,7 +47,7 @@ struct type_caster<turbodbc::buffer_size> {
     }
 
     static handle cast(Type const & cpp_value, return_value_policy policy, handle parent) {
-        return boost::apply_visitor(variant_caster_visitor(policy, parent), cpp_value);
+        return std::visit(variant_caster_visitor(policy, parent), cpp_value);
     }
 };
 

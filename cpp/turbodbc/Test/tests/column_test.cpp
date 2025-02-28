@@ -4,7 +4,7 @@
 #include "mock_classes.h"
 
 #include <turbodbc/descriptions/string_description.h>
-#include <boost/variant/get.hpp>
+#include <variant>
 
 
 namespace {

@@ -1,6 +1,6 @@
 #include <turbodbc/descriptions/boolean_description.h>
 
-#include <boost/variant/get.hpp>
+#include <variant>
 #include <sqlext.h>
 
 namespace turbodbc {

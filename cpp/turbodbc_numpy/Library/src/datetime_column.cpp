@@ -5,8 +5,6 @@
 
 #include <Python.h>
 
-#include <boost/date_time/gregorian/gregorian_types.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #ifdef _WIN32
 #include <windows.h>

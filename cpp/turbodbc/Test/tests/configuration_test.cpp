@@ -11,7 +11,7 @@ using turbodbc_test::mock_connection;
 TEST(ConfigurationTest, OptionsDefaults)
 {
     turbodbc::options options;
-    EXPECT_EQ(boost::get<turbodbc::megabytes>(options.read_buffer_size).value, 20);
+    EXPECT_EQ(std::get<turbodbc::megabytes>(options.read_buffer_size).value, 20);
     EXPECT_EQ(options.parameter_sets_to_buffer, 1000);
     EXPECT_EQ(options.varchar_max_character_limit, 65535);
     EXPECT_FALSE(options.use_async_io);

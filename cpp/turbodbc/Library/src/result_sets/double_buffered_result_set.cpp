@@ -4,7 +4,7 @@
 
 #include <turbodbc/buffer_size.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <sqlext.h>
 
 #include <future>
@@ -41,7 +41,7 @@ namespace {
 
     turbodbc::options options_with_half_read_buffer(turbodbc::options options)
     {
-        options.read_buffer_size = boost::apply_visitor(halve_buffer_size(), options.read_buffer_size);
+        options.read_buffer_size = std::visit(halve_buffer_size(), options.read_buffer_size);
         return options;
     }
 
