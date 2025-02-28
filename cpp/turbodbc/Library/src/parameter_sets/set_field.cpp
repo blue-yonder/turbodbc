@@ -85,9 +85,9 @@ namespace {
 			auto micros = std::chrono::duration_cast<std::chrono::microseconds>(time_of_day);
 
 			auto destination = reinterpret_cast<SQL_TIMESTAMP_STRUCT *>(destination_.data_pointer);
-			destination->year = static_cast<SQLSMALLINT>(int(ymd.year()));
-			destination->month = static_cast<SQLUSMALLINT>(unsigned(ymd.month()));
-			destination->day = static_cast<SQLUSMALLINT>(unsigned(ymd.day()));
+			destination->year = static_cast<SQLSMALLINT>(static_cast<int>(ymd.year()));
+			destination->month = static_cast<SQLUSMALLINT>(static_cast<unsigned>(ymd.month()));
+			destination->day = static_cast<SQLUSMALLINT>(static_cast<unsigned>(ymd.day()));
 			destination->hour = static_cast<SQLUSMALLINT>(hrs.count());
 			destination->minute = static_cast<SQLUSMALLINT>(mins.count());
 			destination->second = static_cast<SQLUSMALLINT>(secs.count());
@@ -98,9 +98,9 @@ namespace {
 		void operator()(std::chrono::year_month_day const & value)
 		{
 			auto destination = reinterpret_cast<SQL_DATE_STRUCT *>(destination_.data_pointer);
-			destination->year = static_cast<SQLSMALLINT>(int(value.year()));
-			destination->month = static_cast<SQLUSMALLINT>(unsigned(value.month()));
-			destination->day = static_cast<SQLUSMALLINT>(unsigned(value.day()));
+			destination->year = static_cast<SQLSMALLINT>(static_cast<int>(value.year()));
+			destination->month = static_cast<SQLUSMALLINT>(static_cast<unsigned>(value.month()));
+			destination->day = static_cast<SQLUSMALLINT>(static_cast<unsigned>(value.day()));
 			destination_.indicator = sizeof(SQL_DATE_STRUCT);
 		}
 

@@ -430,10 +430,7 @@ TEST_F(ArrowResultSetTest, MultiBatchConversionTimestamp)
                 }
             } else {
                 ASSERT_OK(builder.Append(i));
-                auto tp = std::chrono::system_clock::time_point{
-                    std::chrono::sys_days{std::chrono::year{1970}/std::chrono::month{1}/std::chrono::day{1}} +
-                    std::chrono::microseconds(i)
-                };
+                auto tp = std::chrono::system_clock::time_point{} + std::chrono::microseconds(i);
                 SQL_TIMESTAMP_STRUCT* sql_ts;
                 if (i < OUTPUT_SIZE) {
                     sql_ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT*>(buffer_1.data_pointer()) + i;
@@ -471,10 +468,7 @@ TEST_F(ArrowResultSetTest, MultiBatchConversionTimestamp)
         arrow::TimestampBuilder builder(arrow::timestamp(arrow::TimeUnit::MICRO), pool);
         for (int64_t i = 0; i < 2 * OUTPUT_SIZE; i++) {
             ASSERT_OK(builder.Append(i));
-            auto tp = std::chrono::system_clock::time_point{
-                    std::chrono::sys_days{std::chrono::year{1970}/std::chrono::month{1}/std::chrono::day{1}} +
-                    std::chrono::microseconds(i)
-            };
+            auto tp = std::chrono::system_clock::time_point{} + std::chrono::microseconds(i);
             SQL_TIMESTAMP_STRUCT* sql_ts;
             if (i < OUTPUT_SIZE) {
                 sql_ts = reinterpret_cast<SQL_TIMESTAMP_STRUCT*>(buffer_2.data_pointer()) + i;
