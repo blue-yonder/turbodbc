@@ -1,0 +1,8 @@
+ignore:
+# Do not consider unit test code part of code that requires coverage
+  - "cpp/cpp_odbc/Test/.*"
+  - "cpp/turbodbc/Test/.*"
+# Stuff just for debugging purposes
+  - "cpp/cpp_odbc/Library/src/level1/unixodbc_backend_debug.cpp"
+# C++-only things that are currently not considered as part of the interface
+  - "cpp/turbodbc/Library/src/parameter_sets/field_parameter_set.cpp"

@@ -1,0 +1,125 @@
+{
+	"data_source_name": "Exasol",
+
+	"capabilities": {
+		"supports_row_count": true,
+		"indicates_null_columns": false,
+		"reports_column_names_as_upper_case": true,
+		"fractional_second_digits": 3,
+		"connection_user_option": "exauid"
+	},
+
+	"setup": {
+		"view": {
+			"create": ["CREATE OR REPLACE VIEW {table_name} AS {content}"],
+			"drop": ["DROP VIEW {table_name}"]
+		},
+		"table": {
+			"create": ["CREATE OR REPLACE TABLE {table_name} ({content})"],
+			"drop": ["DROP TABLE {table_name}"]
+		}
+	},
+
+	"queries": {
+		"SELECT DOUBLE": {
+			"view": "SELECT CAST(3.14 AS DOUBLE PRECISION) a FROM DUAL",
+			"payload": "SELECT a FROM {table_name}"
+		},
+
+		"SELECT TRUE": {
+			"payload": "SELECT TRUE"
+		},
+
+		"SELECT FALSE": {
+			"payload": "SELECT FALSE"
+		},
+
+		"SELECT UNICODE": {
+			"payload": "SELECT 'I \u2665 unicode'"
+		},
+
+		"SELECT MULTIPLE INTEGERS": {
+			"table": "a INTEGER",
+			"setup": ["INSERT INTO {table_name} VALUES (42), (43), (44)"],
+			"payload": "SELECT a FROM {table_name} ORDER BY a ASC"
+		},
+		
+		"SELECT TIMESTAMP": {
+			"payload": "SELECT CAST('2015-12-31 01:02:03' AS TIMESTAMP) AS a"
+		},
+
+		"SELECT LARGE INTEGER DECIMAL": {
+			"payload": "SELECT CAST(42 AS DECIMAL(24, 0)) AS a"
+		},
+
+		"SELECT LARGE FRACTIONAL DECIMAL": {
+			"payload": "SELECT CAST(3.14 AS DECIMAL(24, 8)) AS a"
+		},
+
+		"INSERT STRING": {
+			"table": "a VARCHAR(20)"
+		},
+
+		"INSERT STRING MAX": {
+			"table": "a VARCHAR(2000000)"
+		},
+
+		"INSERT UNICODE": {
+			"table": "a VARCHAR(20) CHARACTER SET UTF8"
+		},
+
+		"INSERT UNICODE MAX": {
+			"table": "a VARCHAR(2000000) CHARACTER SET UTF8"
+		},
+
+		"INSERT LONG STRING": {
+			"table": "a VARCHAR(1000)"
+		},
+	
+		"INSERT INTEGER": {
+			"table": "a INTEGER"
+		},
+		
+		"INSERT TWO INTEGER COLUMNS": {
+			"table": "a INTEGER, b INTEGER"
+		},
+		
+		"INSERT MIXED": {
+			"table": "a INTEGER, b DOUBLE PRECISION"
+		},
+	
+		"INSERT DOUBLE": {
+			"table": "a DOUBLE PRECISION"
+		},
+	
+		"INSERT BOOL": {
+			"table": "a BOOLEAN"
+		},
+		
+		"INSERT INDEXED BOOL": {
+			"table": "a BOOLEAN, b INTEGER"
+		},
+	
+		"INSERT DATE": {
+			"table": "a DATE"
+		},
+	
+		"INSERT TIMESTAMP": {
+			"table": "a TIMESTAMP"
+		},
+
+		"INSERT DUPLICATE UNIQUECOL": {
+			"table": "a integer NOT NULL",
+			"setup": ["ALTER TABLE {table_name} ADD CONSTRAINT test_idu_a_unique PRIMARY KEY(a)",
+				      "INSERT INTO {table_name} VALUES (1)"]
+		},
+
+		"DESCRIPTION": {
+			"table": "as_int INTEGER, as_double DOUBLE PRECISION, as_varchar VARCHAR(100), as_date DATE, as_timestamp TIMESTAMP, as_int_not_null INTEGER NOT NULL"
+		},
+
+		"UNICODE COLUMN NAME": {
+			"table": "[I \u2665 Unicode] INTEGER"
+		}
+	}
+}
