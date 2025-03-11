@@ -1,1 +1,0 @@
-# empty file so that readthedocs does not complain requirements.txt is missing

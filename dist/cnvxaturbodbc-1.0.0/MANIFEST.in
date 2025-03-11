@@ -1,5 +1,0 @@
-global-include *.h
-global-include *.cpp
-include LICENSE
-include README.md
-include CHANGELOG.rst
