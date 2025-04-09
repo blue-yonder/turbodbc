@@ -48,25 +48,7 @@ void cursor::prepare(std::string const & sql)
         statement->prepare(sql);
     }
 
-    command_ = std::make_shared<command>(statement, configuration_);
-}
-
-// NEW METHOD with user-specified timeout
-void cursor::prepare_with_timeout(std::string const & sql, std::int32_t timeout_seconds)
-{
-    reset();
-    auto statement = connection_->make_statement();
-    if (configuration_.options.prefer_unicode) {
-        statement->prepare(as_utf16(sql));
-    } else {
-        statement->prepare(sql);
-    }
-
-    // Only set the attribute if the user gave a positive timeout
-    if (timeout_seconds > 0) {
-        statement->set_attribute(SQL_ATTR_QUERY_TIMEOUT,
-                                 static_cast<std::intptr_t>(timeout_seconds));
-    }
+    statement->set_attribute(SQL_ATTR_QUERY_TIMEOUT, static_cast<std::intptr_t>(5));
 
     command_ = std::make_shared<command>(statement, configuration_);
 }
