@@ -9,7 +9,7 @@ from turbodbc_intern import (
     make_parameter_set,
     make_row_based_result_set,
     set_arrow_parameters,
-    set_numpy_parameters
+    set_numpy_parameters,
 )
 
 from .exceptions import InterfaceError, translate_exceptions
@@ -115,7 +115,7 @@ class Cursor:
         return self
 
     @translate_exceptions
-    def execute(self, sql, parameters=None):
+    def execute(self, sql, parameters=None, timeout: int = 0):
         """
         Execute an SQL command or query
 
@@ -129,6 +129,14 @@ class Cursor:
         self.rowcount = -1
         self._assert_valid()
         self.impl.prepare(sql)
+
+        if timeout > 0:
+            # Use the new method that sets SQL_ATTR_QUERY_TIMEOUT
+            self.impl.prepare_with_timeout(sql, timeout)
+        else:
+            # Fallback to old method that sets no special timeout
+            self.impl.prepare(sql)
+
         if parameters:
             buffer = make_parameter_set(self.impl)
             buffer.add_set(parameters)
