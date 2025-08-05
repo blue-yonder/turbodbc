@@ -25,7 +25,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
       - name: Set up pixi
-        uses: prefix-dev/setup-pixi@307e5e5842748e3752d5178fbd158e0a6c1b55ff
+        uses: prefix-dev/setup-pixi@8ca4608ef7f4daeb54f5205b20d0b7cb42f11143
         with:
           environments: default
       - name: Build the sdist
@@ -59,7 +59,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
       - name: Set up pixi
-        uses: prefix-dev/setup-pixi@307e5e5842748e3752d5178fbd158e0a6c1b55ff
+        uses: prefix-dev/setup-pixi@8ca4608ef7f4daeb54f5205b20d0b7cb42f11143
         with:
           environments: ${{ matrix.environment }}
       - name: Build the wheel
@@ -136,7 +136,7 @@ jobs:
           sudo odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
           /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db' -l 60
       - name: Set up pixi
-        uses: prefix-dev/setup-pixi@307e5e5842748e3752d5178fbd158e0a6c1b55ff
+        uses: prefix-dev/setup-pixi@8ca4608ef7f4daeb54f5205b20d0b7cb42f11143
         with:
           environments: ${{ matrix.environment }}
       - name: pip list
@@ -181,7 +181,7 @@ jobs:
       - name: Fetch full git history
         run: git fetch --prune --unshallow
       - name: Set up pixi
-        uses: prefix-dev/setup-pixi@307e5e5842748e3752d5178fbd158e0a6c1b55ff
+        uses: prefix-dev/setup-pixi@8ca4608ef7f4daeb54f5205b20d0b7cb42f11143
         with:
           environments: ${{ matrix.environment }}
       - name: Create postgres test_db
@@ -243,7 +243,7 @@ jobs:
       - name: Fetch full git history
         run: git fetch --prune --unshallow
       - name: Set up pixi
-        uses: prefix-dev/setup-pixi@307e5e5842748e3752d5178fbd158e0a6c1b55ff
+        uses: prefix-dev/setup-pixi@8ca4608ef7f4daeb54f5205b20d0b7cb42f11143
         with:
           environments: ${{ matrix.environment }}
       - name: Build wheel
