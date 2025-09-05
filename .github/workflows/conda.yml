@@ -249,7 +249,7 @@ jobs:
       - name: Build wheel
         run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
       - name: Install wheel
-        run: pixi run -e ${{ matrix.environment }} python -m pip install 'dist\*.whl'
+        run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
         shell: bash
       - name: Test
         run: pixi run -e ${{ matrix.environment }} pytest -sv
