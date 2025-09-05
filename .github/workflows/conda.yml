@@ -32,7 +32,7 @@ jobs:
         run: pixi run python -m build --sdist --no-isolation
       - name: Publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags') && github.repository == 'blue-yonder/turbodbc'
-        uses: pypa/gh-action-pypi-publish@v1.12.4
+        uses: pypa/gh-action-pypi-publish@v1.13.0
         with:
           user: __token__
           password: ${{ secrets.PYPI_UPLOAD }}
@@ -249,7 +249,8 @@ jobs:
       - name: Build wheel
         run: pixi run -e ${{ matrix.environment }} python -m build --no-isolation
       - name: Install wheel
-        run: pixi run -e ${{ matrix.environment }} python -m pip install 'dist\*.whl'
+        run: pixi run -e ${{ matrix.environment }} python -m pip install dist/*.whl
+        shell: bash
       - name: Test
         run: pixi run -e ${{ matrix.environment }} pytest -sv
         env:
