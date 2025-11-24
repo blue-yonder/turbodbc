@@ -13,7 +13,7 @@ jobs:
   pixi-update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@v0.9.3
         with:
