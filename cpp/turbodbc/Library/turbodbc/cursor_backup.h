@@ -22,8 +22,6 @@ public:
 
     void prepare(std::string const &sql);
 
-    void prepare_with_timeout(std::string const &sql, std::int32_t timeout_seconds);
-
     void execute();
 
     void reset();
