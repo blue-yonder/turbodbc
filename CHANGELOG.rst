@@ -3,6 +3,12 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 5.2.0
+-------------
+
+* Support Python 3.12-3.14.
+* Allow ``pyarrow`` 18-23 and ``numpy`` 2+ in build tooling.
+
 Version 5.1.1, 5.1.2
 --------------------
 
@@ -174,7 +180,7 @@ Version 4.3.1
 Version 4.3.0
 -------------
 
-* Add Python 3.14 build 
+* Add Python 3.10 build 
 * Update package requirements so that ``pyarrow>0.17.1,<6.1`` can be used.
 * Bump pybind11 version to 2.8.1
 

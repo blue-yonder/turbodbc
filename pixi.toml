@@ -1,6 +1,6 @@
 [project]
 name = "turbodbc"
-version = "0.1.0"
+version = "5.2.0"
 description = "Add a short description here"
 authors = ["Uwe L. Korn <uwe.korn@quantco.com>"]
 channels = ["conda-forge"]
