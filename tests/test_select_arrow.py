@@ -1,6 +1,6 @@
 import datetime
 import gc
-import sys
+import weakref
 from collections import OrderedDict
 
 import pyarrow as pa
@@ -51,8 +51,10 @@ def test_arrow_reference_count(dsn, configuration):
         with query_fixture(cursor, configuration, "INSERT INTEGER") as table_name:
             cursor.execute(f"SELECT a FROM {table_name}")
             result = cursor.fetchallarrow()
+            result_ref = weakref.ref(result)
+            del result
             gc.collect()
-            assert sys.getrefcount(result) == 2
+            assert result_ref() is None
 
 
 @for_each_database
