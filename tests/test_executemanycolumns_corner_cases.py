@@ -9,7 +9,6 @@ import turbodbc
 from turbodbc import InterfaceError
 
 
-
 @for_one_database
 def test_column_of_unsupported_type_raises(dsn, configuration):
     with open_cursor(configuration) as cursor:

@@ -9,7 +9,7 @@ from turbodbc_intern import (
     make_parameter_set,
     make_row_based_result_set,
     set_arrow_parameters,
-    set_numpy_parameters
+    set_numpy_parameters,
 )
 
 from .exceptions import InterfaceError, translate_exceptions
