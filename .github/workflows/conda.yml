@@ -43,8 +43,9 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py312-pa18"
-          - "py313-pa19"
+          - "py311-pa18"
+          - "py312-pa20"
+          - "py313-pa21"
           - "py314-pa23"
     steps:
       - name: Checkout branch
@@ -65,7 +66,8 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py312-pa18"
+          - "py311-pa18"
+          - "py311-pa20"
           - "py312-pa20"
           - "py313-pa21"
           - "py313-pa23"
@@ -145,7 +147,8 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py312-pa18"
+          - "py311-pa18"
+          - "py311-pa20"
           - "py312-pa20"
           - "py313-pa21"
           - "py313-pa23"
@@ -186,7 +189,8 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py312-pa18"
+          - "py311-pa18"
+          - "py311-pa20"
           - "py312-pa20"
           - "py313-pa21"
           - "py313-pa23"

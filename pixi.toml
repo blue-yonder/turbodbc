@@ -35,6 +35,8 @@ sed = "*"
 
 [feature.py312.dependencies]
 python = "3.12.*"
+[feature.py311.dependencies]
+python = "3.11.*"
 [feature.py313.dependencies]
 python = "3.13.*"
 [feature.py314.dependencies]
@@ -54,19 +56,26 @@ pyarrow = ">=23,<24"
 
 [environments]
 default = ["py312", "pyarrow23"]
+py311 = ["py311"]
 py312 = ["py312"]
 py313 = ["py313"]
 py314 = ["py314"]
+py311-pa18 = ["py311", "pyarrow18"]
 py312-pa18 = ["py312", "pyarrow18"]
 py313-pa18 = ["py313", "pyarrow18"]
+py311-pa19 = ["py311", "pyarrow19"]
 py312-pa19 = ["py312", "pyarrow19"]
 py313-pa19 = ["py313", "pyarrow19"]
+py311-pa20 = ["py311", "pyarrow20"]
 py312-pa20 = ["py312", "pyarrow20"]
 py313-pa20 = ["py313", "pyarrow20"]
+py311-pa21 = ["py311", "pyarrow21"]
 py312-pa21 = ["py312", "pyarrow21"]
 py313-pa21 = ["py313", "pyarrow21"]
+py311-pa22 = ["py311", "pyarrow22"]
 py312-pa22 = ["py312", "pyarrow22"]
 py313-pa22 = ["py313", "pyarrow22"]
+py311-pa23 = ["py311", "pyarrow23"]
 py312-pa23 = ["py312", "pyarrow23"]
 py313-pa23 = ["py313", "pyarrow23"]
 py314-pa23 = ["py314", "pyarrow23"]

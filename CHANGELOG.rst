@@ -6,7 +6,7 @@ From version 2.0.0, turbodbc adapts semantic versioning.
 Version 5.2.0
 -------------
 
-* Support Python 3.12-3.14.
+* Support Python 3.11-3.14.
 * Allow ``pyarrow`` 18-23 and ``numpy`` 2+ in build tooling.
 
 Version 5.1.1, 5.1.2
