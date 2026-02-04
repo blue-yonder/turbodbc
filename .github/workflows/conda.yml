@@ -43,18 +43,10 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          # - "py310-pa14"
-          # - "py311-pa14"
-          - "py312-pa14"
-          # - "py310-pa15"
-          # - "py311-pa15"
-          # - "py312-pa15"
-          # - "py310-pa16"
-          # - "py311-pa16"
-          # - "py312-pa16"
-          - "py310-pa17"
-          # - "py311-pa17"
-          # - "py312-pa17"
+          - "py311-pa18"
+          - "py312-pa20"
+          - "py313-pa21"
+          - "py314-pa23"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v6
@@ -74,19 +66,12 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py310-pa14"
-          # - "py311-pa14"
-          # - "py312-pa14"
-          # - "py310-pa15"
-          - "py311-pa15"
-          # - "py312-pa15"
-          # - "py310-pa16"
-          # - "py311-pa16"
-          - "py312-pa16"
-          # - "py310-pa17"
-          # - "py311-pa17"
-          - "py312-pa17"
-          - "py313-pa18"
+          - "py311-pa18"
+          - "py311-pa20"
+          - "py312-pa20"
+          - "py313-pa21"
+          - "py313-pa23"
+          - "py314-pa23"
     services:
       postgres:
         image: postgres:11
@@ -162,19 +147,12 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py310-pa14"
-          #- "py311-pa14"
-          #- "py312-pa14"
-          - "py310-pa15"
-          #- "py311-pa15"
-          #- "py312-pa15"
-          #- "py310-pa16"
-          - "py311-pa16"
-          #- "py312-pa16"
-          #- "py310-pa17"
-          #- "py311-pa17"
-          - "py312-pa17"
-          - "py313-pa18"
+          - "py311-pa18"
+          - "py311-pa20"
+          - "py312-pa20"
+          - "py313-pa21"
+          - "py313-pa23"
+          - "py314-pa23"
     steps:
       - name: Checkout branch
         uses: actions/checkout@v6
@@ -211,19 +189,12 @@ jobs:
       fail-fast: false
       matrix:
         environment:
-          - "py310-pa14"
-          # - "py311-pa14"
-          # - "py312-pa14"
-          # - "py310-pa15"
-          - "py311-pa15"
-          # - "py312-pa15"
-          # - "py310-pa16"
-          # - "py311-pa16"
-          - "py312-pa16"
-          # - "py310-pa17"
-          # - "py311-pa17"
-          - "py312-pa17"
-          - "py313-pa18"
+          - "py311-pa18"
+          - "py311-pa20"
+          - "py312-pa20"
+          - "py313-pa21"
+          - "py313-pa23"
+          - "py314-pa23"
     steps:
       - name: Create SQL Server
         shell: pwsh

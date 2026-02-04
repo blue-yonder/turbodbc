@@ -1,3 +1,6 @@
+import gc
+import weakref
+
 import pytest
 from helpers import for_each_database, for_one_database, get_credentials, open_cursor
 from query_fixture import query_fixture
@@ -122,9 +125,11 @@ def test_rowcount_is_reset_after_executemanycolumns_raises(dsn, configuration):
 def test_connection_does_not_strongly_reference_cursors(dsn, configuration):
     connection = connect(dsn, **get_credentials(configuration))
     cursor = connection.cursor()
-    import sys
 
-    assert sys.getrefcount(cursor) == 2
+    cursor_ref = weakref.ref(cursor)
+    del cursor
+    gc.collect()
+    assert cursor_ref() is None
 
 
 @for_one_database

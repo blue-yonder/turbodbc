@@ -1,6 +1,6 @@
 [project]
 name = "turbodbc"
-version = "0.1.0"
+version = "5.2.0"
 description = "Add a short description here"
 authors = ["Uwe L. Korn <uwe.korn@quantco.com>"]
 channels = ["conda-forge"]
@@ -15,15 +15,15 @@ meson-python = ">=0.16.0,<0.18"
 ninja = ">=1,<2"
 c-compiler = "*"
 cxx-compiler = "*"
-numpy = ">=1.21,<3"
+numpy = ">=2,<3"
 cmake = ">=3.20,<3.32"
 libboost-devel = ">=1.80.0,<1.88"
 simdutf = ">=5,<6"
-pyarrow = ">=14,<20"
+pyarrow = ">=18,<24"
 pybind11 = ">=2,<3"
-pip = ">=20,<25"
+pip = ">=23,<26"
 python-build = ">=1,<2"
-pytest = ">=8,<9"
+pytest = ">=8,<10"
 pkg-config = ">=0.20,<1"
 
 [target.unix.dependencies]
@@ -33,50 +33,49 @@ psqlodbc = ">=16,<17"
 mysql-connector-odbc = ">=8.3,<9"
 sed = "*"
 
-[feature.py310.dependencies]
-python = "3.10.*"
-[feature.py311.dependencies]
-python = "3.11.*"
 [feature.py312.dependencies]
 python = "3.12.*"
+[feature.py311.dependencies]
+python = "3.11.*"
 [feature.py313.dependencies]
 python = "3.13.*"
-[feature.pyarrow14.dependencies]
-pyarrow = ">=14,<15"
-[feature.pyarrow15.dependencies]
-pyarrow = ">=15,<16"
-[feature.pyarrow16.dependencies]
-pyarrow = ">=16,<17"
-[feature.pyarrow17.dependencies]
-pyarrow = ">=17,<18"
+[feature.py314.dependencies]
+python = "3.14.*"
 [feature.pyarrow18.dependencies]
 pyarrow = ">=18,<19"
 [feature.pyarrow19.dependencies]
 pyarrow = ">=19,<20"
+[feature.pyarrow20.dependencies]
+pyarrow = ">=20,<21"
+[feature.pyarrow21.dependencies]
+pyarrow = ">=21,<22"
+[feature.pyarrow22.dependencies]
+pyarrow = ">=22,<23"
+[feature.pyarrow23.dependencies]
+pyarrow = ">=23,<24"
 
 [environments]
-default = ["py312", "pyarrow18"]
-py310 = ["py310"]
+default = ["py312", "pyarrow23"]
 py311 = ["py311"]
 py312 = ["py312"]
 py313 = ["py313"]
-py310-pa14 = ["py310", "pyarrow14"]
-py311-pa14 = ["py311", "pyarrow14"]
-py312-pa14 = ["py312", "pyarrow14"]
-py310-pa15 = ["py310", "pyarrow15"]
-py311-pa15 = ["py311", "pyarrow15"]
-py312-pa15 = ["py312", "pyarrow15"]
-py310-pa16 = ["py310", "pyarrow16"]
-py311-pa16 = ["py311", "pyarrow16"]
-py312-pa16 = ["py312", "pyarrow16"]
-py310-pa17 = ["py310", "pyarrow17"]
-py311-pa17 = ["py311", "pyarrow17"]
-py312-pa17 = ["py312", "pyarrow17"]
-py310-pa18 = ["py310", "pyarrow18"]
+py314 = ["py314"]
 py311-pa18 = ["py311", "pyarrow18"]
 py312-pa18 = ["py312", "pyarrow18"]
 py313-pa18 = ["py313", "pyarrow18"]
-py310-pa19 = ["py310", "pyarrow19"]
 py311-pa19 = ["py311", "pyarrow19"]
 py312-pa19 = ["py312", "pyarrow19"]
 py313-pa19 = ["py313", "pyarrow19"]
+py311-pa20 = ["py311", "pyarrow20"]
+py312-pa20 = ["py312", "pyarrow20"]
+py313-pa20 = ["py313", "pyarrow20"]
+py311-pa21 = ["py311", "pyarrow21"]
+py312-pa21 = ["py312", "pyarrow21"]
+py313-pa21 = ["py313", "pyarrow21"]
+py311-pa22 = ["py311", "pyarrow22"]
+py312-pa22 = ["py312", "pyarrow22"]
+py313-pa22 = ["py313", "pyarrow22"]
+py311-pa23 = ["py311", "pyarrow23"]
+py312-pa23 = ["py312", "pyarrow23"]
+py313-pa23 = ["py313", "pyarrow23"]
+py314-pa23 = ["py314", "pyarrow23"]
