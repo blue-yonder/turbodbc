@@ -12,6 +12,7 @@ namespace {
 
 	class is_suitable_for : public boost::static_visitor<bool> {
 	public:
+		using boost::static_visitor<bool>::static_visitor;
 		is_suitable_for(parameter const & param) :
 				parameter_(param)
 		{}
@@ -47,6 +48,7 @@ namespace {
 
 	class set_field_for : public boost::static_visitor<> {
 	public:
+		using boost::static_visitor<>::static_visitor;
 		set_field_for(cpp_odbc::writable_buffer_element & destination) :
 				destination_(destination)
 		{}

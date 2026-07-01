@@ -13,6 +13,7 @@
 namespace pybind11 { namespace detail {
 
 struct variant_caster_visitor : boost::static_visitor<handle> {
+    using boost::static_visitor<handle>::static_visitor;
     variant_caster_visitor(return_value_policy policy, handle parent) :
         policy(policy),
         parent(parent)
