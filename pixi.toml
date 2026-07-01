@@ -57,7 +57,7 @@ pyarrow = ">=23,<24"
 pyarrow = ">=24,<25"
 
 [environments]
-default = ["py312", "pyarrow23"]
+default = ["py312", "pyarrow24"]
 py311 = ["py311"]
 py312 = ["py312"]
 py313 = ["py313"]
