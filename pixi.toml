@@ -4,7 +4,7 @@ version = "5.2.0"
 description = "Add a short description here"
 authors = ["Uwe L. Korn <uwe.korn@quantco.com>"]
 channels = ["conda-forge"]
-platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
+platforms = ["osx-arm64", "linux-64", "osx-64", "win-64", "linux-aarch64"]
 
 [tasks]
 
