@@ -65,6 +65,7 @@ std::unique_ptr<description const> make_decimal_description(cpp_odbc::column_des
 using description_ptr = description const *;
 
 struct description_by_value : public boost::static_visitor<description_ptr> {
+    using boost::static_visitor<description_ptr>::static_visitor;
     description_ptr operator()(int64_t const &) const
     {
         return new integer_description;

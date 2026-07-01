@@ -1,10 +1,10 @@
-[project]
+[workspace]
 name = "turbodbc"
 version = "5.2.0"
 description = "Add a short description here"
 authors = ["Uwe L. Korn <uwe.korn@quantco.com>"]
 channels = ["conda-forge"]
-platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
+platforms = ["osx-arm64", "linux-64", "osx-64", "win-64", "linux-aarch64"]
 
 [tasks]
 
@@ -19,7 +19,7 @@ numpy = ">=2,<3"
 cmake = ">=3.20,<3.32"
 libboost-devel = ">=1.80.0,<1.88"
 simdutf = ">=5,<6"
-pyarrow = ">=18,<24"
+pyarrow = ">=18,<25"
 pybind11 = ">=2,<3"
 pip = ">=23,<26"
 python-build = ">=1,<2"
@@ -53,9 +53,11 @@ pyarrow = ">=21,<22"
 pyarrow = ">=22,<23"
 [feature.pyarrow23.dependencies]
 pyarrow = ">=23,<24"
+[feature.pyarrow24.dependencies]
+pyarrow = ">=24,<25"
 
 [environments]
-default = ["py312", "pyarrow23"]
+default = ["py312", "pyarrow24"]
 py311 = ["py311"]
 py312 = ["py312"]
 py313 = ["py313"]
@@ -79,3 +81,7 @@ py311-pa23 = ["py311", "pyarrow23"]
 py312-pa23 = ["py312", "pyarrow23"]
 py313-pa23 = ["py313", "pyarrow23"]
 py314-pa23 = ["py314", "pyarrow23"]
+py311-pa24 = ["py311", "pyarrow24"]
+py312-pa24 = ["py312", "pyarrow24"]
+py313-pa24 = ["py313", "pyarrow24"]
+py314-pa24 = ["py314", "pyarrow24"]

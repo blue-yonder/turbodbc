@@ -3,6 +3,11 @@ Version history / changelog
 
 From version 2.0.0, turbodbc adapts semantic versioning.
 
+Version 5.3.0
+-------------
+
+* Support C++20 and ``pyarrow`` 24
+
 Version 5.2.0
 -------------
 

@@ -36,6 +36,7 @@ class determine_rows_to_buffer
     : public boost::static_visitor<std::size_t>
 {
 public:
+    using boost::static_visitor<std::size_t>::static_visitor;
     determine_rows_to_buffer(std::vector<std::unique_ptr<turbodbc::description const>> const& descriptions);
     std::size_t operator()(rows const& r) const;
     std::size_t operator()(megabytes const& m) const;
@@ -52,6 +53,7 @@ class halve_buffer_size
     : public boost::static_visitor<buffer_size>
 {
 public:
+    using boost::static_visitor<buffer_size>::static_visitor;
     buffer_size operator()(rows const& r) const;
     buffer_size operator()(megabytes const& m) const;
 };
