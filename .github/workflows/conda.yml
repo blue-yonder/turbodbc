@@ -16,6 +16,9 @@ defaults:
   run:
     shell: bash -ex {0}
 
+env:
+  TEST_DB_PASSWORD: ${{ format('Turbodbc-CI-{0}-{1}!', github.run_id, github.run_attempt) }}
+
 jobs:
   linux-release:
     runs-on: ubuntu-latest
@@ -83,7 +86,7 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_PASSWORD: password
+          POSTGRES_PASSWORD: ${{ env.TEST_DB_PASSWORD }}
           POSTGRES_USER: postgres
           POSTGRES_DB: test_db
       mysql:
@@ -91,9 +94,9 @@ jobs:
         image: mysql:8.3
         # command: --default-authentication-plugin=mysql_native_password
         env:
-          MYSQL_ROOT_PASSWORD: StrongPassword1
+          MYSQL_ROOT_PASSWORD: ${{ env.TEST_DB_PASSWORD }}
           MYSQL_USER: mysqluser
-          MYSQL_PASSWORD: password
+          MYSQL_PASSWORD: ${{ env.TEST_DB_PASSWORD }}
           MYSQL_DATABASE: test_db
         ports:
           - 3306:3306
@@ -101,8 +104,7 @@ jobs:
         image: mcr.microsoft.com/mssql/server:2019-latest
         env:
           ACCEPT_EULA: Y
-          SA_PASSWORD: StrongPassword1
-          MSSQL_SA_PASSWORD: StrongPassword1
+          MSSQL_SA_PASSWORD: ${{ env.TEST_DB_PASSWORD }}
         ports:
           - 1433:1433
         options: >-
@@ -117,13 +119,14 @@ jobs:
         run: git fetch --prune --unshallow
       - name: Install MS SQL Drivers
         run: |
-          wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
-          wget -q https://packages.microsoft.com/config/debian/9/prod.list -O- | sudo tee -a /etc/apt/sources.list.d/mssql-release.list
+          source /etc/os-release
+          curl -fsSL "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" \
+            -o "$RUNNER_TEMP/packages-microsoft-prod.deb"
+          sudo dpkg -i "$RUNNER_TEMP/packages-microsoft-prod.deb"
           sudo apt-get update
-          ACCEPT_EULA=Y sudo apt-get install msodbcsql17 mssql-tools
-          ls -l  /opt/microsoft/msodbcsql17/lib64/
-          sudo odbcinst -i -d -f /opt/microsoft/msodbcsql17/etc/odbcinst.ini
-          /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'StrongPassword1' -Q 'CREATE DATABASE test_db' -l 60
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18
+          SQLCMDPASSWORD="$TEST_DB_PASSWORD" /opt/mssql-tools18/bin/sqlcmd \
+            -S localhost -U SA -C -b -Q 'CREATE DATABASE test_db' -l 60
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@ad1da6449d9e506fd127fd67ab2d054a769f6a94
         with:
@@ -139,12 +142,22 @@ jobs:
       - name: Import test
         run: pixi run -e ${{ matrix.environment }} python -c 'import turbodbc'
       - name: Prepare ODBC
-        run: pixi run -e ${{ matrix.environment }} bash -c 'sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini'
+        run: |
+          mkdir -p "$RUNNER_TEMP/turbodbc-odbc"
+          sed -e "s/^\([[:space:]]*password[[:space:]]*=\).*/\1 $TEST_DB_PASSWORD/I" \
+            -e 's/^Driver = ODBC Driver 17 for SQL Server$/Driver = ODBC Driver 18 for SQL Server/' \
+            -e '/^\[MSSQL\]/a TrustServerCertificate = Yes' \
+            odbc_test_linux/odbc.ini > "$RUNNER_TEMP/turbodbc-odbc/odbc.ini"
+          pixi run -e ${{ matrix.environment }} bash -c 'sed "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_linux/odbcinst.ini' \
+            > "$RUNNER_TEMP/turbodbc-odbc/odbcinst.ini"
+          /usr/bin/odbcinst -q -d -n 'ODBC Driver 18 for SQL Server' >> "$RUNNER_TEMP/turbodbc-odbc/odbcinst.ini"
+          jq --arg password "$TEST_DB_PASSWORD" '.password = $password' tests/query_fixtures_mssql.json \
+            > "$RUNNER_TEMP/turbodbc-odbc/query_fixtures_mssql.json"
       - name: Build and test
-        run: ODBCSYSINI=$(pwd)/odbc_test_linux pixi run -e ${{ matrix.environment }} pytest
+        run: ODBCSYSINI="$RUNNER_TEMP/turbodbc-odbc" pixi run -e ${{ matrix.environment }} pytest
         env:
           # TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mysql.json,tests/query_fixtures_mssql.json"
-          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,tests/query_fixtures_mssql.json"
+          TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json,${{ runner.temp }}/turbodbc-odbc/query_fixtures_mssql.json"
   macos-tests:
     runs-on: macos-latest
     strategy:
@@ -169,7 +182,7 @@ jobs:
         with:
           environments: ${{ matrix.environment }}
       - name: Create postgres test_db
-        run: pixi run -e ${{ matrix.environment }} bash -c 'initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "password")'
+        run: pixi run -e ${{ matrix.environment }} bash -c 'initdb -D test_db --username="runner" --pwfile=<(printf "%s\n" "$TEST_DB_PASSWORD")'
       - name: Start postgres
         run: pixi run -e ${{ matrix.environment }} pg_ctl -D test_db -l logfile start
       - name: Create inner database
@@ -181,11 +194,16 @@ jobs:
       - name: Import test
         run: pixi run -e ${{ matrix.environment }} python -c 'import turbodbc'
       - name: Prepare ODBC
-        run: pixi run -e ${{ matrix.environment }} bash -c 'sed -i "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_osx/odbcinst.ini'
+        run: |
+          mkdir -p "$RUNNER_TEMP/turbodbc-odbc"
+          sed "s/^Password[[:space:]]*=.*/Password = $TEST_DB_PASSWORD/" odbc_test_osx/odbc.ini \
+            > "$RUNNER_TEMP/turbodbc-odbc/odbc.ini"
+          pixi run -e ${{ matrix.environment }} bash -c 'sed "s;CONDA_PREFIX;${CONDA_PREFIX};g" odbc_test_osx/odbcinst.ini' \
+            > "$RUNNER_TEMP/turbodbc-odbc/odbcinst.ini"
       - name: Build and test
         env:
           TURBODBC_TEST_CONFIGURATION_FILES: "tests/query_fixtures_postgresql.json"
-        run: pixi run -e ${{ matrix.environment }} bash -c 'ulimit -c unlimited && ODBCSYSINI=$(pwd)/odbc_test_osx pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt all" -o "quit"; exit 1)'
+        run: pixi run -e ${{ matrix.environment }} bash -c 'ulimit -c unlimited && ODBCSYSINI="$RUNNER_TEMP/turbodbc-odbc" pytest -sv || (lldb -o "target create python --core $(ls /cores/core*)" -o "bt all" -o "quit"; exit 1)'
   windows-pixi-tests:
     defaults:
       run:
